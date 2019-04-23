@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { AppRegistry } from 'react-native';
-import LandingPage from './app/pages/LandingPage';
+import LogInPage from './app/pages/LogInPage';
 
 class App extends Component {
   render() {
     return (
-      <LandingPage />s
+      <LogInPage />
       // <Routes />
     );
   }
