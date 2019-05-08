@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { TouchableOpacity, Text, View, Image } from 'react-native';
-import theme from '../styles/theme.style';
 import styles from '../styles/component.ButtonBlue.style';
 
 export default class ButtonBlue extends Component {

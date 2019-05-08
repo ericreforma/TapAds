@@ -12,6 +12,7 @@ export default StyleSheet.create({
     },
     textNormalLabel: {
         color: theme.COLOR_WHITE,
+        fontSize: theme.FONT_SIZE_SMALL,
         fontFamily: 'Montserrat-Regular'
     },
     textNormalLabelMargin: {
@@ -22,17 +23,19 @@ export default StyleSheet.create({
         fontFamily: 'Montserrat-Bold',
     },
     loginButton: {
-        marginTop: 40
+        marginTop: 40,
+        marginBottom: 7
     },
     loginAlternativeLabel: {
         marginBottom: 10,
+        marginTop: 10,
         fontFamily: 'Montserrat-Light',
         color: theme.COLOR_NORMAL_FONT,
         textAlign: 'right'
     },
     loginAlternativeIconView: {
         flexDirection: 'row',
-        marginBottom: 20,
+        marginBottom: 30,
         justifyContent: 'flex-end'
     },
     loginAlternativeIconFacebook: {

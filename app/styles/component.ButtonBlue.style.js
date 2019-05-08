@@ -4,11 +4,11 @@ import theme from './theme.style';
 export default StyleSheet.create({
     buttonStyle: {
         backgroundColor: theme.COLOR_BLUE,
-        borderRadius: 20,
-        marginVertical: 7,
-        paddingHorizontal: 20,
+        borderRadius: 15,
+        paddingHorizontal: 15,
         maxWidth: 200,
-        height: 56,
+        minWidth: 110,
+        height: 45,
         flexDirection: 'row',
     },
     buttonJustifyContent: {
@@ -19,12 +19,12 @@ export default StyleSheet.create({
     },
     buttonLabel: {
         color: theme.COLOR_WHITE,
-        fontSize: theme.FONT_SIZE_MEDIUM,
         fontFamily: 'Montserrat-Medium',
-        paddingVertical: 13,
+        fontSize: 16,
+        paddingVertical: 11,
     },
     buttonIcon: {
-        marginVertical: 18,
-        height: 18
+        marginVertical: 15,
+        height: 14
     }
 });
