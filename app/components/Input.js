@@ -3,7 +3,7 @@ import { View, Text, Image, TextInput } from 'react-native';
 import styles from '../styles/component.Input.style';
 import theme from '../styles/theme.style';
 
-export default class Input extends Component {
+export default class InputLogin extends Component {
     icons = (type) => {
         var icons = [
             {
@@ -40,6 +40,7 @@ export default class Input extends Component {
                         secureTextEntry={iconData.security}
                         placeholder={iconData.placeholder}
                         placeholderTextColor={theme.COLOR_WHITE}
+                        onChangeText={this.props.onChangeText}
                     />
                 </View>
             </View>

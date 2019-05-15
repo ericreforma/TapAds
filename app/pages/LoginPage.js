@@ -5,11 +5,53 @@ import {
 	Text,
 	View,
 	Image } from 'react-native';
-import Input from '../components/Input';
+import axios from 'axios';
+import InputLogin from '../components/Input';
 import ButtonBlue from '../components/ButtonBlue';
 import styles from '../styles/page.Login.style';
 
 export default class LogInPage extends Component {
+	state = {
+		username: '',
+		password: '',
+	}
+
+	loginCredentialsOnChangeText = (inputType) => (text) => {
+		var username = inputType == 'username' ? text : this.state.username,
+			password = inputType == 'password' ? text : this.state.password;
+
+		this.setState({
+			username: username,
+			password: password
+		});
+	}
+	
+	loginButtonOnPress = () => {
+		var proceed = true;
+
+		if(this.state.username == '') {
+			proceed = false;
+			alert('Input Username!');
+		} else if(this.state.password == '') {
+			proceed = false;
+			alert('Input Password!');
+		}
+
+		if(proceed) {
+			const form = {
+				email: this.state.username,
+				password: this.state.password
+			};
+
+			axios.post("http://dev.bcdpinpoint.com/TapAdsServer/public/api/login", form).then(response => {
+				this.props.navigation.replace('Home');
+			}).catch(error => {
+				// console.log(error.response.data);
+				alert('Login credentials unmatched');
+			});
+		}
+	}
+
 	render() {
 		return (
 			<ImageBackground
@@ -18,9 +60,15 @@ export default class LogInPage extends Component {
 			>
 				
 				<View style={styles.loginCredentialsView}>
-					<Input type="username"/>
+					<InputLogin
+						type="username"
+						onChangeText={this.loginCredentialsOnChangeText('username')}
+					/>
 
-					<Input type="password"/>
+					<InputLogin
+						type="password"
+						onChangeText={this.loginCredentialsOnChangeText('password')}
+					/>
 				</View>
 
 				<TouchableOpacity>
@@ -33,6 +81,7 @@ export default class LogInPage extends Component {
 					<ButtonBlue
 						loginButton={true}
 						label="Login"
+						onPress={this.loginButtonOnPress}
 					/>
 				</View>
 

@@ -13,17 +13,21 @@ class HeaderNav extends Component {
             <View
                 style={[styles.headerNavRowDirection, styles.headerNavTopContainer]}
             >
-                <Text
-                    style={styles.headerNavTopAppName}
+                <TouchableOpacity
+                    onPress={() => this.props.navigation.navigate('Home')}
                 >
-                    TAP ADS
-                </Text>
+                    <Text
+                        style={styles.headerNavTopAppName}
+                    >
+                        TAP ADS
+                    </Text>
+                </TouchableOpacity>
 
                 <View
                     style={styles.headerNavTopButtons}
                 >
                     <TouchableOpacity
-                        onPress={this.props.notifButtonOnPress}
+                        onPress={() => this.props.navigation.navigate('Notification')}
                     >
                         <Image
                             style={styles.headerNavTopNotification}
