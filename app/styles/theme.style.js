@@ -13,6 +13,7 @@ export default {
   COLOR_BLACK: '#000',
   COLOR_LABEL: '#353a60',
   COLOR_NORMAL_FONT: '#5f5f5f',
+  COLOR_SIGNUP_FONT: '#b5b5b5',
 
 // FONTS
   FONT_SIZE_SMALL: 12,

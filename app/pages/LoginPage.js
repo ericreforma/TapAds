@@ -52,6 +52,10 @@ export default class LogInPage extends Component {
 		}
 	}
 
+	signUpButtonOnPress = () => {
+		this.props.navigation.navigate('Signup');
+	}
+
 	render() {
 		return (
 			<ImageBackground
@@ -89,7 +93,9 @@ export default class LogInPage extends Component {
 					Don't have an account?
 				</Text>
 
-				<TouchableOpacity>
+				<TouchableOpacity
+					onPress={this.signUpButtonOnPress}
+				>
 					<Text style={styles.textSignUp}>
 						Sign up
 					</Text>

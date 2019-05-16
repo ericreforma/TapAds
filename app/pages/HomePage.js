@@ -184,7 +184,10 @@ export default class HomePage extends Component {
                 name: ['slot_available', 'slots'],
                 label: 'Slots available'
             }
-        ]
+        ],
+
+        //category
+        currentCategoryIndex: 0
     }
 
     menuButtonOnPress = () => {
@@ -336,6 +339,11 @@ export default class HomePage extends Component {
         );
     }
 
+    _currentCategory = (slideIndex) => {
+        console.log(slideIndex);
+        this.setState({ currentCategoryIndex: slideIndex });
+    }
+    
     loadMoreCampaign = () => {
         var returnJSX;
         if(this.state.campaignViewLength < this.state.campaignData.length) {
@@ -460,6 +468,7 @@ export default class HomePage extends Component {
                                     sliderWidth={this.state.width}
                                     itemWidth={(this.state.width / 3) + 20}
                                     loop={true}
+                                    onSnapToItem={this._currentCategory}
                                 />
                             </View>
                         </View>

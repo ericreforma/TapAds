@@ -3,6 +3,7 @@ import { createStackNavigator, createAppContainer } from 'react-navigation';
 import LogInPage from '../pages/LogInPage';
 import HomePage from '../pages/HomePage';
 import NotificationPage from '../pages/NotificationPage';
+import SignUpPage from '../pages/SignUpPage';
 
 export default class Route extends Component {
 	render() {
@@ -16,9 +17,10 @@ const RouteStack = createStackNavigator(
 	{
 		Login: LogInPage,
 		Home: HomePage,
-		Notification: NotificationPage
+		Notification: NotificationPage,
+		Signup: SignUpPage
 	}, {
-        initialRouteName: 'Notification',
+        initialRouteName: 'Home',
 		headerMode: 'none',
 		navigationOptions: {
 			headerVisible: false,
