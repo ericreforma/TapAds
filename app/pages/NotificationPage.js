@@ -104,6 +104,7 @@ export default class NotificationPage extends Component {
                     <UserInfo 
                         profilePicture={require('../assets/image/male_avatar.png')}
                         userData={this.state.userData}
+                        navigation={this.props.navigation}
                     />
 
                     {/* notification content */}

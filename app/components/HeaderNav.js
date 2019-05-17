@@ -85,7 +85,10 @@ class UserInfo extends Component {
                 <View
                     style={[styles.headerNavCenter, styles.headerNavProfilePicture]}
                 >
-                    <TouchableOpacity activeOpacity={0.8}>
+                    <TouchableOpacity
+                        activeOpacity={0.8}
+                        onPress={() => this.props.navigation.navigate('Profile')}
+                    >
                         <Image
                             style={styles.headerNavProfilePictureImage}
                             source={this.props.profilePicture}

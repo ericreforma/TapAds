@@ -59,15 +59,26 @@ export default StyleSheet.create({
     homePageCampaignCardContainer: {
         marginVertical: 5
     },
+    homePageCampaignCardInfoWrapper: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
     homePageCampaignCardInfoLabel: {
+        flex: 1,
+        textAlign: 'left',
         fontFamily: 'Montserrat-Regular',
         fontSize: theme.FONT_SIZE_SMALL,
-        color: theme.COLOR_NORMAL_FONT
+        color: theme.COLOR_NORMAL_FONT,
+        paddingRight: 1.5
     },
     homePageCampaignCardInfoValue: {
+        flex: 1,
+        textAlign: 'right',
         fontFamily: 'Montserrat-Bold',
         fontSize: theme.FONT_SIZE_SMALL,
-        color: theme.COLOR_NORMAL_FONT
+        color: theme.COLOR_NORMAL_FONT,
+        paddingLeft: 1.5
     },
     homePageLabelText: {
         fontFamily: 'Montserrat-Bold',
@@ -102,11 +113,14 @@ export default StyleSheet.create({
     },
     homePageRecommendedCampaignBody: {
         flexDirection: 'row',
+        justifyContent: 'flex-end',
+        alignItems: 'flex-end',
         marginBottom: 10
     },
     homePageRecommendedCampaignFirstCol: {
         flex: 1,
         justifyContent: 'flex-end',
+        alignItems: 'flex-start'
     },
     homePageAlignCenter: {
         flex: 1,

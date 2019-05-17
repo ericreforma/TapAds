@@ -4,11 +4,14 @@ import {
 	ImageBackground,
 	Text,
 	View,
-	Image } from 'react-native';
+	Image,
+	Dimensions
+} from 'react-native';
 import axios from 'axios';
 import InputLogin from '../components/Input';
 import ButtonBlue from '../components/ButtonBlue';
 import styles from '../styles/page.Login.style';
+import theme from '../styles/theme.style';
 
 export default class LogInPage extends Component {
 	state = {
@@ -19,7 +22,7 @@ export default class LogInPage extends Component {
 	loginCredentialsOnChangeText = (inputType) => (text) => {
 		var username = inputType == 'username' ? text : this.state.username,
 			password = inputType == 'password' ? text : this.state.password;
-
+   
 		this.setState({
 			username: username,
 			password: password
@@ -59,67 +62,99 @@ export default class LogInPage extends Component {
 	render() {
 		return (
 			<ImageBackground
+				resizeMode="stretch"
 				source={require('../assets/image/login_page_bg.png')}
 				style={styles.containerView}
 			>
-				
-				<View style={styles.loginCredentialsView}>
-					<InputLogin
-						type="username"
-						onChangeText={this.loginCredentialsOnChangeText('username')}
-					/>
-
-					<InputLogin
-						type="password"
-						onChangeText={this.loginCredentialsOnChangeText('password')}
-					/>
-				</View>
-
-				<TouchableOpacity>
-					<Text style={[styles.textNormalLabel, styles.textNormalLabelMargin]}>
-						Forgot Password?
-					</Text>
-				</TouchableOpacity>
-
-				<View style={styles.loginButton}>
-					<ButtonBlue
-						loginButton={true}
-						label="Login"
-						onPress={this.loginButtonOnPress}
-					/>
-				</View>
-
-				<Text style={styles.textNormalLabel}>
-					Don't have an account?
-				</Text>
-
-				<TouchableOpacity
-					onPress={this.signUpButtonOnPress}
+				{/* logo taptab */}
+				<View
+					style={{
+						height: '40%',
+						justifyContent: 'center',
+						alignItems: 'flex-end',
+					}}
 				>
-					<Text style={styles.textSignUp}>
-						Sign up
-					</Text>
-				</TouchableOpacity>
+					<Image
+						style={{
+							width: '45%'
+						}}
+						resizeMode="contain"
+						source={require('../assets/image/app_logo.png')}
+					/>
+				</View>
 
-				<Text style={styles.loginAlternativeLabel}>
-					or login with
-				</Text>
-				
-				<View style={styles.loginAlternativeIconView}>
-					<TouchableOpacity>
-						<Image
-							source={require('../assets/image/icons/google_icon.png')}
+				{/* main login input values */}
+				<View
+					style={{
+						flex: 1,
+						paddingTop: 30,
+					}}
+				>
+					<View style={styles.loginCredentialsView}>
+						<InputLogin
+							type="username"
+							onChangeText={this.loginCredentialsOnChangeText('username')}
 						/>
+
+						<InputLogin
+							type="password"
+							onChangeText={this.loginCredentialsOnChangeText('password')}
+						/>
+					</View>
+
+					<TouchableOpacity>
+						<Text style={[styles.textNormalLabel, styles.textNormalLabelMargin]}>
+							Forgot Password?
+						</Text>
 					</TouchableOpacity>
-					
-					<TouchableOpacity>
-						<Image
-							style={styles.loginAlternativeIconFacebook}
-							source={require('../assets/image/icons/facebook_icon.png')}
+
+					<View style={styles.loginButton}>
+						<ButtonBlue
+							loginButton={true}
+							label="Login"
+							onPress={this.loginButtonOnPress}
 						/>
+					</View>
+
+					<Text style={styles.textNormalLabel}>
+						Don't have an account?
+					</Text>
+
+					<TouchableOpacity
+						onPress={this.signUpButtonOnPress}
+					>
+						<Text style={styles.textSignUp}>
+							Sign up
+						</Text>
 					</TouchableOpacity>
 				</View>
 
+				{/* alternative login */}
+				<View
+					style={{
+						justifyContent: 'flex-end',
+						alignItems: 'flex-end'
+					}}
+				>
+					<Text style={styles.loginAlternativeLabel}>
+						or login with
+					</Text>
+					
+					<View style={styles.loginAlternativeIconView}>
+						<TouchableOpacity>
+							<Image
+								source={require('../assets/image/icons/google_icon.png')}
+							/>
+						</TouchableOpacity>
+						
+						<TouchableOpacity>
+							<Image
+								style={styles.loginAlternativeIconFacebook}
+								source={require('../assets/image/icons/facebook_icon.png')}
+							/>
+						</TouchableOpacity>
+					</View>
+				</View>
 			</ImageBackground>
 		);
   }

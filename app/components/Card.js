@@ -59,6 +59,11 @@ class CardBody extends Component {
                         this.props.header
                         ? styles.cardRadiusTop
                         : {}
+                    ),
+                    (
+                        this.props.footer
+                        ? styles.cardRadiusBottom
+                        : {}
                     )
                 ]}
             >
@@ -168,6 +173,11 @@ class CardColumnContent extends Component {
                 style={[
                     styles.cardColumnContent,
                     (
+                        this.props.getCardSize
+                        ? styles.cardColumnCenter
+                        : styles.cardColumnContentPaddingBottom
+                    ),
+                    (
                         this.props.firstChild
                         ? styles.cardColumnContentFirst
                         : (
@@ -183,6 +193,12 @@ class CardColumnContent extends Component {
                         )
                     }
                 ]}
+                onLayout={(event) => {
+                    var {x, y, width, height} = event.nativeEvent.layout;
+                    if(this.props.getCardSize) {
+                        this.props.getCardSize(x, y, width, height, this.props.cardIndex);
+                    }
+                }}
             >
                 <View>
                     {this.props.children}

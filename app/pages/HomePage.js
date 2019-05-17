@@ -105,7 +105,7 @@ export default class HomePage extends Component {
                 campaign_name: 'Campaign Name',
                 client_name: 'Brand name here',
                 description: 'Porttitor congue quam ridiculus mi felis sollicitudin etiam non conubia blandit viverra ullamcorper. Torquent donec hac nulla.',
-                location: 'Quezon City',
+                location: 'Quezon',
                 vehicleType: 2,
                 vehicleClass: 'Private',
                 slots: '100',
@@ -340,7 +340,6 @@ export default class HomePage extends Component {
     }
 
     _currentCategory = (slideIndex) => {
-        console.log(slideIndex);
         this.setState({ currentCategoryIndex: slideIndex });
     }
     
@@ -390,9 +389,10 @@ export default class HomePage extends Component {
                     scrollEnabled={this.state.scrollEnable}
                 >
 
-                    <UserInfo 
+                    <UserInfo
                         profilePicture={require('../assets/image/male_avatar.png')}
                         userData={this.state.userData}
+                        navigation={this.props.navigation}
                     />
                     
                     <View
@@ -526,10 +526,18 @@ export default class HomePage extends Component {
                                                     {this.state.campaignInfoLabel.map((campaign, campaignIndex) =>
                                                         <View
                                                             key={campaignIndex}
-                                                            style={{
-                                                                flexDirection: 'row',
-                                                                justifyContent: 'space-between'
-                                                            }}
+                                                            style={[
+                                                                styles.homePageCampaignCardInfoWrapper,
+                                                                (
+                                                                    campaignIndex == 0
+                                                                    ? {marginBottom: 3}
+                                                                    : (
+                                                                        campaignIndex == (this.state.campaignInfoLabel.length - 1)
+                                                                        ? {marginTop: 3}
+                                                                        : {marginVertical: 3}
+                                                                    )
+                                                                )
+                                                            ]}
                                                         >
                                                             <Text    
                                                                 style={styles.homePageCampaignCardInfoLabel}

@@ -67,9 +67,15 @@ export default StyleSheet.create({
     },
     cardColumnContent: {
         flex: 1,
+    },
+    cardColumnContentPaddingBottom: {
+        paddingBottom: 20,
         flexDirection: 'column',
         justifyContent: 'space-between',
-        paddingBottom: 20
+    },
+    cardColumnCenter: {
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     cardColumnContentFirst: {
         borderTopLeftRadius: 15,

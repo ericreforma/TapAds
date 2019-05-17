@@ -72,6 +72,9 @@ export default class ModalMenu extends Component {
                                 >
                                     <TouchableOpacity
                                         style={styles.navigationContentBodyTopSpaceBetween}
+                                        onPress={() => {
+                                            if(index == 0) this.props.navigation.navigate('Profile')
+                                        }}
                                     >
                                         <CommonText color="white">{'<'}</CommonText>
                                         <LabelText color="white">{value}</LabelText>

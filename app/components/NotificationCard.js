@@ -34,31 +34,29 @@ export default class NotificationCard extends Component {
 
         return (
             <TouchableOpacity
+                style={styles.cardContainer}
+                activeOpacity={0.8}
                 onPress={this.props.onPress}
             >
-                <View
-                    style={styles.cardContainer}
-                >
-                    <View>
-                        <Text
-                            style={styles.cardBodyClientLabel}
-                        >
-                            {this.props.client}
-                        </Text>
+                <View>
+                    <Text
+                        style={styles.cardBodyClientLabel}
+                    >
+                        {this.props.client}
+                    </Text>
 
-                        <Text
-                            style={styles.cardBodyMessageText}
-                        >
-                            {icons.message}
-                        </Text>
-                    </View>
-
-                    <Image
-                        style={styles.cardBodyIconSize}
-                        resizeMode="contain"
-                        source={icons.source}
-                    />
+                    <Text
+                        style={styles.cardBodyMessageText}
+                    >
+                        {icons.message}
+                    </Text>
                 </View>
+
+                <Image
+                    style={styles.cardBodyIconSize}
+                    resizeMode="contain"
+                    source={icons.source}
+                />
             </TouchableOpacity>
         );
     }
