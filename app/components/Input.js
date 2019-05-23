@@ -4,6 +4,7 @@ import styles from '../styles/component.Input.style';
 import theme from '../styles/theme.style';
 
 export default class Input extends Component {
+
     icons = (type) => {
         var icons = [
             {
@@ -36,10 +37,13 @@ export default class Input extends Component {
 
                 <View style={{flex: 1}}>
                     <TextInput
+                        name={this.props.name}
+                        value={this.props.value}
                         style={[styles.inputText, styles.inputFont]}
                         secureTextEntry={iconData.security}
                         placeholder={iconData.placeholder}
                         placeholderTextColor={theme.COLOR_WHITE}
+                        onChangeText={this.props.onChangeText}
                     />
                 </View>
             </View>

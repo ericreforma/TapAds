@@ -1,14 +1,14 @@
 
 import { createStackNavigator, createAppContainer } from 'react-navigation';
 import LogInPage from '../pages/LoginPage';
-import SignUpPage from '../pages/SignUpPage';
+import HomePage from '../pages/HomePage';
 
 const RouteStack = createStackNavigator({
   login: {
     screen: LogInPage
   },
   signup: {
-    screen: SignUpPage
+    screen: HomePage
   }
 });
 

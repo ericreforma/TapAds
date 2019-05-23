@@ -1,15 +1,25 @@
 import React, { Component } from 'react';
 import { AppRegistry } from 'react-native';
-import LogInPage from './app/pages/LogInPage';
-import HomePage from './app/pages/HomePage';
+// import Routes from './app/routes';
+import { Provider } from 'react-redux';
+import { store } from './app/redux/store';
+import LogInPage from './app/pages/LoginPage';
 
 class App extends Component {
+
+
 	render() {
 		return (
-			<HomePage />
-			// <Routes />
+			// <LogInPage />
+			<Provider store={store}>
+
+				<LogInPage />
+
+			</Provider>
 		);
 	}
+
+
 }
 
 AppRegistry.registerComponent('TapAds', () => App);
