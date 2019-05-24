@@ -1,16 +1,33 @@
-
+import React, { Component } from 'react';
 import { createStackNavigator, createAppContainer } from 'react-navigation';
-import LogInPage from '../pages/LoginPage';
+import LogInPage from '../pages/LogInPage';
+import HomePage from '../pages/HomePage';
+import NotificationPage from '../pages/NotificationPage';
 import SignUpPage from '../pages/SignUpPage';
+import ProfilePage from '../pages/ProfilePage';
 
-const RouteStack = createStackNavigator({
-  login: {
-    screen: LogInPage
-  },
-  signup: {
-    screen: SignUpPage
-  }
-});
+export default class Route extends Component {
+	render() {
+		return (
+			<AppContainer />
+		);
+	}
+}
 
-const Routes = createAppContainer(RouteStack);
-export default Routes;
+const RouteStack = createStackNavigator(
+	{
+		Login: LogInPage,
+		Signup: SignUpPage,
+		Home: HomePage,
+		Notification: NotificationPage,
+		Profile: ProfilePage
+	}, {
+        initialRouteName: 'Notification',
+		headerMode: 'none',
+		navigationOptions: {
+			headerVisible: false,
+		}
+	}
+);
+
+const AppContainer = createAppContainer(RouteStack);

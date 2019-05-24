@@ -17,7 +17,7 @@ export default class ButtonBlue extends Component {
 
 	render() {
 		return (
-            <TouchableOpacity
+            <TouchableOpacity onPress={this.props.onPress}
                 style={[
                     styles.buttonStyle,
                     (
@@ -26,6 +26,7 @@ export default class ButtonBlue extends Component {
                         : styles.buttonCenterContent
                     )
                 ]}
+                onPress={this.props.onPress}
             >
                 <Text
                     style={styles.buttonLabel}
