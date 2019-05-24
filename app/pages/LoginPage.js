@@ -12,6 +12,15 @@ import ButtonBlue from '../components/ButtonBlue';
 import { AuthAction } from '../redux/actions/auth.action';
 
 import styles from '../styles/page.Login.style';
+import { AuthAction } from '../redux/actions/auth.action';
+
+
+class LogInPage extends Component {
+
+	state = {
+		email: '',
+		password: ''
+	}
 
 
 class LogInPage extends Component {
