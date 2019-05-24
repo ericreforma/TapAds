@@ -23,6 +23,7 @@ class LogInPage extends Component {
 		return (
 
 			<ImageBackground
+				resizeMode="stretch"
 				source={require('../assets/image/login_page_bg.png')}
 				style={styles.containerView}
 			>
@@ -57,9 +58,18 @@ class LogInPage extends Component {
 					/>
 				</View>
 
-				<Text style={styles.textNormalLabel}>
-					Don't have an account?
-				</Text>
+				{/* main login input values */}
+				<View
+					style={{
+						flex: 1,
+						paddingTop: 30,
+					}}
+				>
+					<View style={styles.loginCredentialsView}>
+						<InputLogin
+							type="username"
+							onChangeText={this.loginCredentialsOnChangeText('username')}
+						/>
 
 				<TouchableOpacity onPress={() => this.loginPressed }>
 					<Text style={styles.textSignUp}>
@@ -74,9 +84,9 @@ class LogInPage extends Component {
 				<View style={styles.loginAlternativeIconView}>
 
 					<TouchableOpacity>
-						<Image
-							source={require('../assets/image/icons/google_icon.png')}
-						/>
+						<Text style={[styles.textNormalLabel, styles.textNormalLabelMargin]}>
+							Forgot Password?
+						</Text>
 					</TouchableOpacity>
 
 					<TouchableOpacity>
@@ -84,9 +94,47 @@ class LogInPage extends Component {
 							style={styles.loginAlternativeIconFacebook}
 							source={require('../assets/image/icons/facebook_icon.png')}
 						/>
+					</View>
+
+					<Text style={styles.textNormalLabel}>
+						Don't have an account?
+					</Text>
+
+					<TouchableOpacity
+						onPress={this.signUpButtonOnPress}
+					>
+						<Text style={styles.textSignUp}>
+							Sign up
+						</Text>
 					</TouchableOpacity>
 				</View>
 
+				{/* alternative login */}
+				<View
+					style={{
+						justifyContent: 'flex-end',
+						alignItems: 'flex-end'
+					}}
+				>
+					<Text style={styles.loginAlternativeLabel}>
+						or login with
+					</Text>
+
+					<View style={styles.loginAlternativeIconView}>
+						<TouchableOpacity>
+							<Image
+								source={require('../assets/image/icons/google_icon.png')}
+							/>
+						</TouchableOpacity>
+
+						<TouchableOpacity>
+							<Image
+								style={styles.loginAlternativeIconFacebook}
+								source={require('../assets/image/icons/facebook_icon.png')}
+							/>
+						</TouchableOpacity>
+					</View>
+				</View>
 			</ImageBackground>
 		);
   }

@@ -1,167 +1,115 @@
 import React, { Component } from 'react';
-import { View, Text, Animated, TouchableHighlight, TouchableOpacity } from 'react-native';
-import { LabelText, CommonText } from '../Text';
-import theme from '../../styles/theme.style';
+import { View,
+      Text,
+      Animated,
+      TouchableHighlight,
+      TouchableOpacity
+} from 'react-native';
+import {
+  LabelText,
+  CommonText
+} from '../Text';
+import styles from '../../styles/component.Navigation.style';
 
 export default class ModalMenu extends Component {
     render() {
         return (
             <View
-                style={{
-                    position: 'absolute',
-                    zIndex: this.props.modalContainerzIndex,
-                    top: 0
-                }}
+                style={[
+                    styles.navigationContainer,
+                    {
+                        zIndex: this.props.modalContainerzIndex
+                    }
+                ]}
             >
                 <TouchableHighlight
                     onPress={this.props.menuButtonOnPress}
                 >
                     <Animated.View
-                        style={{
-                            backgroundColor: theme.COLOR_BLACK,
-                            width: this.props.width,
-                            height: this.props.height,
-                            opacity: this.props.modalFadeBackground
-                        }}
-                    ></Animated.View>
+                        style={[
+                            styles.navigationBackground,
+                            {
+                                width: this.props.width,
+                                height: this.props.height,
+                                opacity: this.props.modalFadeBackground
+                            }
+                        ]}
+                    />
                 </TouchableHighlight>
-                
+
                 <Animated.View
-                    style={{
-                        backgroundColor: theme.COLOR_BLUE,
-                        width: 330,
-                        position: 'absolute',
-                        top: 70,
-                        left: this.props.modalXValue,
-                        borderTopLeftRadius: 15,
-                        borderBottomLeftRadius: 15,
-                        padding: 15
-                    }}
+                    style={[
+                        styles.navigationContentContainer,
+                        {
+                            left: this.props.modalXValue
+                        }
+                    ]}
                 >
-                    <TouchableHighlight
-                        style={{
-                            alignSelf: 'flex-start',
-                        }}
-                        onPress={this.props.menuButtonOnPress}
-                    >
-                        <Text
-                            style={{
-                                color: theme.COLOR_WHITE,
-                                fontFamily: 'Montserrat-Regular'
-                            }}
-                        >X</Text>
-                    </TouchableHighlight>
+                    <View style={styles.navigationCloseButton}>
+                        <TouchableOpacity
+                            onPress={this.props.menuButtonOnPress}
+                        >
+                            <Text
+                                style={styles.navigationCloseText}
+                            >
+                                X
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
 
                     <View
-                        style={{
-                            flexDirection: 'column',
-                            justifyContent: 'space-between',
-                            alignItems: 'flex-end',
-                            padding: 20
-                        }}
+                        style={styles.navigationContentBody}
                     >
                         <View
-                            style={{
-                                flex: 1,
-                                alignItems: 'flex-end',
-                            }}
+                            style={styles.navigationContentBodyTop}
                         >
-                            <View
-                                style={{
-                                    width: 210,
-                                    borderTopWidth: 1,
-                                    borderTopColor: theme.COLOR_WHITE,
-                                    borderBottomWidth: 1,
-                                    borderBottomColor: theme.COLOR_WHITE,
-                                    paddingVertical: 10,
-                                }}
-                            >
-                                <TouchableOpacity
-                                    style={{
-                                        flexDirection: 'row',
-                                        justifyContent: 'space-between',
-                                        alignItems: 'center'
-                                    }}
+                            {['My Profile', 'Messenger', 'Terms and Conditions'].map((value, index) =>
+                                <View
+                                    key={index}
+                                    style={[
+                                        styles.navigationContentBodyTopWrapper,
+                                        (
+                                            index == 0
+                                            ? styles.navigationContentBodyTopWrapperFirstChild
+                                            : {}
+                                        )
+                                    ]}
                                 >
-                                    <CommonText color="white">{'<'}</CommonText>
-                                    <LabelText color="white">My Profile</LabelText>
-                                </TouchableOpacity>
-                            </View>
-                            <View
-                                style={{
-                                    width: 210,
-                                    borderBottomWidth: 1,
-                                    borderBottomColor: theme.COLOR_WHITE,
-                                    paddingVertical: 10,
-                                }}
-                            >
-                                <TouchableOpacity
-                                    style={{
-                                        flexDirection: 'row',
-                                        justifyContent: 'space-between',
-                                        alignItems: 'center'
-                                    }}
-                                >
-                                    <CommonText color="white">{'<'}</CommonText>
-                                    <LabelText color="white">Messenger</LabelText>
-                                </TouchableOpacity>
-                            </View>
-                            <View
-                                style={{
-                                    width: 210,
-                                    borderBottomWidth: 1,
-                                    borderBottomColor: theme.COLOR_WHITE,
-                                    paddingVertical: 10,
-                                }}
-                            >
-                                <TouchableOpacity
-                                    style={{
-                                        flexDirection: 'row',
-                                        justifyContent: 'space-between',
-                                        alignItems: 'center'
-                                    }}
-                                >
-                                    <CommonText color="white">{'<'}</CommonText>
-                                    <LabelText color="white">Terms and Conditions</LabelText>
-                                </TouchableOpacity>
-                            </View>
+                                    <TouchableOpacity
+                                        style={styles.navigationContentBodyTopSpaceBetween}
+                                        onPress={() => {
+                                            if(index == 0) this.props.navigation.navigate('Profile')
+                                        }}
+                                    >
+                                        <CommonText color="white">{'<'}</CommonText>
+                                        <LabelText color="white">{value}</LabelText>
+                                    </TouchableOpacity>
+                                </View>
+                            )}
                         </View>
 
                         <View
-                            style={{
-                                flex: 1,
-                                width: 150,
-                                marginTop: 100,
-                                justifyContent: 'flex-end',
-                                alignItems: 'flex-end'
-                            }}
+                            style={styles.navigationContentBodyBottom}
                         >
                             <View
-                                style={{
-                                    borderBottomWidth: 0.5,
-                                    borderBottomColor: theme.COLOR_WHITE,
-                                    paddingVertical: 10
-                                }}
+                                style={styles.navigationContentBodyBottomWrapper}
                             >
                                 <Text
-                                    style={{
-                                        fontFamily: 'Montserrat-Regular',
-                                        fontSize: theme.FONT_SIZE_SMALL,
-                                        color: theme.COLOR_WHITE,
-                                        textAlign: 'right'
-                                    }}
+                                    style={styles.navigationContentBodyBottomText}
                                 >
                                     Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do mpore et dolore magna
                                 </Text>
                             </View>
 
-                            <TouchableOpacity
-                                style={{
-                                    paddingVertical: 10
-                                }}
+                            <View
+                                style={styles.navigationContentBodyBottomLogout}
                             >
-                                <LabelText color="white">Log out</LabelText>
-                            </TouchableOpacity>
+                                <TouchableOpacity
+                                    onPress={() => this.props.navigation.replace('Login')}
+                                >
+                                    <LabelText color="white">Log out</LabelText>
+                                </TouchableOpacity>
+                            </View>
                         </View>
                     </View>
                 </Animated.View>

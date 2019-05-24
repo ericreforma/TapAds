@@ -13,17 +13,21 @@ class HeaderNav extends Component {
             <View
                 style={[styles.headerNavRowDirection, styles.headerNavTopContainer]}
             >
-                <Text
-                    style={styles.headerNavTopAppName}
+                <TouchableOpacity
+                    onPress={() => this.props.navigation.navigate('Home')}
                 >
-                    TAP ADS
-                </Text>
+                    <Text
+                        style={styles.headerNavTopAppName}
+                    >
+                        TAP ADS
+                    </Text>
+                </TouchableOpacity>
 
                 <View
                     style={styles.headerNavTopButtons}
                 >
                     <TouchableOpacity
-                        onPress={this.props.notifButtonOnPress}
+                        onPress={() => this.props.navigation.navigate('Notification')}
                     >
                         <Image
                             style={styles.headerNavTopNotification}
@@ -81,7 +85,10 @@ class UserInfo extends Component {
                 <View
                     style={[styles.headerNavCenter, styles.headerNavProfilePicture]}
                 >
-                    <TouchableOpacity activeOpacity={0.8}>
+                    <TouchableOpacity
+                        activeOpacity={0.8}
+                        onPress={() => this.props.navigation.navigate('Profile')}
+                    >
                         <Image
                             style={styles.headerNavProfilePictureImage}
                             source={this.props.profilePicture}

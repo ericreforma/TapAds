@@ -1,11 +1,12 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
 import theme from './theme.style';
 
 export default StyleSheet.create({
     containerView: {
         flex: 1,
-        paddingHorizontal: 40,
-        justifyContent: 'flex-end'
+        height: Dimensions.get('window').height,
+        width: Dimensions.get('window').width,
+        paddingHorizontal: 40
     },
     loginCredentialsView: {
         marginRight: 20

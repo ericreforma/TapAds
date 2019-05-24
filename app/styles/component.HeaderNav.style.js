@@ -21,14 +21,12 @@ export default StyleSheet.create({
     },
     headerNavTopAppName: {
         color: theme.COLOR_LABEL,
-        flex: 1,
         justifyContent: 'flex-start',
         fontFamily: 'Montserrat-Bold',
         fontSize: 20
     },
     headerNavTopButtons: {
         flexDirection: 'row',
-        flex: 1,
         justifyContent: 'flex-end'
     },
     headerNavTopNotification: {
@@ -51,6 +49,7 @@ export default StyleSheet.create({
         marginTop: (Dimensions.get('window').width / 3.5) / 2,
         borderWidth: 3,
         borderColor: theme.COLOR_MEDIUM_BLUE,
+        backgroundColor: theme.COLOR_WHITE
     },
     headerNavUserContainer: {
         marginTop: ((Dimensions.get('window').width / 3.5) / 2) + 5,

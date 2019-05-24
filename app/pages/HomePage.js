@@ -105,7 +105,7 @@ export default class HomePage extends Component {
                 campaign_name: 'Campaign Name',
                 client_name: 'Brand name here',
                 description: 'Porttitor congue quam ridiculus mi felis sollicitudin etiam non conubia blandit viverra ullamcorper. Torquent donec hac nulla.',
-                location: 'Quezon City',
+                location: 'Quezon',
                 vehicleType: 2,
                 vehicleClass: 'Private',
                 slots: '100',
@@ -184,7 +184,10 @@ export default class HomePage extends Component {
                 name: ['slot_available', 'slots'],
                 label: 'Slots available'
             }
-        ]
+        ],
+
+        //category
+        currentCategoryIndex: 0
     }
 
     menuButtonOnPress = () => {
@@ -208,10 +211,6 @@ export default class HomePage extends Component {
         });
     }
 
-    notifButtonOnPress = () => {
-        alert('Notif button pressed');
-    }
-
     recommendedCarouselCardBody = (data) => {
         return (
             <View>
@@ -233,21 +232,17 @@ export default class HomePage extends Component {
 
                 <CardBody>
                     <View
-                        style={styles.homePageRecommendedCampaignInfoContainer}
+                        style={styles.homePageRecommendedCampaignBody}
                     >
                         <View
-                            style={styles.homePageRecommendedCampaignInfoView}
+                            style={styles.homePageRecommendedCampaignFirstCol}
                         >
                             <LabelText>{data.location}</LabelText>
                             <CommonText>Location</CommonText>
                         </View>
                         
                         <View
-                            style={{
-                                flex: 1,
-                                justifyContent: 'center',
-                                alignItems: 'center'
-                            }}
+                            style={styles.homePageAlignCenter}
                         >
                             <VehicleType
                                 vehicleType={data.vehicleType}
@@ -258,11 +253,7 @@ export default class HomePage extends Component {
                         </View>
 
                         <View
-                            style={{
-                                flex: 1,
-                                justifyContent: 'flex-end',
-                                alignItems: 'flex-end'
-                            }}
+                            style={styles.homePageAlignRight}
                         >
                             <View style={{flexDirection: 'row'}}>
                                 <LabelText>{data.availableSlots}</LabelText>
@@ -287,10 +278,7 @@ export default class HomePage extends Component {
     _renderRecommendedItem = ({item, index}) => {
         return (
             <View
-                style={{
-                    backgroundColor: theme.COLOR_WHITE,
-                    borderRadius: 15
-                }}
+                style={styles.homePageRecommendedCampaignInfoContainer}
             >
                 <Card>
                     <CardHeader active={true}>
@@ -319,10 +307,7 @@ export default class HomePage extends Component {
                 <Card>
                     <CardBody header={true}>
                         <View
-                            style={{
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                            }}
+                            style={styles.homePageAlignCenter}
                         >
                             <VehicleCategory
                                 vehicleType={item.type}
@@ -332,28 +317,18 @@ export default class HomePage extends Component {
 
                     <CardFooter active={true}>
                         <View
-                            style={{
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                            }}
+                            style={styles.homePageAlignCenter}
                         >
                             <LabelText color="white">
                                 {item.type.charAt(0).toUpperCase() + item.type.slice(1)}
                             </LabelText>
 
                             <View
-                                style={{
-                                    height: 3,
-                                    width: 25,
-                                    backgroundColor: theme.COLOR_WHITE,
-                                    marginVertical: 10
-                                }}
+                                style={styles.homePageCategoryDescriptionContainer}
                             ></View>
                             
                             <View
-                                style={{
-                                    height: 35
-                                }}
+                                style={styles.homePageCategoryDescriptionWrapper}
                             >   
                                 <CommonText color="white">{item.description}</CommonText>
                             </View>
@@ -364,15 +339,16 @@ export default class HomePage extends Component {
         );
     }
 
+    _currentCategory = (slideIndex) => {
+        this.setState({ currentCategoryIndex: slideIndex });
+    }
+    
     loadMoreCampaign = () => {
         var returnJSX;
         if(this.state.campaignViewLength < this.state.campaignData.length) {
             returnJSX = (
                 <View
-                    style={{
-                        justifyContent: 'center',
-                        alignItems: 'center'
-                    }}
+                    style={styles.homePageAlignCenter}
                 >
                     <TouchableOpacity
                         onPress={this.onPressLoadMore}
@@ -396,63 +372,48 @@ export default class HomePage extends Component {
         return (
             <View>
                 <ImageBackground
-                    style={{
-                        width: '100%',
-                        minHeight: this.state.height,
-                        position: 'absolute'
-                    }}
+                    style={styles.homePageBackgroundImage}
                     resizeMode="stretch"
                     source={require('../assets/image/common_page_background.png')}
                 ></ImageBackground>
                 
                 <HeaderNav
                     menuButtonOnPress={this.menuButtonOnPress}
-                    notifButtonOnPress={this.notifButtonOnPress}
+                    navigation={this.props.navigation}
                 />
 
                 <ScrollView
-                    style={{
-                        marginBottom: 60,
-                    }}
+                    style={styles.homePageScrollView}
                     overScrollMode='never'
                     showsVerticalScrollIndicator={false}
                     scrollEnabled={this.state.scrollEnable}
                 >
 
-                    <UserInfo 
+                    <UserInfo
                         profilePicture={require('../assets/image/male_avatar.png')}
                         userData={this.state.userData}
+                        navigation={this.props.navigation}
                     />
                     
                     <View
-                        style={{
-                            paddingVertical: 20,
-                        }}
+                        style={styles.homePageContainer}
                     >
                         {/* recommended for you section */}
                         <View
-                            style={{
-                                flexDirection: 'column',
-                                marginVertical: 10
-                            }}
+                            style={[
+                                styles.homePageRecommendedContainer,
+                                styles.homePageSectionVerticalMargin
+                            ]}
                         >
                             {/* labels */}
                             <View
-                                style={{
-                                    flexDirection: 'row',
-                                    justifyContent: 'space-between',
-                                    alignItems: 'center',
-                                    paddingHorizontal: theme.PAGE_PADDING_HORIZONTAL
-                                }}
+                                style={styles.homePageRecommendedLabel}
                             >
                                 <LabelText color="white">Recommended for you</LabelText>
                                 
                                 <TouchableOpacity>
                                     <Text
-                                        style={{
-                                            fontFamily: 'Montserrat-Regular',
-                                            color: theme.COLOR_PINK
-                                        }}
+                                        style={styles.homePageViewAll}
                                     >
                                         View All
                                     </Text>
@@ -461,9 +422,7 @@ export default class HomePage extends Component {
 
                             {/* content */}
                             <View
-                                style={{
-                                    paddingVertical: 20
-                                }}
+                                style={styles.homePageContentPadding}
                             >
                                 <Carousel
                                     data={this.state.recommendedData}
@@ -477,48 +436,30 @@ export default class HomePage extends Component {
                         
                         {/* categories section */}
                         <View
-                            style={{
-                                marginVertical: 10
-                            }}
+                            style={styles.homePageSectionVerticalMargin}
                         >
                             {/* label */}
                             <View
-                                style={{
-                                    flexDirection: 'row',
-                                    justifyContent: 'center',
-                                    alignItems: 'center'
-                                }}
+                                style={styles.homePageCategoryLabel}
                             >
                                 <View
-                                    style={{
-                                        flex: 1,
-                                        height: 2,
-                                        backgroundColor: theme.COLOR_WHITE,
-                                    }}
+                                    style={styles.homePageCategoryLabelLine}
                                 ></View>
 
                                 <View
-                                    style={{
-                                        paddingHorizontal: 20
-                                    }}
+                                    style={styles.homePageCategoryLabelText}
                                 >
                                     <LabelText color="white">Categories</LabelText>
                                 </View>
 
                                 <View
-                                    style={{
-                                        flex: 1,
-                                        height: 2,
-                                        backgroundColor: theme.COLOR_WHITE,
-                                    }}
+                                    style={styles.homePageCategoryLabelLine}
                                 ></View>
                             </View>
 
                             {/* content */}
                             <View
-                                style={{
-                                    paddingVertical: 20
-                                }}
+                                style={styles.homePageContainer}
                             >
                                 <Carousel
                                     data={this.state.categoryData}
@@ -527,34 +468,24 @@ export default class HomePage extends Component {
                                     sliderWidth={this.state.width}
                                     itemWidth={(this.state.width / 3) + 20}
                                     loop={true}
+                                    onSnapToItem={this._currentCategory}
                                 />
                             </View>
                         </View>
                     
                         {/* campaign section */}
                         <View
-                            style={{
-                                marginVertical: 10,
-                                paddingHorizontal: theme.PAGE_PADDING_HORIZONTAL
-                            }}
+                            style={styles.homePageCampaignContainer}
                         >
                             {/* label */}
                             <View
-                                style={{
-                                    flexDirection: 'row',
-                                    justifyContent: 'space-between',
-                                    alignItems: 'center',
-                                    marginBottom: 10
-                                }}
+                                style={styles.homePageCampaignLabel}
                             >
                                 <LabelText color="white">Latest</LabelText>
                                 
                                 <TouchableOpacity>
                                     <Text
-                                        style={{
-                                            fontFamily: 'Montserrat-Regular',
-                                            color: theme.COLOR_PINK
-                                        }}
+                                        style={styles.homePageViewAll}
                                     >
                                         View All
                                     </Text>
@@ -567,9 +498,7 @@ export default class HomePage extends Component {
                                 .map((cData, cIndex) =>
                                     <View
                                         key={cIndex}
-                                        style={{
-                                            marginVertical: 5
-                                        }}
+                                        style={styles.homePageCampaignCardContainer}
                                     >
                                         <Card
                                             justifyContent={true}
@@ -597,27 +526,27 @@ export default class HomePage extends Component {
                                                     {this.state.campaignInfoLabel.map((campaign, campaignIndex) =>
                                                         <View
                                                             key={campaignIndex}
-                                                            style={{
-                                                                flexDirection: 'row',
-                                                                justifyContent: 'space-between'
-                                                            }}
+                                                            style={[
+                                                                styles.homePageCampaignCardInfoWrapper,
+                                                                (
+                                                                    campaignIndex == 0
+                                                                    ? {marginBottom: 3}
+                                                                    : (
+                                                                        campaignIndex == (this.state.campaignInfoLabel.length - 1)
+                                                                        ? {marginTop: 3}
+                                                                        : {marginVertical: 3}
+                                                                    )
+                                                                )
+                                                            ]}
                                                         >
                                                             <Text    
-                                                                style={{
-                                                                    fontFamily: 'Montserrat-Regular',
-                                                                    fontSize: theme.FONT_SIZE_SMALL,
-                                                                    color: theme.COLOR_NORMAL_FONT
-                                                                }}
+                                                                style={styles.homePageCampaignCardInfoLabel}
                                                             >
                                                                 {campaign.label}
                                                             </Text>
 
                                                             <Text
-                                                                style={{
-                                                                    fontFamily: 'Montserrat-Bold',
-                                                                    fontSize: theme.FONT_SIZE_SMALL,
-                                                                    color: theme.COLOR_NORMAL_FONT
-                                                                }}
+                                                                style={styles.homePageCampaignCardInfoValue}
                                                             >
                                                                 {
                                                                     Array.isArray(campaign.name)
@@ -637,11 +566,10 @@ export default class HomePage extends Component {
                                             >
                                                 <CardColumnContentBody>
                                                     <Text    
-                                                        style={{
-                                                            fontFamily: 'Montserrat-Regular',
-                                                            fontSize: theme.FONT_SIZE_SMALL,
-                                                            color: theme.COLOR_WHITE
-                                                        }}
+                                                        style={[
+                                                            styles.homePageCommonText,
+                                                            styles.homePageTextWhite
+                                                        ]}
                                                     >
                                                         {cData.description}
                                                     </Text>
@@ -659,12 +587,12 @@ export default class HomePage extends Component {
 
                 <ModalMenu
                     modalContainerzIndex={this.state.modalContainerzIndex}
-                    modalContainerTop={this.state.modalContainerTop}
                     width={this.state.width}
                     height={this.state.scrollEnable ? 0 : this.state.height}
                     modalFadeBackground={this.state.modalFadeBackground}
                     modalXValue={this.state.modalXValue}
                     menuButtonOnPress={this.menuButtonOnPress}
+                    navigation={this.props.navigation}
                 />
             </View>
         );

@@ -26,6 +26,7 @@ export default class ButtonBlue extends Component {
                         : styles.buttonCenterContent
                     )
                 ]}
+                onPress={this.props.onPress}
             >
                 <Text
                     style={styles.buttonLabel}

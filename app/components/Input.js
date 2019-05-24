@@ -6,13 +6,13 @@ import theme from '../styles/theme.style';
 export default class Input extends Component {
 
     icons = (type) => {
-        var icons = [
+        let icons = [
             {
                 type: 'username',
                 placeholder: 'Username',
                 security: false,
                 url: require('../assets/image/icons/login_username_icon.png')
-            },{
+            }, {
                 type: 'password',
                 placeholder: 'Password',
                 security: true,
