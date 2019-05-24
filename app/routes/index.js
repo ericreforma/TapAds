@@ -22,7 +22,7 @@ const RouteStack = createStackNavigator(
 		Notification: NotificationPage,
 		Profile: ProfilePage
 	}, {
-        initialRouteName: 'Notification',
+        initialRouteName: 'Home',
 		headerMode: 'none',
 		navigationOptions: {
 			headerVisible: false,

@@ -23,7 +23,6 @@ export default class Input extends Component {
         return icons.filter(i => i.type == type)[0];
     }
 
-
     render() {
         var iconData = this.icons(this.props.type);
 
