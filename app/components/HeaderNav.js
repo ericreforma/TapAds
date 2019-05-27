@@ -27,6 +27,9 @@ class HeaderNav extends Component {
                     style={styles.headerNavTopButtons}
                 >
                     <TouchableOpacity
+                        style={{
+                            marginRight: 20
+                        }}
                         onPress={() => this.props.navigation.navigate('Notification')}
                     >
                         <Image

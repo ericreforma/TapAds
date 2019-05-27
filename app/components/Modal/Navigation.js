@@ -58,7 +58,7 @@ export default class ModalMenu extends Component {
                         <View
                             style={styles.navigationContentBodyTop}
                         >
-                            {['My Profile', 'Messenger', 'Terms and Conditions'].map((value, index) =>
+                            {['My Campaigns', 'My Profile', 'Messenger', 'Terms and Conditions'].map((value, index) =>
                                 <View
                                     key={index}
                                     style={[
@@ -73,7 +73,13 @@ export default class ModalMenu extends Component {
                                     <TouchableOpacity
                                         style={styles.navigationContentBodyTopSpaceBetween}
                                         onPress={() => {
-                                            if(index == 0) this.props.navigation.navigate('Profile')
+                                            switch(index) {
+                                                case 0:
+                                                    return this.props.navigation.navigate('Mycampaign');
+
+                                                case 1: 
+                                                    return this.props.navigation.navigate('Profile');
+                                            }
                                         }}
                                     >
                                         <CommonText color="white">{'<'}</CommonText>

@@ -76,7 +76,7 @@ export default class LogInPage extends Component {
 				>
 					<Image
 						style={{
-							width: '45%'
+							width: Dimensions.get('window').width / 2.5
 						}}
 						resizeMode="contain"
 						source={require('../assets/image/app_logo.png')}

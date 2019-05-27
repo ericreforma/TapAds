@@ -5,6 +5,7 @@ import HomePage from '../pages/HomePage';
 import NotificationPage from '../pages/NotificationPage';
 import SignUpPage from '../pages/SignUpPage';
 import ProfilePage from '../pages/ProfilePage';
+import MyCampaignPage from '../pages/MyCampaignPage';
 
 export default class Route extends Component {
 	render() {
@@ -20,9 +21,10 @@ const RouteStack = createStackNavigator(
 		Signup: SignUpPage,
 		Home: HomePage,
 		Notification: NotificationPage,
-		Profile: ProfilePage
+		Profile: ProfilePage,
+		Mycampaign: MyCampaignPage
 	}, {
-        initialRouteName: 'Notification',
+        initialRouteName: 'Mycampaign',
 		headerMode: 'none',
 		navigationOptions: {
 			headerVisible: false,

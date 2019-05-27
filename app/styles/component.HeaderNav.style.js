@@ -30,11 +30,10 @@ export default StyleSheet.create({
         justifyContent: 'flex-end'
     },
     headerNavTopNotification: {
-        width: 21,
-        marginRight: 15
+        width: 25
     },
     headerNavTopMenu: {
-        width: 23
+        width: 27
     },
     headerNavProfilePicture: {
         backgroundColor: '#fff',
