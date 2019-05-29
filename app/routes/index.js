@@ -24,7 +24,7 @@ const RouteStack = createStackNavigator(
 		Profile: ProfilePage,
 		Mycampaign: MyCampaignPage
 	}, {
-        initialRouteName: 'Mycampaign',
+        initialRouteName: 'Login',
 		headerMode: 'none',
 		navigationOptions: {
 			headerVisible: false,

@@ -30,7 +30,16 @@ class LabelText extends Component {
                     (
                         this.props.color == 'white'
                         ? styles.textWhite
-                        : styles.textBlack
+                        : (
+                            this.props.color == 'blue'
+                            ? styles.textBlue
+                            : styles.textBlack
+                        )
+                    ),
+                    (
+                        this.props.large
+                        ? styles.textLarge
+                        : styles.textDefault
                     )
                 ]}
             >

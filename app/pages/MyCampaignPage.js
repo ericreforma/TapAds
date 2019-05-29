@@ -37,6 +37,51 @@ export default class MyCampaignPage extends Component {
             rate: 4.60239,
             totalRate: 35 //total number of clients(rating)
         },
+
+        activeCampaign: [
+            {
+                campaign: 'Campaign Name',
+                client: 'Brand name here',
+                location: 'Quezon City',
+                vehicleType: 2,
+                vehicleClass: 'Private',
+                distance: '300km',
+                basicPay: '5,000',
+                totalPay: '7,000'
+            },{
+                campaign: 'Campaign Name',
+                client: 'Brand name here',
+                location: 'Quezon City',
+                vehicleType: 2,
+                vehicleClass: 'Private',
+                distance: '300km',
+                basicPay: '5,000',
+                totalPay: '7,000'
+            },{
+                campaign: 'Campaign Name',
+                client: 'Brand name here',
+                location: 'Quezon City',
+                vehicleType: 2,
+                vehicleClass: 'Private',
+                distance: '300km',
+                basicPay: '5,000',
+                totalPay: '7,000'
+            }
+        ],
+        completeCampaign: [
+            {
+                campaign: 'Campaign Name',
+                client: 'Brand name here',
+                location: 'Quezon City',
+                vehicleType: 2,
+                vehicleClass: 'Private',
+                distance: '300km',
+                basicPay: '5,000',
+                totalPay: '7,000'
+            }
+        ],
+    
+        myCampaignClick: 'activeCampaign',
     }
 
     menuButtonOnPress = () => {
@@ -58,6 +103,10 @@ export default class MyCampaignPage extends Component {
             scrollEnable: !this.state.scrollEnable,
             modalContainerzIndex: 1
         });
+    }
+
+    clickCampaign = (active) => () => {
+        this.setState({ myCampaignClick: active })
     }
 
     render() {
@@ -108,71 +157,210 @@ export default class MyCampaignPage extends Component {
                                     flexDirection: 'row'
                                 }}
                             >
-                                <View
+                                <TouchableOpacity
+                                    style={{
+                                        flex: 1
+                                    }}
+                                    onPress={this.clickCampaign('activeCampaign')}
+                                >
+                                    <View
+                                        style={[
+                                            {
+                                                borderTopLeftRadius: theme.PAGE_CARD_RADIUS,
+                                                justifyContent: 'center',
+                                                alignItems: 'center',
+                                                paddingVertical: 15
+                                            },
+                                            (
+                                                this.state.myCampaignClick == 'activeCampaign'
+                                                ? {
+                                                    backgroundColor: theme.COLOR_GRAY_HEAVY,
+                                                    borderBottomWidth: 3,
+                                                    borderBottomColor: theme.COLOR_LIGHT_BLUE
+                                                }
+                                                : {
+                                                    backgroundColor: theme.COLOR_GRAY_LIGHT,
+                                                    borderBottomWidth: 3,
+                                                    borderBottomColor: theme.COLOR_WHITE,
+                                                }
+                                            )
+                                        ]}
+                                    >
+                                        <Text
+                                            style={[
+                                                {
+                                                    fontSize: theme.FONT_SIZE_MEDIUM,
+                                                    fontFamily: 'Montserrat-Bold',
+                                                },
+                                                (
+                                                    this.state.myCampaignClick == 'activeCampaign'
+                                                    ? {
+                                                        color: theme.COLOR_WHITE
+                                                    }
+                                                    : {
+                                                        color: theme.COLOR_NORMAL_FONT + '70'
+                                                    }
+                                                )
+                                            ]}
+                                        >
+                                            Active 
+                                        </Text>
+                                    </View>
+                                </TouchableOpacity>
+                                
+                                <TouchableOpacity
                                     style={{
                                         flex: 1,
-                                        backgroundColor: theme.COLOR_GRAY_HEAVY,
-                                        borderTopLeftRadius: theme.PAGE_CARD_RADIUS,
-                                        borderBottomWidth: 1,
-                                        borderBottomColor: theme.COLOR_LIGHT_BLUE,
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                        paddingVertical: 15
                                     }}
+                                    onPress={this.clickCampaign('completeCampaign')}
                                 >
-                                    <Text
-                                        style={{
-                                            fontSize: theme.FONT_SIZE_MEDIUM,
-                                            fontFamily: 'Montserrat-Bold',
-                                            color: theme.COLOR_WHITE
-                                        }}
+                                    <View
+                                        style={[
+                                            {
+                                                borderTopRightRadius: theme.PAGE_CARD_RADIUS,
+                                                justifyContent: 'center',
+                                                alignItems: 'center',
+                                                paddingVertical: 15
+                                            },
+                                            (
+                                                this.state.myCampaignClick == 'completeCampaign'
+                                                ? {
+                                                    backgroundColor: theme.COLOR_GRAY_HEAVY,
+                                                    borderBottomWidth: 3,
+                                                    borderBottomColor: theme.COLOR_LIGHT_BLUE
+                                                }
+                                                : {
+                                                    backgroundColor: theme.COLOR_GRAY_LIGHT,
+                                                    borderBottomWidth: 3,
+                                                    borderBottomColor: theme.COLOR_WHITE,
+                                                }
+                                            )
+                                        ]}
                                     >
-                                        Active 
-                                    </Text>
-                                </View>
-
-                                <View
-                                    style={{
-                                        flex: 1,
-                                        backgroundColor: theme.COLOR_GRAY_LIGHT,
-                                        borderTopRightRadius: theme.PAGE_CARD_RADIUS,
-                                        borderBottomWidth: 1,
-                                        borderBottomColor: theme.COLOR_LIGHT_BLUE + '00',
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                        paddingVertical: 15
-                                    }}
-                                >
-                                    <Text
-                                        style={{
-                                            fontSize: theme.FONT_SIZE_MEDIUM,
-                                            fontFamily: 'Montserrat-Bold',
-                                            color: theme.COLOR_NORMAL_FONT + '70'
-                                        }}
-                                    >
-                                        Completed
-                                    </Text>
-                                </View>
+                                        <Text
+                                            style={[
+                                                {
+                                                    fontSize: theme.FONT_SIZE_MEDIUM,
+                                                    fontFamily: 'Montserrat-Bold',
+                                                },
+                                                (
+                                                    this.state.myCampaignClick == 'completeCampaign'
+                                                    ? {
+                                                        color: theme.COLOR_WHITE
+                                                    }
+                                                    : {
+                                                        color: theme.COLOR_NORMAL_FONT + '70'
+                                                    }
+                                                )
+                                            ]}
+                                        >
+                                            Completed
+                                        </Text>
+                                    </View>
+                                </TouchableOpacity>
                             </View>
 
                             <View
                                 style={{
                                     backgroundColor: theme.COLOR_WHITE,
-                                    paddingVertical: 5
+                                    paddingVertical: 5,
+                                    borderBottomLeftRadius: 15,
+                                    borderBottomRightRadius: 15
                                 }}
                             >
                                 <View
                                     style={{
-                                        marginVertical: 10,
+                                        marginTop: 10,
+                                        marginBottom: 20,
                                         marginHorizontal: 10
                                     }}
                                 >
-                                    <Card>
-                                        <CardHeader>
-                                            <LabelText>Campaign Name</LabelText>
-                                            <CommonText>Brand name here</CommonText>
-                                        </CardHeader>
-                                    </Card>
+                                    {this.state[this.state.myCampaignClick].map((data, index) =>
+                                        <View
+                                            key={index}
+                                            style={{
+                                                paddingVertical: 10
+                                            }}
+                                        >
+                                            <Card shadow={true}>
+                                                <CardHeader active={true}>
+                                                    <LabelText>Campaign Name</LabelText>
+                                                    <View
+                                                        style={{
+                                                            flexDirection: 'row',
+                                                            justifyContent: 'space-between',
+                                                            alignItems: 'center'
+                                                        }}
+                                                    >
+                                                        <CommonText>Brand name here</CommonText>
+                                                        
+                                                        <TouchableOpacity>
+                                                            <Text
+                                                                style={styles.homePageViewAll}
+                                                            >
+                                                                Full details
+                                                            </Text>
+                                                        </TouchableOpacity>
+                                                    </View>
+                                                </CardHeader>
+                                                
+                                                <CardBody>
+                                                    <View
+                                                        style={styles.homePageRecommendedCampaignBody}
+                                                    >
+                                                        <View
+                                                            style={styles.homePageRecommendedCampaignFirstCol}
+                                                        >
+                                                            <LabelText>{data.location}</LabelText>
+                                                            <CommonText>Location</CommonText>
+                                                        </View>
+                                                        
+                                                        <View
+                                                            style={styles.homePageAlignCenter}
+                                                        >
+                                                            <VehicleType
+                                                                vehicleType={data.vehicleType}
+                                                                vehicleColor="black"
+                                                            />
+                                                            
+                                                            <CommonText>{data.vehicleClass}</CommonText>
+                                                        </View>
+
+                                                        <View
+                                                            style={styles.homePageAlignRight}
+                                                        >
+                                                            <LabelText>P{data.basicPay}</LabelText>
+                                                            <CommonText>Basic Pay</CommonText>
+                                                        </View>
+                                                    </View>
+                                                </CardBody>
+                                                
+                                                <CardFooter
+                                                    active={true}
+                                                >
+                                                    <View
+                                                        style={{
+                                                            flexDirection: 'row',
+                                                            justifyContent: 'space-between'
+                                                        }}
+                                                    >
+                                                        <LabelText color="blue" large={true}>{data.distance}</LabelText>
+                                                        <LabelText color="blue" large={true}>P{data.totalPay}</LabelText>
+                                                    </View>
+                                                    
+                                                    <View
+                                                        style={{
+                                                            flexDirection: 'row',
+                                                            justifyContent: 'space-between'
+                                                        }}
+                                                    >
+                                                        <CommonText color="white">Traveled Counter</CommonText>
+                                                        <CommonText color="white">Earnings</CommonText>
+                                                    </View>
+                                                </CardFooter>
+                                            </Card>
+                                        </View>
+                                    )}
                                 </View>
                             </View>
                         </View>
