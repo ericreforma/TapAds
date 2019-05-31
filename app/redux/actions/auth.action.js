@@ -24,6 +24,7 @@ export const AuthAction = {
               UserController.request.profile()
               .then((userResponse) => {
                 dispatch({ type: USER.GET.PROFILE.SUCCESS });
+
                 UserSchema.update(userResponse.data,
                 () => {
                   console.log('UserSchema Saved');

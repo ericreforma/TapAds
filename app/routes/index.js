@@ -1,10 +1,21 @@
 import React, { Component } from 'react';
-import { createStackNavigator, createAppContainer } from 'react-navigation';
-import LogInPage from '../pages/LoginPage';
-import HomePage from '../pages/HomePage';
-import NotificationPage from '../pages/NotificationPage';
-import SignUpPage from '../pages/SignUpPage';
-import ProfilePage from '../pages/ProfilePage';
+import {
+	createStackNavigator,
+	createSwitchNavigator,
+	createAppContainer,
+} from 'react-navigation';
+
+import {
+	LogInPage,
+	HomePage,
+	NotificationPage,
+	SignUpPage,
+	ProfilePage,
+	LoadingPage,
+	SamplePage
+} from '../pages';
+
+import { UserInfo } from '../components/UserInfo';
 
 export default class Route extends Component {
 	render() {
@@ -14,20 +25,33 @@ export default class Route extends Component {
 	}
 }
 
-const RouteStack = createStackNavigator(
-	{
-		Login: LogInPage,
-		Signup: SignUpPage,
+const AuthStack = createStackNavigator({
+	Login: LogInPage,
+	SignUp: SignUpPage
+	}, {
+		initialRouteName: 'Login'
+});
+
+const AppStack = createStackNavigator({
 		Home: HomePage,
 		Notification: NotificationPage,
-		Profile: ProfilePage
+		Profile: ProfilePage,
+		Sample: SamplePage,
 	}, {
-        initialRouteName: 'Login',
+    initialRouteName: 'Home',
 		headerMode: 'none',
 		navigationOptions: {
 			headerVisible: false,
 		}
+});
+
+const AppRoute = createSwitchNavigator({
+	Loading: LoadingPage,
+	Auth: AuthStack,
+	App: AppStack,
+	}, {
+		initialRouteName: 'Loading',
 	}
 );
 
-const AppContainer = createAppContainer(RouteStack);
+const AppContainer = createAppContainer(AppRoute);

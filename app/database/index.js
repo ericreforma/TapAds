@@ -140,7 +140,8 @@ export const UserSchema = {
     }
 
     return u;
-  }
+  },
+
 };
 
 export const TokenSchema = {
@@ -162,7 +163,7 @@ export const TokenSchema = {
       return tok;
   },
 
-  update: (token, callbackSuccess, callbackFailed) => {
+  update: (token, callbackSuccess = null, callbackFailed = null) => {
     try {
       realm.write(() => {
         realm.delete(realm.objects('Token'));
@@ -191,7 +192,6 @@ export const TokenSchema = {
     }
     const api = API;
     api.headers.Authorization = `Bearer ${token}`;
-    console.log(api);
     return api;
   }
 };

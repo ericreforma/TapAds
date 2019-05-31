@@ -72,7 +72,7 @@ class CardBody extends Component {
                 >
                     {this.props.children}
                 </View>
-                
+
                 <View style={(this.props.divider ? styles.cardBodyDivider : {})}>
                 </View>
             </View>
@@ -134,21 +134,21 @@ class CardColumnContent extends Component {
     }
 
     additionalCarInfo = (type, size) => {
-        var sources = [
+        const sizes = [
             {
                 url: require('../assets/image/icons/car_small_white_icon.png')
-            },{
+            }, {
                 url: require('../assets/image/icons/car_mid_white_icon.png')
-            },{
+            }, {
                 url: require('../assets/image/icons/car_large_white_icon.png')
-            },{
+            }, {
                 url: require('../assets/image/icons/motorcycle_white_icon.png')
             }
         ];
 
-        var sizes = ['small','mid','large','motorcycle'];
+        const classifications = ['public', 'private', 'on-call'];
 
-        if(type && sizes.indexOf(size) !== -1) {
+        if(type) {
             return (
                 <View style={styles.cardColumnContentCarInfo}>
                     <View
@@ -156,12 +156,12 @@ class CardColumnContent extends Component {
                     >
                         <Image
                             style={styles.cardColumnContentCarInfoImage}
-                            source={sources[sizes.indexOf(size)].url}
+                            source={sizes[size].url}
                             resizeMode="contain"
                         />
                     </View>
 
-                    <Text style={styles.cardColumnContentCarInfoType}>{type}</Text>
+                    <Text style={styles.cardColumnContentCarInfoType}>{classifications[type]}</Text>
                 </View>
             );
         }
@@ -220,7 +220,7 @@ class CardColumnContentBody extends Component {
                 >
                     {this.props.children}
                 </View>
-                
+
                 <View
                     style={
                         (

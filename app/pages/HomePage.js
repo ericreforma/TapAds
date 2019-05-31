@@ -2,16 +2,16 @@ import React, { Component } from 'react';
 import {
     View,
     Text,
-    Image,
     ImageBackground,
     ScrollView,
     TouchableOpacity,
-    TouchableHighlight,
     Dimensions,
     Animated
 } from 'react-native';
+import Carousel from 'react-native-snap-carousel';
 import styles from '../styles/page.Home.style';
-import { HeaderNav, UserInfo } from '../components/HeaderNav';
+import { HeaderNav } from '../components/HeaderNav';
+import { UserInfo } from '../components/UserInfo';
 import {
     Card,
     CardHeader,
@@ -20,9 +20,9 @@ import {
     CardColumnContent,
     CardColumnContentBody
 } from '../components/Card';
+
 import { VehicleType, VehicleCategory } from '../components/VehicleType';
 import { LabelText, CommonText } from '../components/Text';
-import Carousel from 'react-native-snap-carousel';
 import theme from '../styles/theme.style';
 import ModalMenu from '../components/Modal/Navigation';
 
@@ -37,11 +37,13 @@ export default class HomePage extends Component {
         width: Dimensions.get('window').width,
         height: Dimensions.get('window').height,
         campaignViewLength: 3,
+        user: [],
         userData: {
             name: 'Patrick Cua',
             rate: 4.60239,
             totalRate: 35 //total number of clients(rating)
         },
+
         recommendedData: [
             {
                 campaign: 'Campaign Name',
@@ -240,7 +242,7 @@ export default class HomePage extends Component {
                             <LabelText>{data.location}</LabelText>
                             <CommonText>Location</CommonText>
                         </View>
-                        
+
                         <View
                             style={styles.homePageAlignCenter}
                         >
@@ -248,7 +250,7 @@ export default class HomePage extends Component {
                                 vehicleType={data.vehicleType}
                                 vehicleColor="black"
                             />
-                            
+
                             <CommonText>{data.vehicleClass}</CommonText>
                         </View>
 
@@ -326,10 +328,10 @@ export default class HomePage extends Component {
                             <View
                                 style={styles.homePageCategoryDescriptionContainer}
                             ></View>
-                            
+
                             <View
                                 style={styles.homePageCategoryDescriptionWrapper}
-                            >   
+                            >
                                 <CommonText color="white">{item.description}</CommonText>
                             </View>
                         </View>
@@ -342,7 +344,7 @@ export default class HomePage extends Component {
     _currentCategory = (slideIndex) => {
         this.setState({ currentCategoryIndex: slideIndex });
     }
-    
+
     loadMoreCampaign = () => {
         var returnJSX;
         if(this.state.campaignViewLength < this.state.campaignData.length) {
@@ -376,7 +378,7 @@ export default class HomePage extends Component {
                     resizeMode="stretch"
                     source={require('../assets/image/common_page_background.png')}
                 ></ImageBackground>
-                
+
                 <HeaderNav
                     menuButtonOnPress={this.menuButtonOnPress}
                     navigation={this.props.navigation}
@@ -389,12 +391,6 @@ export default class HomePage extends Component {
                     scrollEnabled={this.state.scrollEnable}
                 >
 
-                    <UserInfo
-                        profilePicture={require('../assets/image/male_avatar.png')}
-                        userData={this.state.userData}
-                        navigation={this.props.navigation}
-                    />
-                    
                     <View
                         style={styles.homePageContainer}
                     >
@@ -410,7 +406,7 @@ export default class HomePage extends Component {
                                 style={styles.homePageRecommendedLabel}
                             >
                                 <LabelText color="white">Recommended for you</LabelText>
-                                
+
                                 <TouchableOpacity>
                                     <Text
                                         style={styles.homePageViewAll}
@@ -433,7 +429,7 @@ export default class HomePage extends Component {
                                 />
                             </View>
                         </View>
-                        
+
                         {/* categories section */}
                         <View
                             style={styles.homePageSectionVerticalMargin}
@@ -472,7 +468,7 @@ export default class HomePage extends Component {
                                 />
                             </View>
                         </View>
-                    
+
                         {/* campaign section */}
                         <View
                             style={styles.homePageCampaignContainer}
@@ -482,7 +478,7 @@ export default class HomePage extends Component {
                                 style={styles.homePageCampaignLabel}
                             >
                                 <LabelText color="white">Latest</LabelText>
-                                
+
                                 <TouchableOpacity>
                                     <Text
                                         style={styles.homePageViewAll}
@@ -506,8 +502,8 @@ export default class HomePage extends Component {
                                             <CardColumnContent
                                                 firstChild={true}
                                                 backgroundColor={theme.COLOR_WHITE}
-                                                carType="Private"
-                                                carSize="large"
+                                                carType={3}
+                                                carSize={2}
                                             >
                                                 <CardColumnContentBody
                                                     divider={true}
@@ -515,13 +511,13 @@ export default class HomePage extends Component {
                                                     <LabelText>{cData.campaign_name}</LabelText>
                                                     <CommonText>{cData.client_name}</CommonText>
                                                 </CardColumnContentBody>
-                                                
+
                                                 <View
                                                     style={{
                                                         height: 2
                                                     }}
                                                 ></View>
-                                                
+
                                                 <CardColumnContentBody>
                                                     {this.state.campaignInfoLabel.map((campaign, campaignIndex) =>
                                                         <View
@@ -539,7 +535,7 @@ export default class HomePage extends Component {
                                                                 )
                                                             ]}
                                                         >
-                                                            <Text    
+                                                            <Text
                                                                 style={styles.homePageCampaignCardInfoLabel}
                                                             >
                                                                 {campaign.label}
@@ -565,7 +561,7 @@ export default class HomePage extends Component {
                                                 buttonViewInfo={true}
                                             >
                                                 <CardColumnContentBody>
-                                                    <Text    
+                                                    <Text
                                                         style={[
                                                             styles.homePageCommonText,
                                                             styles.homePageTextWhite
@@ -576,11 +572,11 @@ export default class HomePage extends Component {
                                                 </CardColumnContentBody>
                                             </CardColumnContent>
                                         </Card>
-                                    </View>  
+                                    </View>
                                 )
                             }
                         </View>
-                            
+
                         {this.loadMoreCampaign()}
                     </View>
                 </ScrollView>
