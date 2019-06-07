@@ -5,32 +5,31 @@ import {
     Image,
     TouchableOpacity
 } from 'react-native';
-import theme from '../styles/theme.style';
 import styles from '../styles/component.NotificationCard.style';
 
 export default class NotificationCard extends Component {
     notificationIcon = (action) => {
-        var icons = [
+        const icons = [
             {
                 action: 1,
                 message: 'sent you a message',
                 source: require('../assets/image/icons/mail_icon.png')
-            },{
-                action: 2,
+            }, {
+                 action: 2,
                 message: 'approved your post',
                 source: require('../assets/image/icons/approve_icon.png')
-            },{
+            }, {
                 action: 3,
                 message: 'sent payment',
                 source: require('../assets/image/icons/payment_icon.png')
             }
         ];
 
-        return icons.filter(i => i.action == action)[0];
+        return icons.filter(i => i.action === action)[0];
     }
 
     render() {
-        var icons = this.notificationIcon(this.props.action);
+        const icons = this.notificationIcon(this.props.action);
 
         return (
             <TouchableOpacity

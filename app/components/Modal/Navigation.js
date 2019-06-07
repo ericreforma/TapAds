@@ -1,7 +1,14 @@
 import React, { Component } from 'react';
-import { View, Text, Animated, TouchableHighlight, TouchableOpacity } from 'react-native';
-import { LabelText, CommonText } from '../Text';
-import theme from '../../styles/theme.style';
+import { View,
+      Text,
+      Animated,
+      TouchableHighlight,
+      TouchableOpacity
+} from 'react-native';
+import {
+  LabelText,
+  CommonText
+} from '../Text';
 import styles from '../../styles/component.Navigation.style';
 
 export default class ModalMenu extends Component {
@@ -27,9 +34,9 @@ export default class ModalMenu extends Component {
                                 opacity: this.props.modalFadeBackground
                             }
                         ]}
-                    ></Animated.View>
+                    />
                 </TouchableHighlight>
-                
+
                 <Animated.View
                     style={[
                         styles.navigationContentContainer,
@@ -38,9 +45,7 @@ export default class ModalMenu extends Component {
                         }
                     ]}
                 >
-                    <View
-                        style={styles.navigationCloseButton}
-                    >
+                    <View style={styles.navigationCloseButton}>
                         <TouchableOpacity
                             onPress={this.props.menuButtonOnPress}
                         >
@@ -101,7 +106,7 @@ export default class ModalMenu extends Component {
                                     Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do mpore et dolore magna
                                 </Text>
                             </View>
-                                    
+
                             <View
                                 style={styles.navigationContentBodyBottomLogout}
                             >

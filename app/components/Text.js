@@ -11,7 +11,11 @@ class CommonText extends Component {
                     (
                         this.props.color == 'white'
                         ? styles.textWhite
-                        : styles.textCommonColor
+                        : (
+                            this.props.color == 'blue'
+                            ? styles.textBlue
+                            : styles.textBlack
+                        )
                     )
                 ]}
             >

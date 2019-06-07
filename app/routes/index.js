@@ -6,6 +6,7 @@ import NotificationPage from '../pages/NotificationPage';
 import SignUpPage from '../pages/SignUpPage';
 import ProfilePage from '../pages/ProfilePage';
 import MyCampaignPage from '../pages/MyCampaignPage';
+import CampaignCardActive from '../pages/CampaignCardActive';
 
 export default class Route extends Component {
 	render() {
@@ -22,9 +23,10 @@ const RouteStack = createStackNavigator(
 		Home: HomePage,
 		Notification: NotificationPage,
 		Profile: ProfilePage,
-		Mycampaign: MyCampaignPage
+		Mycampaign: MyCampaignPage,
+		CampaignCardActive: CampaignCardActive
 	}, {
-        initialRouteName: 'Login',
+        initialRouteName: 'Home',
 		headerMode: 'none',
 		navigationOptions: {
 			headerVisible: false,

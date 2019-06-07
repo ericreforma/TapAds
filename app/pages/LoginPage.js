@@ -7,60 +7,21 @@ import {
 	Image,
 	Dimensions
 } from 'react-native';
-import axios from 'axios';
-import InputLogin from '../components/Input';
+import { connect } from 'react-redux';
+import Input from '../components/Input';
 import ButtonBlue from '../components/ButtonBlue';
+import { AuthAction } from '../redux/actions/auth.action';
 import styles from '../styles/page.Login.style';
-import theme from '../styles/theme.style';
 
-export default class LogInPage extends Component {
+class LogInPage extends Component {
 	state = {
-		username: '',
-		password: '',
-	}
-
-	loginCredentialsOnChangeText = (inputType) => (text) => {
-		var username = inputType == 'username' ? text : this.state.username,
-			password = inputType == 'password' ? text : this.state.password;
-   
-		this.setState({
-			username: username,
-			password: password
-		});
-	}
-	
-	loginButtonOnPress = () => {
-		var proceed = true;
-
-		if(this.state.username == '') {
-			proceed = false;
-			alert('Input Username!');
-		} else if(this.state.password == '') {
-			proceed = false;
-			alert('Input Password!');
-		}
-
-		if(proceed) {
-			const form = {
-				email: this.state.username,
-				password: this.state.password
-			};
-
-			axios.post("http://dev.bcdpinpoint.com/TapAdsServer/public/api/login", form).then(response => {
-				this.props.navigation.replace('Home');
-			}).catch(error => {
-				// console.log(error.response.data);
-				alert('Login credentials unmatched');
-			});
-		}
-	}
-
-	signUpButtonOnPress = () => {
-		this.props.navigation.navigate('Signup');
+		email: '',
+		password: ''
 	}
 
 	render() {
 		return (
+
 			<ImageBackground
 				resizeMode="stretch"
 				source={require('../assets/image/login_page_bg.png')}
@@ -83,6 +44,7 @@ export default class LogInPage extends Component {
 					/>
 				</View>
 
+
 				{/* main login input values */}
 				<View
 					style={{
@@ -90,15 +52,15 @@ export default class LogInPage extends Component {
 						paddingTop: 30,
 					}}
 				>
-					<View style={styles.loginCredentialsView}>
-						<InputLogin
-							type="username"
-							onChangeText={this.loginCredentialsOnChangeText('username')}
-						/>
 
-						<InputLogin
+					<View style={styles.loginCredentialsView}>
+						<Input
+							type="username"
+							onChangeText={(email) => this.setState({ email })}
+						/>
+						<Input
 							type="password"
-							onChangeText={this.loginCredentialsOnChangeText('password')}
+							onChangeText={(password) => this.setState({ password })}
 						/>
 					</View>
 
@@ -110,25 +72,25 @@ export default class LogInPage extends Component {
 
 					<View style={styles.loginButton}>
 						<ButtonBlue
-							loginButton={true}
+							loginButton
 							label="Login"
-							onPress={this.loginButtonOnPress}
+							onPress={
+							() => this.props.loginPressed(this.state.email, this.state.password)
+							}
 						/>
 					</View>
 
 					<Text style={styles.textNormalLabel}>
 						Don't have an account?
 					</Text>
-
 					<TouchableOpacity
-						onPress={this.signUpButtonOnPress}
+						onPress={() => this.props.navigation.navigate('Signup')}
 					>
 						<Text style={styles.textSignUp}>
 							Sign up
 						</Text>
 					</TouchableOpacity>
 				</View>
-
 				{/* alternative login */}
 				<View
 					style={{
@@ -139,14 +101,14 @@ export default class LogInPage extends Component {
 					<Text style={styles.loginAlternativeLabel}>
 						or login with
 					</Text>
-					
+
 					<View style={styles.loginAlternativeIconView}>
 						<TouchableOpacity>
 							<Image
 								source={require('../assets/image/icons/google_icon.png')}
 							/>
 						</TouchableOpacity>
-						
+
 						<TouchableOpacity>
 							<Image
 								style={styles.loginAlternativeIconFacebook}
@@ -157,5 +119,16 @@ export default class LogInPage extends Component {
 				</View>
 			</ImageBackground>
 		);
-  }
+  	}
 }
+
+const mapStateToProps = (state) => ({
+	email: state.email,
+	password: state.password
+});
+
+const mapDispatchToProps = (dispatch) => ({
+	loginPressed: (email, password) => dispatch(AuthAction.login(email, password))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(LogInPage);

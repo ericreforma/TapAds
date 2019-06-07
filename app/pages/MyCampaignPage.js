@@ -131,7 +131,7 @@ export default class MyCampaignPage extends Component {
     }
 
     viewCampaignFullDetails = (id) => () => {
-        alert('Full details campaign id: ' + id);
+        this.props.navigation.navigate('CampaignCardActive');
     }
 
     viewCampaignDashboard = (id) => () => {
