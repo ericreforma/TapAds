@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { createStackNavigator, createAppContainer } from 'react-navigation';
-import LogInPage from '../pages/LogInPage';
+import LogInPage from '../pages/LoginPage';
 import HomePage from '../pages/HomePage';
 import NotificationPage from '../pages/NotificationPage';
 import SignUpPage from '../pages/SignUpPage';
