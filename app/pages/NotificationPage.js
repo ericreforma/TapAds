@@ -80,6 +80,12 @@ export default class NotificationPage extends Component {
         });
     }
 
+    notificationOnPress = (action) => () => {
+        if(action == 1) {
+            this.props.navigation.navigate('Messenger');
+        }
+    }
+
     render() {
         return (
             <View>
@@ -134,7 +140,7 @@ export default class NotificationPage extends Component {
                                         key={index}
                                         client={notif.client}
                                         action={notif.action}
-                                        onPress={() => alert('pressed!')}
+                                        onPress={this.notificationOnPress(notif.action)}
                                     />
                                 )}
                             </View>

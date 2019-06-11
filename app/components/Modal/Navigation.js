@@ -64,7 +64,7 @@ export default class ModalMenu extends Component {
                         <View
                             style={styles.navigationContentBodyTop}
                         >
-                            {['My Profile', 'Messenger', 'Terms and Conditions'].map((value, index) =>
+                            {['My Campaigns', 'My Profile', 'Messenger', 'Terms and Conditions'].map((value, index) =>
                                 <View
                                     key={index}
                                     style={[

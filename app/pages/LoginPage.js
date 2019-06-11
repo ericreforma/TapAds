@@ -5,6 +5,7 @@ import {
 	Text,
 	View,
 	Image,
+	Dimensions
 } from 'react-native';
 import { connect } from 'react-redux';
 import Input from '../components/Input';
@@ -13,7 +14,6 @@ import { AuthAction } from '../redux/actions/auth.action';
 import styles from '../styles/page.Login.style';
 
 class LogInPage extends Component {
-
 	state = {
 		email: '',
 		password: ''
@@ -37,7 +37,7 @@ class LogInPage extends Component {
 				>
 					<Image
 						style={{
-							width: '45%'
+							width: Dimensions.get('window').width / 2.5
 						}}
 						resizeMode="contain"
 						source={require('../assets/image/app_logo.png')}
@@ -84,7 +84,7 @@ class LogInPage extends Component {
 						Don't have an account?
 					</Text>
 					<TouchableOpacity
-						onPress={this.signUpButtonOnPress}
+						onPress={() => this.props.navigation.navigate('Signup')}
 					>
 						<Text style={styles.textSignUp}>
 							Sign up
@@ -119,16 +119,16 @@ class LogInPage extends Component {
 				</View>
 			</ImageBackground>
 		);
-  }
+  	}
 }
 
 const mapStateToProps = (state) => ({
-		email: state.email,
-		password: state.password
+	email: state.email,
+	password: state.password
 });
 
 const mapDispatchToProps = (dispatch) => ({
-		loginPressed: (email, password) => dispatch(AuthAction.login(email, password))
+	loginPressed: (email, password) => dispatch(AuthAction.login(email, password))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(LogInPage);
