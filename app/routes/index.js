@@ -8,6 +8,7 @@ import ProfilePage from '../pages/ProfilePage';
 import MyCampaignPage from '../pages/MyCampaignPage';
 import CampaignCardActive from '../pages/CampaignCardActive';
 import MessengerPage from '../pages/MessengerPage';
+import CampaignPage from '../pages/CampaignPage';
 
 export default class Route extends Component {
 	render() {
@@ -27,6 +28,7 @@ const RouteStack = createStackNavigator(
 		Mycampaign: MyCampaignPage,
 		CampaignCardActive: CampaignCardActive,
 		Messenger: MessengerPage,
+		Campaign: CampaignPage
 	}, {
         initialRouteName: 'Home',
 		headerMode: 'none',

@@ -15,7 +15,7 @@ export default StyleSheet.create({
         marginVertical: 10
     },
     homePageContainer: {
-        paddingVertical: 20,
+        paddingVertical: 30,
     },
     homePageRecommendedContainer: {
         flexDirection: 'column'
@@ -24,7 +24,7 @@ export default StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        paddingHorizontal: theme.PAGE_PADDING_HORIZONTAL
+        paddingHorizontal: theme.PAGE_PADDING_HORIZONTAL + 10
     },
     homePageViewAll: {
         fontFamily: 'Montserrat-Regular',
@@ -99,7 +99,7 @@ export default StyleSheet.create({
     },
     homePageDescriptionText: {
         lineHeight: 18,
-        height: Dimensions.get('window').height * 0.115
+        // height: Dimensions.get('window').height * 0.115
     },
     homePageOfTextBlack: {
         fontFamily: 'Montserrat-Regular',

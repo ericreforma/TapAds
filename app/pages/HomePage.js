@@ -275,6 +275,10 @@ export default class HomePage extends Component {
         );
     }
 
+    viewCampaign = () => {
+        this.props.navigation.navigate('Campaign');
+    }
+
     _renderRecommendedItem = ({item, index}) => {
         return (
             <View
@@ -292,6 +296,7 @@ export default class HomePage extends Component {
                         active={true}
                         justifyContent={true}
                         buttonViewInfo={true}
+                        buttonViewOnPress={this.viewCampaign}
                     >
                         <LabelText color="white">P{item.basicPay}</LabelText>
                         <CommonText color="white">BasicPay</CommonText>
@@ -563,6 +568,7 @@ export default class HomePage extends Component {
                                                 lastChild={true}
                                                 backgroundColor={theme.COLOR_GRAY_HEAVY}
                                                 buttonViewInfo={true}
+                                                buttonViewOnPress={this.viewCampaign}
                                             >
                                                 <CardColumnContentBody>
                                                     <Text    

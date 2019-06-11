@@ -87,6 +87,7 @@ class CardFooter extends Component {
                 <View>
                     <ButtonBlue
                         label="View Info"
+                        onPress={this.props.buttonViewOnPress}
                     />
                 </View>
             );
@@ -127,6 +128,7 @@ class CardColumnContent extends Component {
                 <View style={styles.cardColumnContentButtonViewInfo}>
                     <ButtonBlue
                         label="View Info"
+                        onPress={this.props.buttonViewOnPress}
                     />
                 </View>
             );
