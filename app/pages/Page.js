@@ -56,7 +56,6 @@ export class Page extends Component {
 
         {this.props.children}
 
-
         <ModalMenu
             modalContainerzIndex={this.state.modalContainerzIndex}
             width={this.state.width}

@@ -9,6 +9,7 @@ import {
   LabelText,
   CommonText
 } from '../Text';
+import NavigationService from '../../services/navigation';
 import styles from '../../styles/component.Navigation.style';
 
 export default class ModalMenu extends Component {
@@ -78,7 +79,7 @@ export default class ModalMenu extends Component {
                                     <TouchableOpacity
                                         style={styles.navigationContentBodyTopSpaceBetween}
                                         onPress={() => {
-                                            if(index == 0) this.props.navigation.navigate('Profile')
+                                            if(index == 0) NavigationService.navigate('Profile')
                                         }}
                                     >
                                         <CommonText color="white">{'<'}</CommonText>

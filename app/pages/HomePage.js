@@ -141,7 +141,6 @@ class HomePage extends Component {
                             </View>
 
                             {/* content */}
-
                             <CampaignListContainer />
 
                             {(!this.props.isRequesting) ?

@@ -11,8 +11,8 @@ import {
     Animated
 } from 'react-native';
 import Carousel from 'react-native-snap-carousel';
+import { Page } from './Page';
 import { URL } from '../config/variables';
-import { HeaderNav } from '../components/HeaderNav';
 import UserInfo from '../components/UserInfo';
 import { LabelText, CommonText } from '../components/Text';
 import ButtonBlue from '../components/ButtonBlue';
@@ -172,31 +172,17 @@ class ProfilePage extends Component {
         />
     );
 
-
 	render() {
 		return (
-            <View>
-                <ImageBackground
-                    style={styles.homePageBackgroundImage}
-                    resizeMode="stretch"
-                    source={require('../assets/image/common_page_background.png')}
-                ></ImageBackground>
 
-                <HeaderNav
-                    menuButtonOnPress={this.menuButtonOnPress}
-                    navigation={this.props.navigation}
-                />
-
+            <Page>
                 <ScrollView
                     style={styles.homePageScrollView}
                     overScrollMode='never'
                     showsVerticalScrollIndicator={false}
                     scrollEnabled={this.state.scrollEnable}
                 >
-                    <UserInfo
-                        profilePicture={require('../assets/image/male_avatar.png')}
-                        navigation={this.props.navigation}
-                    />
+                    <UserInfo />
 
                     {/* earnings */}
                     <View
@@ -632,7 +618,7 @@ class ProfilePage extends Component {
                     menuButtonOnPress={this.menuButtonOnPress}
                     navigation={this.props.navigation}
                 />
-            </View>
+            </Page>
 		);
     }
 }
