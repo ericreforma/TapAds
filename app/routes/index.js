@@ -26,7 +26,7 @@ const RouteStack = createStackNavigator(
 		Profile: ProfilePage,
 		Mycampaign: MyCampaignPage,
 		CampaignCardActive: CampaignCardActive,
-		Messenger: MessengerPage
+		Messenger: MessengerPage,
 	}, {
         initialRouteName: 'Home',
 		headerMode: 'none',
