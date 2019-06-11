@@ -8,6 +8,7 @@ import {
     Animated,
 } from 'react-native';
 
+import ModalMenu from '../components/Modal/Navigation';
 import { HeaderNav, UserInfo } from '../components/HeaderNav';
 import { LabelText, CommonText } from '../components/Text';
 import ButtonBlue from '../components/ButtonBlue';
@@ -254,6 +255,16 @@ export default class CampaignCardActive extends Component {
                         </View>
                     </View>
                 </ScrollView>
+
+                <ModalMenu
+                    modalContainerzIndex={this.state.modalContainerzIndex}
+                    width={this.state.width}
+                    height={this.state.scrollEnable ? 0 : this.state.height}
+                    modalFadeBackground={this.state.modalFadeBackground}
+                    modalXValue={this.state.modalXValue}
+                    menuButtonOnPress={this.menuButtonOnPress}
+                    navigation={this.props.navigation}
+                />
             </View>
         )
     }
