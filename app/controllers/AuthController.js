@@ -1,13 +1,9 @@
-
-import axios from 'axios';
-import { API } from '../config';
-
-const request = axios.create(API);
+import { RawHttpRequest } from '../services/http';
 
 export const AuthController = {
 
   login: (email, password) =>
-      request.post('/user/login', {
+      RawHttpRequest.post('/user/login', {
           email, password
       })
 

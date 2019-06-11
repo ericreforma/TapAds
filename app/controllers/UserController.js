@@ -1,14 +1,8 @@
-import axios from 'axios';
-import { TOKENIZED_API } from '../config';
-
-let httpRequest;
+import { HttpRequest } from '../services/http';
 
 export const UserController = {
   request: {
-    profile: () => {
-      httpRequest = axios.create(TOKENIZED_API());
-      return httpRequest.get('/user');
-    }
+    profile: () => HttpRequest.get('/user')
   },
 
   rating: (ratings) => {

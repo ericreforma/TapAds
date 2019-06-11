@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { View, Text, Image, TextInput } from 'react-native';
+import { View, Text, Image } from 'react-native';
 import ButtonBlue from '../components/ButtonBlue';
 import styles from '../styles/component.Card.style';
 import theme from '../styles/theme.style';
+import { VEHICLE } from '../config/variables';
 
 class Card extends Component {
     render() {
@@ -134,21 +135,25 @@ class CardColumnContent extends Component {
     }
 
     additionalCarInfo = (type, size) => {
-        const sizes = [
+        const classifications = [
             {
-                url: require('../assets/image/icons/car_small_white_icon.png')
+                url: VEHICLE.CLASS.small.icon.white,
             }, {
-                url: require('../assets/image/icons/car_mid_white_icon.png')
+                url: VEHICLE.CLASS.mid.icon.white
             }, {
-                url: require('../assets/image/icons/car_large_white_icon.png')
+                url: VEHICLE.CLASS.large.icon.white
             }, {
-                url: require('../assets/image/icons/motorcycle_white_icon.png')
+                url: VEHICLE.CLASS.motorcycle.icon.white
             }
         ];
 
-        const classifications = ['public', 'private', 'on-call'];
+        const types = [
+          VEHICLE.TYPE.public.name,
+          VEHICLE.TYPE.private.name,
+          VEHICLE.TYPE.oncall.name
+        ];
 
-        if(type) {
+        if (type != null) {
             return (
                 <View style={styles.cardColumnContentCarInfo}>
                     <View
@@ -156,12 +161,12 @@ class CardColumnContent extends Component {
                     >
                         <Image
                             style={styles.cardColumnContentCarInfoImage}
-                            source={sizes[size].url}
+                            source={classifications[size].url}
                             resizeMode="contain"
                         />
                     </View>
 
-                    <Text style={styles.cardColumnContentCarInfoType}>{classifications[type]}</Text>
+                    <Text style={styles.cardColumnContentCarInfoType}>{types[type]}</Text>
                 </View>
             );
         }

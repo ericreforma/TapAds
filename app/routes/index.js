@@ -5,6 +5,7 @@ import {
 	createAppContainer,
 } from 'react-navigation';
 
+import NavigationService from '../services/navigation';
 import {
 	LogInPage,
 	HomePage,
@@ -15,12 +16,14 @@ import {
 	SamplePage
 } from '../pages';
 
-import { UserInfo } from '../components/UserInfo';
-
 export default class Route extends Component {
 	render() {
 		return (
-			<AppContainer />
+			<AppContainer
+				ref={(navigatorRef) => {
+					NavigationService.setTopLevelNavigator(navigatorRef);
+				}}
+			/>
 		);
 	}
 }

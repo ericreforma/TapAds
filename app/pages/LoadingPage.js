@@ -24,7 +24,7 @@ class LoadingPage extends Component {
         this.props.dispatchGetProfile(authResponse.data);
         UserSchema.update(authResponse.data,
         () => {
-          this.props.navigation.navigate('Profile');
+          this.props.navigation.navigate('Home');
         });
       })
       .catch((error) => {
