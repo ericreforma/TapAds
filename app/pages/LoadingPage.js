@@ -28,7 +28,6 @@ class LoadingPage extends Component {
         });
       })
       .catch((error) => {
-          this.props.dispatchLoginFailed();
           this.props.navigation.navigate('Login');
           console.log(error);
       });
@@ -53,7 +52,8 @@ const mapDispatchToProps = (dispatch) => ({
   dispatchGetProfile: (user) => dispatch({ type: USER.GET.PROFILE.SUCCESS, user }),
   dispatchLoginRequest: () => dispatch({ type: AUTH.LOGIN.REQUEST }),
   dispatchLoginSuccess: () => dispatch({ type: AUTH.LOGIN.SUCCESS }),
-  dispatchLoginFailed: () => dispatch({ type: AUTH.LOGIN.FAILED })
+  dispatchLoginFailed: () => dispatch({ type: AUTH.LOGIN.FAILED }),
+
 });
 
 export default connect(null, mapDispatchToProps)(LoadingPage);

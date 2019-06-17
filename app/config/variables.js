@@ -5,8 +5,15 @@ const SERVER_MEDIA = 'http://192.168.0.108/tapads/public/storage/media';
 export const URL = {
   SERVER_MAIN,
   SERVER_API,
-  SERVER_MEDIA
+  SERVER_MEDIA,
+  PAGE: {
+    USER: '/user',
+    CAMPAIGN: '/user/campaign/browse',
+    MYLIST: '/user/campaign/mylist',
+    ADDLIST: '/user/campaign/addmylist'
+  }
 };
+
 
 export const VEHICLE = {
   CLASS: {

@@ -4,12 +4,11 @@ import {
     Text,
     ScrollView,
     Dimensions,
-    ImageBackground,
     Animated,
 } from 'react-native';
+import { Page } from '../pages';
 
-import ModalMenu from '../components/Modal/Navigation';
-import { HeaderNav, UserInfo } from '../components/HeaderNav';
+import { UserInfo } from '../components/UserInfo';
 import { LabelText, CommonText } from '../components/Text';
 import ButtonBlue from '../components/ButtonBlue';
 
@@ -22,7 +21,7 @@ export default class CampaignCardActive extends Component {
         modalContainerzIndex: 0,
         modalXValue: new Animated.Value(Dimensions.get('window').width),
         scrollEnable: true,
-        
+
         height: Dimensions.get('window').height,
         width: Dimensions.get('window').width,
         userData: {
@@ -65,18 +64,7 @@ export default class CampaignCardActive extends Component {
 
     render() {
         return (
-            <View>
-                <ImageBackground
-                    style={styles.homePageBackgroundImage}
-                    resizeMode="stretch"
-                    source={require('../assets/image/common_page_background.png')}
-                ></ImageBackground>
-                
-                <HeaderNav
-                    menuButtonOnPress={this.menuButtonOnPress}
-                    navigation={this.props.navigation}
-                />
-
+            <Page>
                 <ScrollView
                     style={styles.homePageScrollView}
                     overScrollMode='never'
@@ -84,11 +72,7 @@ export default class CampaignCardActive extends Component {
                     scrollEnabled={this.state.scrollEnable}
                 >
 
-                    <UserInfo
-                        profilePicture={require('../assets/image/male_avatar.png')}
-                        userData={this.state.userData}
-                        navigation={this.props.navigation}
-                    />
+                    <UserInfo />
 
                     <View
                         style={{
@@ -182,7 +166,7 @@ export default class CampaignCardActive extends Component {
                                         >
                                             {this.state.campaignData.kmTravelled}km
                                         </LabelText>
-        
+
                                         <CommonText>
                                             km travelled counter
                                         </CommonText>
@@ -200,7 +184,7 @@ export default class CampaignCardActive extends Component {
                                         >
                                             {this.state.campaignData.frequentLocation}
                                         </LabelText>
-        
+
                                         <CommonText>
                                             Frequent Location
                                         </CommonText>
@@ -256,16 +240,8 @@ export default class CampaignCardActive extends Component {
                     </View>
                 </ScrollView>
 
-                <ModalMenu
-                    modalContainerzIndex={this.state.modalContainerzIndex}
-                    width={this.state.width}
-                    height={this.state.scrollEnable ? 0 : this.state.height}
-                    modalFadeBackground={this.state.modalFadeBackground}
-                    modalXValue={this.state.modalXValue}
-                    menuButtonOnPress={this.menuButtonOnPress}
-                    navigation={this.props.navigation}
-                />
-            </View>
+
+            </Page>
         )
     }
 }

@@ -1,11 +1,11 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import {
     View,
     Text,
     Image,
     ScrollView,
     Animated,
-    ImageBackground,
     TouchableHighlight,
     TouchableOpacity,
     Dimensions
@@ -17,93 +17,26 @@ import {
     CardBody,
     CardFooter
 } from '../components/Card';
-import ModalMenu from '../components/Modal/Navigation';
-import { VehicleType, VehicleCategory } from '../components/VehicleType';
-import { HeaderNav, UserInfo } from '../components/HeaderNav';
+import { Page } from '../pages/Page';
+import { VehicleType } from '../components/VehicleType';
+import UserInfo from '../components/UserInfo';
 import { LabelText, CommonText } from '../components/Text';
 import ButtonBlue from '../components/ButtonBlue';
-
+import { VEHICLE } from '../config/variables';
 import theme from '../styles/theme.style';
 import styles from '../styles/page.Home.style';
 
-export default class MyCampaignPage extends Component {
-    state = {
-        modalFadeBackground: new Animated.Value(0),
-        modalContainerzIndex: 0,
-        modalXValue: new Animated.Value(Dimensions.get('window').width),
-        scrollEnable: true,
+class MyCampaignPage extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
         width: Dimensions.get('window').width,
-        height: Dimensions.get('window').height,
-
-        userData: {
-            name: 'Patrick Cua',
-            rate: 4.60239,
-            totalRate: 35 //total number of clients(rating)
-        },
-
-        activeCampaign: [
-            {
-                id: 5,
-                campaign: 'Campaign Name',
-                client: 'Brand name here',
-                location: 'Quezon City',
-                vehicleType: 2,
-                vehicleClass: 'Private',
-                distance: '300km',
-                basicPay: '5,000',
-                totalPay: '7,000'
-            },{
-                id: 8,
-                campaign: 'Campaign Name',
-                client: 'Brand name here',
-                location: 'Quezon City',
-                vehicleType: 2,
-                vehicleClass: 'Private',
-                distance: '300km',
-                basicPay: '5,000',
-                totalPay: '7,000'
-            },{
-                id: 15,
-                campaign: 'Campaign Name',
-                client: 'Brand name here',
-                location: 'Quezon City',
-                vehicleType: 2,
-                vehicleClass: 'Private',
-                distance: '300km',
-                basicPay: '5,000',
-                totalPay: '7,000'
-            }
-        ],
-        completeCampaign: [
-            {
-                id: 1,
-                campaign: 'Campaign Name',
-                totalEarnings: '7,000',
-                messageNotif: '1',
-                favorite: '1',
-                completionDate: 'MAR. 30, 2019',
-                campaignStatus: 'Completed'
-            },{
-                id: 2,
-                campaign: 'Campaign Name',
-                totalEarnings: '7,000',
-                messageNotif: '1',
-                favorite: '1',
-                completionDate: 'MAR. 30, 2019',
-                campaignStatus: 'Completed'
-            },{
-                id: 6,
-                campaign: 'Campaign Name',
-                totalEarnings: '7,000',
-                messageNotif: '1',
-                favorite: '1',
-                completionDate: 'MAR. 30, 2019',
-                campaignStatus: 'Completed'
-            }
-        ],
-    
         myCampaignClick: 'active',
-    }
+        vehicleType: Object.values(VEHICLE.TYPE),
+    };
+  }
+
 
     menuButtonOnPress = () => {
         Animated.timing(this.state.modalFadeBackground, {
@@ -148,8 +81,10 @@ export default class MyCampaignPage extends Component {
 
     activeCampaignView = () => {
         return (
-            this.state.activeCampaign.map((data, index) =>
-                <View
+            this.props.myList.map((data, index) => {
+              if (!data.completed) {
+                return (
+                  <View
                     key={index}
                     style={{
                         paddingVertical: 10
@@ -157,7 +92,7 @@ export default class MyCampaignPage extends Component {
                 >
                     <Card shadow={true}>
                         <CardHeader active={true}>
-                            <LabelText>{data.campaign}</LabelText>
+                            <LabelText>{data.campaignDetails.name}</LabelText>
                             <View
                                 style={{
                                     flexDirection: 'row',
@@ -165,8 +100,8 @@ export default class MyCampaignPage extends Component {
                                     alignItems: 'center'
                                 }}
                             >
-                                <CommonText>{data.client}</CommonText>
-                                
+                                <CommonText>{data.client.business_name}</CommonText>
+
                                 <TouchableOpacity
                                     onPress={this.viewCampaignFullDetails(data.id)}
                                 >
@@ -178,7 +113,7 @@ export default class MyCampaignPage extends Component {
                                 </TouchableOpacity>
                             </View>
                         </CardHeader>
-                        
+
                         <CardBody>
                             <View
                                 style={styles.homePageRecommendedCampaignBody}
@@ -186,30 +121,30 @@ export default class MyCampaignPage extends Component {
                                 <View
                                     style={styles.homePageRecommendedCampaignFirstCol}
                                 >
-                                    <LabelText>{data.location}</LabelText>
+                                    <LabelText>{data.campaignDetails.location}</LabelText>
                                     <CommonText>Location</CommonText>
                                 </View>
-                                
+
                                 <View
                                     style={styles.homePageAlignCenter}
                                 >
                                     <VehicleType
-                                        vehicleType={data.vehicleType}
+                                        vehicleType={data.campaignDetails.vehicle_classification}
                                         vehicleColor="black"
                                     />
-                                    
-                                    <CommonText>{data.vehicleClass}</CommonText>
+
+                                    <CommonText>{ this.state.vehicleType[data.campaignDetails.vehicle_type].name }</CommonText>
                                 </View>
 
                                 <View
                                     style={styles.homePageAlignRight}
                                 >
-                                    <LabelText>P{data.basicPay}</LabelText>
+                                    <LabelText>P{data.campaignDetails.pay_basic}</LabelText>
                                     <CommonText>Basic Pay</CommonText>
                                 </View>
                             </View>
                         </CardBody>
-                        
+
                         <CardFooter
                             active={true}
                         >
@@ -219,10 +154,10 @@ export default class MyCampaignPage extends Component {
                                     justifyContent: 'space-between'
                                 }}
                             >
-                                <LabelText color="blue" large={true}>{data.distance}</LabelText>
-                                <LabelText color="blue" large={true}>P{data.totalPay}</LabelText>
+                                <LabelText color="blue" large={true}>{0}</LabelText>
+                                <LabelText color="blue" large={true}>P{0}</LabelText>
                             </View>
-                            
+
                             <View
                                 style={{
                                     flexDirection: 'row',
@@ -234,14 +169,17 @@ export default class MyCampaignPage extends Component {
                             </View>
                         </CardFooter>
                     </Card>
-                </View>
-            )
+                </View>);
+              }
+            })
         );
     }
 
     completeCampaignView = () => {
         return (
-            this.state.completeCampaign.map((data, index) =>
+            this.props.myList.map((data, index) => {
+            if (data.completed) {
+              return (
                 <View
                     key={index}
                     style={{
@@ -270,8 +208,8 @@ export default class MyCampaignPage extends Component {
                                         paddingVertical: 15,
                                     }}
                                 >
-                                    <LabelText>{data.campaign}</LabelText>
-                                    <CommonText>{data.completionDate}</CommonText>
+                                    <LabelText>{data.campaignDetails.name}</LabelText>
+                                    <CommonText>TODAY</CommonText>
                                 </View>
 
                                 <View
@@ -298,7 +236,7 @@ export default class MyCampaignPage extends Component {
                                             }}
                                             source={require('../assets/image/icons/mail_icon.png')}
                                         />
-                                        
+
                                         <View
                                             style={{
                                                 backgroundColor: theme.COLOR_BLUE,
@@ -319,13 +257,13 @@ export default class MyCampaignPage extends Component {
                                                     fontFamily: 'Montserrat-Bold'
                                                 }}
                                             >
-                                                {data.messageNotif}
+                                                {0}
                                             </Text>
                                         </View>
                                     </TouchableOpacity>
                                 </View>
                             </View>
-                            
+
                             <View
                                 style={{
                                     flexDirection: 'row',
@@ -338,8 +276,8 @@ export default class MyCampaignPage extends Component {
                                         paddingVertical: 15,
                                     }}
                                 >
-                                    <LabelText>{data.completionDate}</LabelText>
-                                    <CommonText>{data.campaignStatus}</CommonText>
+                                    <LabelText>TODAY</LabelText>
+                                    <CommonText>STATUS</CommonText>
                                 </View>
 
                                 <View
@@ -376,7 +314,7 @@ export default class MyCampaignPage extends Component {
                                     flexDirection: 'row',
                                     alignItems: 'center'
                                 }}
-                            >   
+                            >
                                 <View
                                     style={{
                                         flex: 1,
@@ -389,7 +327,7 @@ export default class MyCampaignPage extends Component {
                                         onPress={this.viewCampaignDashboard(data.id)}
                                     />
                                 </View>
-                                
+
                                 <View
                                     style={{
                                         flex: 1,
@@ -397,42 +335,29 @@ export default class MyCampaignPage extends Component {
                                         alignItems: 'flex-end'
                                     }}
                                 >
-                                    <LabelText color="blue" large={true}>P{data.totalEarnings}</LabelText>
+                                    <LabelText color="blue" large={true}>P100</LabelText>
                                     <CommonText color="white">Total Earnings</CommonText>
                                 </View>
                             </View>
                         </CardFooter>
                     </Card>
                 </View>
-            )
+              );
+              }
+            })
         );
     }
 
     render() {
         return (
-            <View>
-                <ImageBackground
-                    style={styles.homePageBackgroundImage}
-                    resizeMode="stretch"
-                    source={require('../assets/image/common_page_background.png')}
-                ></ImageBackground>
-                
-                <HeaderNav
-                    menuButtonOnPress={this.menuButtonOnPress}
-                    navigation={this.props.navigation}
-                />
-
+            <Page>
                 <ScrollView
                     style={styles.homePageScrollView}
                     overScrollMode='never'
                     showsVerticalScrollIndicator={false}
                     scrollEnabled={this.state.scrollEnable}
                 >
-                    <UserInfo
-                        profilePicture={require('../assets/image/male_avatar.png')}
-                        userData={this.state.userData}
-                        navigation={this.props.navigation}
-                    />
+                    <UserInfo />
 
                     <View
                         style={{
@@ -502,11 +427,11 @@ export default class MyCampaignPage extends Component {
                                                 )
                                             ]}
                                         >
-                                            Active 
+                                            Active
                                         </Text>
                                     </View>
                                 </TouchableHighlight>
-                                
+
                                 <TouchableHighlight
                                     style={{
                                         flex: 1,
@@ -585,16 +510,13 @@ export default class MyCampaignPage extends Component {
                     </View>
                 </ScrollView>
 
-                <ModalMenu
-                    modalContainerzIndex={this.state.modalContainerzIndex}
-                    width={this.state.width}
-                    height={this.state.scrollEnable ? 0 : this.state.height}
-                    modalFadeBackground={this.state.modalFadeBackground}
-                    modalXValue={this.state.modalXValue}
-                    menuButtonOnPress={this.menuButtonOnPress}
-                    navigation={this.props.navigation}
-                />
-            </View>
+            </Page>
         );
     }
 }
+
+const mapStateToProps = (state) => ({
+  myList: state.campaignReducer.mylist
+});
+
+export default connect(mapStateToProps)(MyCampaignPage);

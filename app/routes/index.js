@@ -13,7 +13,8 @@ import {
 	SignUpPage,
 	ProfilePage,
 	LoadingPage,
-	SamplePage
+	CampaignPage,
+	MyCampaignPage
 } from '../pages';
 
 export default class Route extends Component {
@@ -39,7 +40,8 @@ const AppStack = createStackNavigator({
 		Home: HomePage,
 		Notification: NotificationPage,
 		Profile: ProfilePage,
-		Sample: SamplePage,
+		Campaign: CampaignPage,
+		MyCampaign: MyCampaignPage
 	}, {
     initialRouteName: 'Home',
 		headerMode: 'none',

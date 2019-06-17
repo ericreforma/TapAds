@@ -2,12 +2,14 @@ import { CAMPAIGN } from '../actions/types.action';
 
 const initialState = {
   list: [],
+  selected: {},
   vehicle_classification: 0,
   current_page: 0,
   total_page: 0,
   isRequesting: false,
   isRequestDone: false,
-  recommended: []
+  recommended: [],
+  mylist: []
 };
 
 export function campaignReducer(state = initialState, action) {
@@ -20,7 +22,8 @@ export function campaignReducer(state = initialState, action) {
 
     case CAMPAIGN.LIST.SUCCESS:
       return Object.assign({}, state, {
-        list: state.list === [] ? action.data.data : [...state.list, ...action.data.data],
+        list: state.list === [] ? action.data.data :
+          [...state.list, ...action.data.data],
         current_page: action.data.current_page,
         total_page: action.data.last_page,
         isRequesting: false,
@@ -51,6 +54,29 @@ export function campaignReducer(state = initialState, action) {
       return Object.assign({}, state, {
         recommended: action.data
       });
+
+    case CAMPAIGN.SELECTED:
+      return Object.assign({}, state, {
+        selected: action.campaign
+      });
+
+    case CAMPAIGN.MYLIST.UPDATE:
+      return Object.assign({}, state, {
+        mylist: state.mylist === [] ? action.campaign :
+          [...state.mylist, ...action.campaign]
+      });
+
+    case CAMPAIGN.MYLIST.ADD:
+      return Object.assign({}, state, {
+        mylist: state.mylist === [] ? action.campaign :
+          [...state.mylist, action.campaign]
+      });
+
+    case CAMPAIGN.MYLIST.GET:
+      return Object.assign({}, state, {
+        mylist: action.mylist
+      });
+
     default:
       return state;
   }

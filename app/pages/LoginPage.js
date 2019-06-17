@@ -119,7 +119,7 @@ class LogInPage extends Component {
 				</View>
 			</ImageBackground>
 		);
-  	}
+  }
 }
 
 const mapStateToProps = (state) => ({

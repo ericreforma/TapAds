@@ -5,3 +5,5 @@ export ProfilePage from './ProfilePage';
 export SignUpPage from './SignUpPage';
 export LoadingPage from './LoadingPage';
 export SamplePage from './SamplePage';
+export CampaignPage from './CampaignPage';
+export MyCampaignPage from './MyCampaignPage';

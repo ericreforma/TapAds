@@ -40,6 +40,7 @@ class HomePage extends Component {
     componentDidMount() {
       this.props.CampaignRecRequest();
       this.props.CampaignListRequest();
+      this.props.dispatchMyList();
     }
 
     _renderCategoryItem = ({ item }) => (
@@ -52,9 +53,7 @@ class HomePage extends Component {
         this.props.CampaignListRequest();
     };
 
-    checkProps() {
-      console.log(this.props.isRequesting);
-    }
+
     render() {
         return (
             <Page>
@@ -172,7 +171,8 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   CampaignChangeCategory: (category) => dispatch(CampaignAction.changeCategory(category)),
   CampaignListRequest: () => dispatch(CampaignAction.list()),
-  CampaignRecRequest: () => dispatch(CampaignAction.recommended())
+  CampaignRecRequest: () => dispatch(CampaignAction.recommended()),
+  dispatchMyList: () => dispatch(CampaignAction.mylist())
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(HomePage);

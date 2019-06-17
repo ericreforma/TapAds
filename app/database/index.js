@@ -64,7 +64,34 @@ UserVehicle.schema = {
   }
 };
 
-const realm = new Realm({ schema: [Token, User, Rating, UserVehicle] });
+class Campaign extends Realm.Object {}
+Campaign.schema = {
+  name: 'Campaign',
+  primaryKey: 'id',
+  properties: {
+    id: 'int',
+    campaign_id: 'int',
+    client_id: 'int',
+    name: 'string',
+    description: 'string',
+    location: 'string',
+    media_id: 'int',
+    vehicle_classification: 'int',
+    vehicle_type: 'int',
+    vehicle_stickerArea: 'int',
+    slots: 'int',
+    pay_basic: 'float',
+    pay_additional: 'float',
+    pay_additional_km: 'float',
+    created_at: 'date',
+    slots_used: 'int',
+    active: 'bool',
+    completed: 'bool',
+    favorite: 'bool'
+  }
+};
+
+const realm = new Realm({ schema: [Token, User, Rating, UserVehicle, Campaign] });
 
 export const UserSchema = {
   update: (user, callbackSuccess, callbackFailed) => {
@@ -194,4 +221,39 @@ export const TokenSchema = {
     api.headers.Authorization = `Bearer ${token}`;
     return api;
   }
+};
+
+export const CampaignSchema = {
+  insert: (campaign, callbackFailed) => {
+    try {
+      realm.write(() => {
+        realm.create('Campaign', {
+          id: campaign.id,
+          campaign_id: campaign.id,
+          client_id: campaign.client_id,
+          name: campaign.name,
+          description: campaign.description,
+          location: campaign.location,
+          media_id: campaign.media_id,
+          vehicle_classification: campaign.vehicle_classification,
+          vehicle_type: campaign.vehicle_type,
+          vehicle_stickerArea: campaign.vehicle_stickerArea,
+          slots: campaign.slots,
+          pay_basic: parseFloat(campaign.pay_basic),
+          pay_additional: parseFloat(campaign.pay_additional),
+          pay_additional_km: parseFloat(campaign.pay_additional_km),
+          created_at: moment(campaign.created_at).format(DATETIME_FORMAT),
+          slots_used: campaign.slots_used,
+          active: true,
+          completed: false,
+          favorite: false
+        });
+      });
+    } catch (e) {
+      callbackFailed(e);
+    }
+  },
+
+  get: () => realm.objects('Campaign'),
+
 };

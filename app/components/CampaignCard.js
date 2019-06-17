@@ -16,7 +16,8 @@ import { VehicleType } from './VehicleType';
 import { VEHICLE } from '../config/variables';
 import { toMoney } from '../utils';
 
-export const CampaignCardList = ({ campaigns }) =>
+
+export const CampaignCardList = ({ campaigns, viewDetails }) =>
   campaigns.map((campaign, index) =>
     <View
         key={index}
@@ -73,6 +74,7 @@ export const CampaignCardList = ({ campaigns }) =>
                 lastChild
                 backgroundColor={theme.COLOR_GRAY_HEAVY}
                 buttonViewInfo
+                buttonViewOnPress={() => { viewDetails(campaign.id); }}
             >
                 <CardColumnContentBody>
                     <Text
@@ -89,7 +91,7 @@ export const CampaignCardList = ({ campaigns }) =>
     </View>
   );
 
-export const CampaignCardRec = ({ campaigns }) => {
+export const CampaignCardRec = ({ campaigns, viewDetails }) => {
   const windowWidth = Dimensions.get('window').width;
   const vehicleTypes = Object.values(VEHICLE.TYPE);
 
@@ -152,7 +154,12 @@ export const CampaignCardRec = ({ campaigns }) => {
               </CardBody>
             </View>
 
-            <CardFooter active justifyContent buttonViewInfo >
+            <CardFooter
+              active
+              justifyContent
+              buttonViewInfo
+              buttonViewOnPress={() => { viewDetails(data.item.id); }}
+            >
                 <LabelText color="white">P {toMoney(data.item.pay_basic)}</LabelText>
                 <CommonText color="white">BasicPay</CommonText>
             </CardFooter>
