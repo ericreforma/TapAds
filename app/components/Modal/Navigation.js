@@ -78,12 +78,19 @@ export default class ModalMenu extends Component {
                                     <TouchableOpacity
                                         style={styles.navigationContentBodyTopSpaceBetween}
                                         onPress={() => {
+                                            this.props.menuButtonOnPress();
                                             switch(index) {
                                                 case 0:
                                                     return this.props.navigation.navigate('Mycampaign');
 
                                                 case 1: 
                                                     return this.props.navigation.navigate('Profile');
+                                                
+                                                case 2: 
+                                                    return this.props.navigation.navigate('Messenger');
+                                                
+                                                case 3:
+                                                    return this.props.navigation.navigate('TermsAndCondition');
                                             }
                                         }}
                                     >

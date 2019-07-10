@@ -82,7 +82,7 @@ export default class NotificationPage extends Component {
 
     notificationOnPress = (action) => () => {
         if(action == 1) {
-            this.props.navigation.navigate('Messenger');
+            this.props.navigation.navigate('Chat');
         }
     }
 

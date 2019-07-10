@@ -200,6 +200,24 @@ export default class ProfilePage extends Component {
                         navigation={this.props.navigation}
                     />
 
+                    <View
+                        style={{
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            marginTop: 5
+                        }}
+                    >
+                        <TouchableOpacity
+                            onPress={e => this.props.navigation.navigate('ProfileInfo')}
+                        >
+                            <Text
+                                style={styles.homePageViewAll}
+                            >
+                                View Profile Info
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
+
                     {/* earnings */}
                     <View
                         style={{
@@ -421,7 +439,9 @@ export default class ProfilePage extends Component {
                                     flexDirection: 'row'
                                 }}
                             >
-                                <TouchableOpacity>
+                                <TouchableOpacity
+                                    onPress={e => this.props.navigation.navigate('Addvehicle')}
+                                >
                                     <Text
                                         style={[
                                             styles.homePageViewAll,

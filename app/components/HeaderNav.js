@@ -94,6 +94,7 @@ class UserInfo extends Component {
                     >
                         <Image
                             style={styles.headerNavProfilePictureImage}
+                            resizeMode="cover"
                             source={this.props.profilePicture}
                         />
                     </TouchableOpacity>

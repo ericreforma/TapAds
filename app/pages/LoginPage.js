@@ -21,7 +21,6 @@ class LogInPage extends Component {
 
 	render() {
 		return (
-
 			<ImageBackground
 				resizeMode="stretch"
 				source={require('../assets/image/login_page_bg.png')}

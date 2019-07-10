@@ -5,15 +5,18 @@ import {
     Dimensions,
     ImageBackground,
     TouchableOpacity,
-    TextInput,
     Animated,
-    Image,
-    Keyboard
+    Image
 } from 'react-native';
 
 import ModalMenu from '../components/Modal/Navigation';
 import { HeaderNav, UserInfo } from '../components/HeaderNav';
-import { LabelText, CommonText } from '../components/Text';
+import {
+    LabelText,
+    Common,
+    CommonOverflow,
+    LabelOverflow
+} from '../components/Text';
 
 import theme from '../styles/theme.style';
 import styles from '../styles/page.Home.style';
@@ -36,37 +39,65 @@ export default class MessengerPage extends Component {
             userType: 'user'
         },
 
-        message: '',
-        messengerData: {
-            id: 5,
-            brand: 'Brand Name',
-        },
-        messengerMessages: [
+        conversations: [
             {
-                from: 'client',
-                message: 'Hi! Lorem ipsum dolor'
+                id: 5,
+                client_id: 4,
+                business_name: 'Mcdonalds Philippines',
+                message: 'Greetings! We are pleased to announce that lorem ipsum dolor sit amet',
+                sender: 1,
+                client_media_url: require('../assets/image/sample_client_mcdo.png'),
+                created_at: '2019-07-09 10:00:00'
             },{
-                from: 'client',
-                message: 'Consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labo re et dolore magna aliqua'
+                id: 10,
+                client_id: 5,
+                business_name: 'Kia Philippines',
+                message: 'Hello! We are pleased to announce that lorem ipsum dolor sit amet',
+                sender: 1,
+                client_media_url: require('../assets/image/sample_client_kia.png'),
+                created_at: '2019-07-09 09:00:00'
             },{
-                from: 'user',
-                message: 'Hey man! Ut enim ad minim'
+                id: 11,
+                client_id: 6,
+                business_name: 'Davies Paints',
+                message: 'Thank you! I hope to be lorem ipsum dolor sit amet',
+                sender: 0,
+                client_media_url: require('../assets/image/sample_client_davies.png'),
+                created_at: '2019-07-09 22:00:00'
             },{
-                from: 'user',
-                message: 'What\'s up?'
+                id: 12,
+                client_id: 7,
+                business_name: 'Pioneer Adhesives',
+                message: 'Hi! I have some inquiries regarding the lorem ipsum dolor sit amet',
+                sender: 0,
+                client_media_url: require('../assets/image/sample_client_pioneer.png'),
+                created_at: '2019-07-09 21:00:00'
             },{
-                from: 'client',
-                message: 'Veniam, quis nostrud'
+                id: 13,
+                client_id: 8,
+                business_name: 'Manulife Philippines',
+                message: 'Hello! Thank you for this! I love the lorem ipsum dolor sit amet',
+                sender: 0,
+                client_media_url: require('../assets/image/sample_client_manulife.png'),
+                created_at: '2019-07-09 19:00:00'
+            },{
+                id: 14,
+                client_id: 9,
+                business_name: 'Fujifilm Philippines',
+                message: 'Thank you so much! I would love to lorem ipsum dolor sit amet',
+                sender: 0,
+                client_media_url: require('../assets/image/sample_client_fuji.png'),
+                created_at: '2019-07-09 17:00:00'
+            },{
+                id: 15,
+                client_id: 10,
+                business_name: 'Lorem Philippines',
+                message: 'Thank you so much! I would love to lorem ipsum dolor sit amet',
+                sender: 0,
+                client_media_url: null,
+                created_at: '2019-07-09 17:00:00'
             }
         ]
-    }
-    
-    componentWillMount = () => {
-        this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow);
-    }
-    
-    _keyboardDidShow = () => {
-        this._scrollView.scrollToEnd({animated: true});
     }
 
     menuButtonOnPress = () => {
@@ -89,26 +120,16 @@ export default class MessengerPage extends Component {
             modalContainerzIndex: 1
         });
     }
-    
-    messageInputOnChangeText = (text) => {
-        this.setState({ message: text });
-    }
 
-    sendMessageOnPress = () => {
-        var message = this.state.message,
-            messengerMessages = this.state.messengerMessages;
+    convert12HourTime = (timestamp) => {
+        var time = timestamp.split(' ')[1],
+            hour = parseInt(time.split(':')[0]),
+            min = time.split(':')[1],
+            time = hour == 0 ? '12' : (
+                hour < 12 ? hour : hour - 12
+            ) + `:${min} ${hour < 12 ? 'AM' : 'PM'}`;
 
-        if(message !== '') {
-            messengerMessages.push({
-                from: this.state.userData.userType,
-                message: message
-            });
-
-            this.setState({
-                message: '',
-                messengerMessages: messengerMessages
-            });
-        }
+        return time;
     }
 
     render() {
@@ -129,211 +150,136 @@ export default class MessengerPage extends Component {
                     navigation={this.props.navigation}
                 />
                 
-                <ScrollView
-                    overScrollMode='never'
-                    showsVerticalScrollIndicator={false}
-                    scrollEnabled={this.state.scrollEnable}
-                    ref={ref => this._scrollView = ref}
-                    onContentSizeChange={(contentWidth, contentHeight) => {
-                        this._scrollView.scrollToEnd({animated: true});
-                    }}
-                >
-                    <UserInfo
-                        profilePicture={require('../assets/image/male_avatar.png')}
-                        userData={this.state.userData}
-                        navigation={this.props.navigation}
-                    />
-
-                    <View
-                        style={{
-                            marginHorizontal: 15,
-                            marginTop: 30
-                        }}
-                    >
-                        <View
-                            style={{
-                                backgroundColor: theme.COLOR_DIRTY_WHITE,
-                                paddingVertical: 20,
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                borderTopLeftRadius: theme.PAGE_CARD_RADIUS,
-                                borderTopRightRadius: theme.PAGE_CARD_RADIUS
-                            }}
-                        >
-                            <LabelText>
-                                {this.state.messengerData.brand}
-                            </LabelText>
-                        </View>
-
-                        <View
-                            style={{
-                                backgroundColor: theme.COLOR_WHITE,
-                                paddingHorizontal: 10,
-                                minHeight: this.state.height / 2.5
-                            }}
-                        >
-                            {this.state.messengerMessages.map((message, index) =>
-                                <View
-                                    key={index}
-                                    style={{
-                                        marginTop: index == 0 ? 20 : 5,
-                                        marginBottom: index == (this.state.messengerMessages.length - 1) ? 20 : 5,
-                                        justifyContent: message.from == 'client' ? 'flex-start' : 'flex-end',
-                                        alignItems: message.from == 'client' ? 'flex-end' : 'flex-end',
-                                        flexDirection: 'row',
-                                    }}
-                                >
-                                    <View
-                                        style={{
-                                            backgroundColor: message.from == 'client' ? theme.COLOR_GRAY_CHAT : theme.COLOR_LIGHT_BLUE,
-                                            position: 'absolute',
-                                            left: message.from == 'client' ? 0 : null,
-                                            right: message.from == 'client' ? null : 0,
-                                            bottom: 0
-                                        }}
-                                    >
-                                        <View
-                                            style={{
-                                                backgroundColor: theme.COLOR_WHITE,
-                                                borderBottomRightRadius: message.from == 'client' ? 12 : 0,
-                                                borderBottomLeftRadius: message.from == 'client' ? 0 : 12,
-                                                width: 21,
-                                                height: 20
-                                            }}
-                                        ></View>
-                                    </View>
-
-                                    <View
-                                        style={{
-                                            backgroundColor: message.from == 'client' ? theme.COLOR_GRAY_CHAT : theme.COLOR_LIGHT_BLUE,
-                                            borderRadius: 20,
-                                            borderBottomLeftRadius: message.from == 'client' ? 0 : 20,
-                                            borderBottomRightRadius: message.from == 'client' ? 20 : 0,
-                                            paddingVertical: 10,
-                                            paddingHorizontal: 20,
-                                            maxWidth: '80%',
-                                            zIndex: 10,
-                                            marginLeft: message.from == 'client' ? 20 : 0,
-                                            marginRight: message.from == 'client' ? 0 : 20,
-                                            flexWrap: 'wrap'
-                                        }}
-                                    >
-                                        <CommonText
-                                            color={message.from == 'client' ? 'black' : 'white'}
-                                        >
-                                            {message.message}
-                                        </CommonText>
-                                    </View>
-                                </View>
-                            )}
-                        </View>
-                    </View>
-                </ScrollView>
-                
-                {/* message container */}
                 <View
                     style={{
-                        width: '100%',
-                        backgroundColor: theme.COLOR_GRAY_HEAVY,
-                        paddingVertical: 10,
-                        paddingHorizontal: 20,
-                        flexDirection: 'row',
-                        justifyContent: 'center',
-                        alignItems: 'center'
+                        flex: 1,
                     }}
                 >
-                    <View
-                        style={{
-                            flex: 1,
-                            justifyContent: 'center',
-                            alignItems: 'flex-start'
-                        }}
+                    <ScrollView
+                        overScrollMode='never'
+                        showsVerticalScrollIndicator={false}
+                        scrollEnabled={this.state.scrollEnable}
                     >
-                        <TouchableOpacity
-                            onPress={() => alert('Open files')}
-                        >
-                            <Image
-                                style={{
-                                    width: 30,
-                                    height: 30,
-                                }}
-                                resizeMode="contain"
-                                source={require('../assets/image/icons/clip_icon.png')}
-                            />
-                        </TouchableOpacity>
-                    </View>
+                        <UserInfo
+                            profilePicture={require('../assets/image/male_avatar.png')}
+                            userData={this.state.userData}
+                            navigation={this.props.navigation}
+                        />
 
-                    <View
-                        style={{
-                            flex: 6,
-                            justifyContent: 'flex-end',
-                            alignItems: 'flex-end'
-                        }}
-                    >
                         <View
                             style={{
-                                width: '100%',
-                                paddingLeft: 20,
-                                paddingRight: 45,
-                                borderRadius: 50,
-                                backgroundColor: theme.COLOR_WHITE,
-                                justifyContent: 'center'
+                                margin: 20,
                             }}
                         >
-                            <TextInput
+                            <View
                                 style={{
-                                    fontSize: theme.PAGE_CARD_RADIUS,
-                                    maxHeight: this.state.height / 7
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    marginBottom: 20,
                                 }}
-                                placeholderTextColor={theme.COLOR_GRAY_MEDIUM}
-                                placeholder="Message"
-                                keyboardAppearance="dark"
-                                multiline={true}
-                                value={this.state.message}
-                                onChangeText={this.messageInputOnChangeText}
-                            />
-
-                            <TouchableOpacity
-                                style={{
-                                    position: 'absolute',
-                                    right: 5
-                                }}
-                                onPress={() => alert('Open mic')}
                             >
-                                <Image
-                                    style={{
-                                        width: 38,
-                                        height: 38,
-                                    }}
-                                    resizeMode="contain"
-                                    source={require('../assets/image/icons/mic_icon.png')}
-                                />
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-
-                    <View
-                        style={{
-                            flex: 1,
-                            justifyContent: 'center',
-                            alignItems: 'flex-end'
-                        }}
-                    >
-                        <TouchableOpacity
-                            onPress={this.sendMessageOnPress}
-                        >
-                            <Image
+                                <LabelText color="white">Messenger</LabelText>
+                            </View>
+                            
+                            <View
                                 style={{
-                                    width: 30,
-                                    height: 30,
+                                    borderRadius: 15,
+                                    paddingHorizontal: 10,
+                                    paddingVertical: 20,
+                                    backgroundColor: theme.COLOR_WHITE
                                 }}
-                                resizeMode="contain"
-                                source={require('../assets/image/icons/send_icon.png')}
-                            />
-                        </TouchableOpacity>
-                    </View>
-                </View>
+                            >
+                                {this.state.conversations.map(c =>
+                                    <TouchableOpacity
+                                        key={c.id}
+                                        style={{
+                                            marginVertical: 7,
+                                            borderRadius: 15,
+                                            paddingVertical: 10,
+                                            paddingHorizontal: 20,
+                                            backgroundColor: theme.COLOR_WHITE,
+                                            flexDirection: 'row',
+                                            alignItems: 'center',
+                                            elevation: 3
+                                        }}
+                                        onPress={e => this.props.navigation.navigate('Chat')}
+                                    >
+                                        {/* client image */}
+                                        <View
+                                            style={{
+                                                width: 50,
+                                                height: 50,
+                                                borderRadius: 30,
+                                                backgroundColor: theme.COLOR_GRAY_HEAVY,
+                                                justifyContent: 'center',
+                                                alignItems: 'center'
+                                            }}
+                                        >
+                                            {c.client_media_url ? (
+                                                <Image
+                                                    style={{
+                                                        width: 50,
+                                                        height: 50,
+                                                        borderRadius: 30
+                                                    }}
+                                                    resizeMode="cover"
+                                                    source={c.client_media_url}
+                                                />
+                                            ) : (
+                                                <Image
+                                                    style={{
+                                                        width: 30,
+                                                        height: 30,
+                                                        borderRadius: 30
+                                                    }}
+                                                    resizeMode="cover"
+                                                    source={require('../assets/image/icons/gallery-icon.png')}
+                                                />
+                                            )}
+                                        </View>
+                                    
+                                        {/* client name and message and time*/}
+                                        <View
+                                            style={{
+                                                flex: 1,
+                                                marginLeft: 15,
+                                                flexDirection: 'row',
+                                                alignItems: 'flex-end'
+                                            }}
+                                        >
+                                            <View
+                                                style={{
+                                                    marginRight: 10,
+                                                    flex: 1,
+                                                }}
+                                            >
+                                                <LabelOverflow
+                                                    label={c.business_name}
+                                                    nonActive={c.sender == 0 ? true : false}
+                                                    numberOfLines={1}
+                                                />
 
+                                                <CommonOverflow
+                                                    label={c.sender == 0 ? `You: ${c.message}` : c.message}
+                                                    numberOfLines={1}
+                                                    nonActive={c.sender == 0 ? true : false}
+                                                />
+                                            </View>
+
+                                            <View>
+                                                <Common
+                                                    label={this.convert12HourTime(c.created_at)}
+                                                    nonActive={c.sender == 0 ? true : false}
+                                                />
+                                            </View>
+                                        </View>
+                                    </TouchableOpacity>
+                                )}
+                            </View>
+                        </View>
+                    </ScrollView>
+                </View>
+                    
                 <ModalMenu
                     modalContainerzIndex={this.state.modalContainerzIndex}
                     width={this.state.width}
@@ -344,6 +290,6 @@ export default class MessengerPage extends Component {
                     navigation={this.props.navigation}
                 />
             </View>
-        )
+        );
     }
 }

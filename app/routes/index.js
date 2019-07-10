@@ -5,10 +5,14 @@ import HomePage from '../pages/HomePage';
 import NotificationPage from '../pages/NotificationPage';
 import SignUpPage from '../pages/SignUpPage';
 import ProfilePage from '../pages/ProfilePage';
+import ProfileInfoPage from '../pages/ProfileInfoPage';
 import MyCampaignPage from '../pages/MyCampaignPage';
 import CampaignCardActive from '../pages/CampaignCardActive';
 import MessengerPage from '../pages/MessengerPage';
 import CampaignPage from '../pages/CampaignPage';
+import ChatPage from '../pages/ChatPage';
+import TermsAndConditionPage from '../pages/TermsAndConditionPage';
+import AddVehiclePage from '../pages/AddVehiclePage';
 
 export default class Route extends Component {
 	render() {
@@ -28,9 +32,13 @@ const RouteStack = createStackNavigator(
 		Mycampaign: MyCampaignPage,
 		CampaignCardActive: CampaignCardActive,
 		Messenger: MessengerPage,
-		Campaign: CampaignPage
+		Campaign: CampaignPage,
+		ProfileInfo: ProfileInfoPage,
+		Chat: ChatPage,
+		TermsAndCondition: TermsAndConditionPage,
+		Addvehicle: AddVehiclePage
 	}, {
-        initialRouteName: 'Home',
+        initialRouteName: 'ProfileInfo',
 		headerMode: 'none',
 		navigationOptions: {
 			headerVisible: false,

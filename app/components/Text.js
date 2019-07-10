@@ -1,20 +1,34 @@
 import React, { Component } from 'react';
 import { Text } from 'react-native';
 import styles from '../styles/component.Text.style';
+import theme from '../styles/theme.style';
 
 class CommonText extends Component {
     render() {
         return (
             <Text
                 style={[
-                    styles.commonText,
+                    (
+                        this.props.bold
+                        ? styles.textBold
+                        : styles.commonText
+                    ),
+                    (
+                        this.props.xsmall
+                        ? styles.xsmallFontSize
+                        : styles.commonFontSize
+                    ),
                     (
                         this.props.color == 'white'
                         ? styles.textWhite
                         : (
                             this.props.color == 'blue'
                             ? styles.textBlue
-                            : styles.textBlack
+                            : (
+                                this.props.color == 'gray'
+                                ? styles.textGray
+                                : styles.textBlack
+                            )
                         )
                     )
                 ]}
@@ -43,7 +57,11 @@ class LabelText extends Component {
                     (
                         this.props.large
                         ? styles.textLarge
-                        : styles.textDefault
+                        : (
+                            this.props.small
+                            ? styles.commonFontSize
+                            : styles.textDefault
+                        )
                     )
                 ]}
             >
@@ -53,4 +71,71 @@ class LabelText extends Component {
     }
 }
 
-export { LabelText, CommonText };
+class Label extends Component {
+    render() {
+        return (
+            <Text
+                style={{
+                    color: this.props.nonActive ? theme.NEW_COLOR.COLOR_GRAY : theme.NEW_COLOR.COLOR_BLACK,
+                    fontFamily: 'Montserrat-Bold',
+                    fontSize: 16
+                }}
+            >
+                {this.props.label}
+            </Text>
+        );
+    }
+}
+
+class LabelOverflow extends Component {
+    render() {
+        return (
+            <Text
+                style={{
+                    color: this.props.nonActive ? theme.NEW_COLOR.COLOR_GRAY : theme.NEW_COLOR.COLOR_BLACK,
+                    fontFamily: 'Montserrat-Bold',
+                    fontSize: 16
+                }}
+                numberOfLines={this.props.numberOfLines}
+            >
+                {this.props.label}
+            </Text>
+        );
+    }
+}
+
+class Common extends Component {
+    render() {
+        return (
+            <Text
+                style={{
+                    color: this.props.nonActive ? theme.NEW_COLOR.COLOR_GRAY : theme.NEW_COLOR.COLOR_BLACK,
+                    fontFamily: 'Montserrat-Medium',
+                    fontSize: theme.FONT_SIZE_SMALL
+                }}
+                onLayout={this.props.onLayout}
+            >
+                {this.props.label}
+            </Text>
+        );
+    }
+}
+
+class CommonOverflow extends Component {
+    render() {
+        return (
+            <Text
+                style={{
+                    color: this.props.nonActive ? theme.NEW_COLOR.COLOR_GRAY : theme.NEW_COLOR.COLOR_BLACK,
+                    fontFamily: 'Montserrat-Medium',
+                    fontSize: theme.FONT_SIZE_SMALL
+                }}
+                numberOfLines={this.props.numberOfLines}
+            >
+                {this.props.label}
+            </Text>
+        );
+    }
+}
+
+export { LabelText, CommonText, Label, Common, CommonOverflow, LabelOverflow };
