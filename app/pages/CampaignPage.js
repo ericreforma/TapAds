@@ -1,15 +1,14 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import {
     View,
     Image,
-    Animated,
     ScrollView,
-    ImageBackground,
     Dimensions,
     Text
 } from 'react-native';
 
-import { HeaderNav, UserInfo } from '../components/HeaderNav';
+import UserInfo from '../components/UserInfo';
 import {
     Card,
     CardHeader,
@@ -17,54 +16,27 @@ import {
     CardFooter,
 } from '../components/Card';
 import { LabelText, CommonText } from '../components/Text';
-import { VehicleType, VehicleCategory } from '../components/VehicleType';
+import { VehicleType } from '../components/VehicleType';
 import ButtonBlue from '../components/ButtonBlue';
-
+import { Page } from './Page';
+import { VEHICLE } from '../config/variables';
 import theme from '../styles/theme.style';
 import styles from '../styles/page.Home.style';
+import { CampaignAction } from '../redux/actions/campaign.action';
 
-export default class CampaignPage extends Component {
-    state = {
-        modalFadeBackground: new Animated.Value(0),
-        modalContainerzIndex: 0,
-        modalXValue: new Animated.Value(Dimensions.get('window').width),
-        userData: {
-            name: 'Patrick Cua',
-            rate: 4.60239,
-            totalRate: 35 //total number of clients(rating)
-        },
+class CampaignPage extends Component {
+    constructor(props) {
+      super(props);
+      this.state = {
         height: Dimensions.get('window').height,
         width: Dimensions.get('window').width,
-        campaignData: {
-            campaign: 'Campaign Name',
-            client: 'Brand name here',
-            description: 'Porttitor congue quam ridiculus mi felis sollicitudin etiam non conubia blandit viverra ullamcorper. Torquent donec hac nulla. Sagittis dictumst potenti tincidunt. Bibendum hac tellus felis lacus gravida.',
-            location: 'Quezon City',
-            vehicleType: 0,
-            vehicleClass: 'Private',
-            slots: '100',
-            availableSlots: '67',
-            basicPay: '5000',
-            addPay: '1000',
-            perKm: '45'
-        }
+        vehicleType: Object.values(VEHICLE.TYPE)
+      };
     }
 
     render() {
-        const { campaignData } = this.state;
-        
         return (
-            <View>
-                <ImageBackground
-                    style={styles.homePageBackgroundImage}
-                    resizeMode="stretch"
-                    source={require('../assets/image/common_page_background.png')}
-                ></ImageBackground>
-                
-                <HeaderNav
-                    menuButtonOnPress={this.menuButtonOnPress}
-                    navigation={this.props.navigation}
-                />
+            <Page>
 
                 <ScrollView
                     style={styles.homePageScrollView}
@@ -73,12 +45,8 @@ export default class CampaignPage extends Component {
                     scrollEnabled={this.state.scrollEnable}
                 >
 
-                    <UserInfo
-                        profilePicture={require('../assets/image/male_avatar.png')}
-                        userData={this.state.userData}
-                        navigation={this.props.navigation}
-                    />
-                    
+                    <UserInfo />
+
                     <View
                         style={styles.homePageContainer}
                     >
@@ -92,10 +60,10 @@ export default class CampaignPage extends Component {
                             <Card>
                                 <CardHeader active={true}>
                                     <LabelText>
-                                        {campaignData.campaign}
+                                        {this.props.campaign.name}
                                     </LabelText>
                                     <CommonText>
-                                        {campaignData.client}
+                                        {this.props.campaign.client[0].business_name}
                                     </CommonText>
                                 </CardHeader>
 
@@ -110,7 +78,7 @@ export default class CampaignPage extends Component {
                                             }
                                         ]}
                                     >
-                                        {campaignData.description}
+                                        {this.props.campaign.description}
                                     </Text>
                                 </CardBody>
 
@@ -121,26 +89,26 @@ export default class CampaignPage extends Component {
                                         <View
                                             style={styles.homePageRecommendedCampaignFirstCol}
                                         >
-                                            <LabelText>{campaignData.location}</LabelText>
+                                            <LabelText>{this.props.campaign.location}</LabelText>
                                             <CommonText>Location</CommonText>
                                         </View>
-                                        
+
                                         <View
                                             style={styles.homePageAlignCenter}
                                         >
                                             <VehicleType
-                                                vehicleType={campaignData.vehicleType}
+                                                vehicleType={this.props.campaign.vehicle_classification}
                                                 vehicleColor="black"
                                             />
-                                            
-                                            <CommonText>{campaignData.vehicleClass}</CommonText>
+
+                                            <CommonText>{this.state.vehicleType[this.props.campaign.vehicle_type].name}</CommonText>
                                         </View>
 
                                         <View
                                             style={styles.homePageAlignRight}
                                         >
                                             <View style={{flexDirection: 'row'}}>
-                                                <LabelText>{campaignData.availableSlots}</LabelText>
+                                                <LabelText>{this.props.campaign.slots_used}</LabelText>
 
                                                 <Text
                                                     style={styles.homePageOfTextBlack}
@@ -148,7 +116,7 @@ export default class CampaignPage extends Component {
                                                     of
                                                 </Text>
 
-                                                <LabelText>{campaignData.slots}</LabelText>
+                                                <LabelText>{this.props.campaign.slots}</LabelText>
                                             </View>
 
                                             <CommonText>Slots available</CommonText>
@@ -176,15 +144,15 @@ export default class CampaignPage extends Component {
 
                                             <View style={{width: 5}}></View>
 
-                                            <LabelText>P{campaignData.addPay}</LabelText>
+                                            <LabelText>P{this.props.campaign.pay_additional}</LabelText>
 
                                             <View style={{width: 5}}></View>
 
                                             <CommonText>every</CommonText>
-                                            
+
                                             <View style={{width: 5}}></View>
 
-                                            <LabelText>{campaignData.perKm}km</LabelText>
+                                            <LabelText>{this.props.campaign.pay_additional_km}km</LabelText>
                                         </View>
 
                                         <View
@@ -203,7 +171,7 @@ export default class CampaignPage extends Component {
 
                                             <View style={{width: 5}}></View>
 
-                                            <LabelText>P{campaignData.basicPay}</LabelText>
+                                            <LabelText>P{this.props.campaign.pay_basic}</LabelText>
                                         </View>
                                     </View>
 
@@ -223,7 +191,7 @@ export default class CampaignPage extends Component {
                                         />
                                     </View>
                                 </CardBody>
-                                
+
                                 <CardFooter
                                     active={true}
                                 >
@@ -236,6 +204,7 @@ export default class CampaignPage extends Component {
                                     >
                                         <ButtonBlue
                                             label="I'm interested"
+                                            onPress={() => { this.props.interestedCampaign(); }}
                                         />
                                     </View>
                                 </CardFooter>
@@ -243,7 +212,17 @@ export default class CampaignPage extends Component {
                         </View>
                     </View>
                 </ScrollView>
-            </View>
+            </Page>
         );
     }
 }
+
+const mapStateToProps = (state) => ({
+  campaign: state.campaignReducer.selected
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  interestedCampaign: () => dispatch(CampaignAction.interested()),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(CampaignPage);

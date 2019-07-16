@@ -7,7 +7,7 @@ import {
 } from 'react-native';
 import styles from '../styles/component.HeaderNav.style';
 
-class HeaderNav extends Component {
+export class HeaderNav extends Component {
     render() {
         return (
             <View
@@ -38,7 +38,7 @@ class HeaderNav extends Component {
                             source={require('../assets/image/icons/notification_icon.png')}
                         />
                     </TouchableOpacity>
-                    
+
                     <TouchableOpacity
                         onPress={this.props.menuButtonOnPress}
                     >

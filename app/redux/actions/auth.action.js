@@ -4,6 +4,8 @@ import {
   UserController
 } from '../../controllers';
 import { TokenSchema, UserSchema } from '../../database';
+import NavigationService from '../../services/navigation';
+
 
 export const AuthAction = {
   login: (email, password) => (dispatch) => {
@@ -18,15 +20,15 @@ export const AuthAction = {
           dispatch({ type: AUTH.LOGIN.SUCCESS });
           TokenSchema.update(authResponse.data.token,
             () => {
-              // SUCCESS
               dispatch({ type: USER.GET.PROFILE.REQUEST });
 
               UserController.request.profile()
               .then((userResponse) => {
-                dispatch({ type: USER.GET.PROFILE.SUCCESS });
+                dispatch({ type: USER.GET.PROFILE.SUCCESS, user: userResponse.data });
+
                 UserSchema.update(userResponse.data,
                 () => {
-                  console.log('UserSchema Saved');
+                  NavigationService.navigate('Loading');
                 },
                 (e) => {
                   console.log(e);

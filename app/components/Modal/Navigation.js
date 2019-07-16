@@ -9,6 +9,7 @@ import {
   LabelText,
   CommonText
 } from '../Text';
+import NavigationService from '../../services/navigation';
 import styles from '../../styles/component.Navigation.style';
 
 export default class ModalMenu extends Component {
@@ -78,20 +79,8 @@ export default class ModalMenu extends Component {
                                     <TouchableOpacity
                                         style={styles.navigationContentBodyTopSpaceBetween}
                                         onPress={() => {
-                                            this.props.menuButtonOnPress();
-                                            switch(index) {
-                                                case 0:
-                                                    return this.props.navigation.navigate('Mycampaign');
-
-                                                case 1: 
-                                                    return this.props.navigation.navigate('Profile');
-                                                
-                                                case 2: 
-                                                    return this.props.navigation.navigate('Messenger');
-                                                
-                                                case 3:
-                                                    return this.props.navigation.navigate('TermsAndCondition');
-                                            }
+                                            if (index == 0) NavigationService.navigate('CampaignCardActive')
+                                            else if (index == 1) NavigationService.navigate('Profile')
                                         }}
                                     >
                                         <CommonText color="white">{'<'}</CommonText>

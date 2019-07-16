@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import {
 	Text,
     View,
@@ -9,10 +10,10 @@ import {
     Dimensions,
     Animated
 } from 'react-native';
-import axios from 'axios';
 import Carousel from 'react-native-snap-carousel';
-
-import { HeaderNav, UserInfo } from '../components/HeaderNav';
+import { Page } from './Page';
+import { URL } from '../config/variables';
+import UserInfo from '../components/UserInfo';
 import { LabelText, CommonText } from '../components/Text';
 import ButtonBlue from '../components/ButtonBlue';
 import {
@@ -26,10 +27,11 @@ import ModalMenu from '../components/Modal/Navigation';
 import theme from '../styles/theme.style';
 import styles from '../styles/page.Home.style';
 
-export default class ProfilePage extends Component {
-    constructor() {
-        super();
+class ProfilePage extends Component {
+    constructor(props) {
+        super(props);
         this.state = {
+						user: [],
             // navigation menu
             modalFadeBackground: new Animated.Value(0),
             modalContainerzIndex: 0,
@@ -37,12 +39,6 @@ export default class ProfilePage extends Component {
             scrollEnable: true,
             width: Dimensions.get('window').width,
             height: Dimensions.get('window').height,
-
-            userData: {
-                name: 'Patrick Cua',
-                rate: 4.60239,
-                totalRate: 35 //total number of clients(rating)
-            },
 
             // history data
             historyData: [
@@ -118,6 +114,10 @@ export default class ProfilePage extends Component {
             vehicleCardSize: [],
         };
     }
+		componentDidMount() {
+			this.setState({ user: this.props.user });
+
+		}
 
     menuButtonOnPress = () => {
         Animated.timing(this.state.modalFadeBackground, {
@@ -148,7 +148,7 @@ export default class ProfilePage extends Component {
                 width: width,
                 active: [true].concat(vehicleDataImageLength - 1 > 0 ? Array(vehicleDataImageLength - 1).fill(false) : [])
             };
-        
+
         vehicleCardSize[index] = vehicleCardSizePush;
         this.setState({ vehicleCardSize: vehicleCardSize });
     }
@@ -160,45 +160,29 @@ export default class ProfilePage extends Component {
         this.setState({ vehicleCardSize: vehicleCardSize });
     }
 
-    _renderVehicleImage = (idx) => ({item, index}) => {
-        return (
-            <Image
-                style={{
-                    width: this.state.vehicleCardSize[idx].width,
-                    height: this.state.vehicleCardSize[idx].height,
-                    borderBottomLeftRadius: 15,
-                    borderTopLeftRadius: 15,
-                }}
-                source={item}
-            />
-        )
-    }
+    _renderVehicleImage = (idx) => ({ item }) => (
+        <Image
+            style={{
+                width: this.state.vehicleCardSize[idx].width,
+                height: this.state.vehicleCardSize[idx].height,
+                borderBottomLeftRadius: 15,
+                borderTopLeftRadius: 15,
+            }}
+            source={{ uri: `${URL.SERVER_MEDIA}/${item.url}` }}
+        />
+    );
 
 	render() {
 		return (
-            <View>
-                <ImageBackground
-                    style={styles.homePageBackgroundImage}
-                    resizeMode="stretch"
-                    source={require('../assets/image/common_page_background.png')}
-                ></ImageBackground>
-                
-                <HeaderNav
-                    menuButtonOnPress={this.menuButtonOnPress}
-                    navigation={this.props.navigation}
-                />
 
+            <Page>
                 <ScrollView
                     style={styles.homePageScrollView}
                     overScrollMode='never'
                     showsVerticalScrollIndicator={false}
                     scrollEnabled={this.state.scrollEnable}
                 >
-                    <UserInfo 
-                        profilePicture={require('../assets/image/male_avatar.png')}
-                        userData={this.state.userData}
-                        navigation={this.props.navigation}
-                    />
+                    <UserInfo />
 
                     <View
                         style={{
@@ -238,7 +222,7 @@ export default class ProfilePage extends Component {
                                     }}
                                 >
                                     <LabelText>Earnings</LabelText>
-                                
+
                                     <TouchableOpacity>
                                         <Text
                                             style={styles.homePageViewAll}
@@ -247,7 +231,7 @@ export default class ProfilePage extends Component {
                                         </Text>
                                     </TouchableOpacity>
                                 </View>
-                                
+
                                 <View
                                     style={{
                                         flexDirection: 'column',
@@ -302,7 +286,7 @@ export default class ProfilePage extends Component {
                             }}
                         >
                             <LabelText color="white">History</LabelText>
-                                
+
                             <TouchableOpacity>
                                 <Text
                                     style={styles.homePageViewAll}
@@ -311,7 +295,7 @@ export default class ProfilePage extends Component {
                                 </Text>
                             </TouchableOpacity>
                         </View>
-                        
+
                         {/* content */}
                         <View
                             style={{
@@ -336,7 +320,7 @@ export default class ProfilePage extends Component {
                                         >
                                             <LabelText>Placements</LabelText>
                                         </View>
-                                        
+
                                         <View
                                             style={{
                                                 width: this.state.width / 4.5,
@@ -346,7 +330,7 @@ export default class ProfilePage extends Component {
                                         >
                                             <LabelText>Date</LabelText>
                                         </View>
-                                        
+
                                         <View
                                             style={{
                                                 width: this.state.width / 4,
@@ -388,7 +372,7 @@ export default class ProfilePage extends Component {
                                             >
                                                 <CommonText>{hd.campaign}</CommonText>
                                             </View>
-                                            
+
                                             <View
                                                 style={{
                                                     width: this.state.width / 4.5,
@@ -398,7 +382,7 @@ export default class ProfilePage extends Component {
                                             >
                                                 <CommonText>{hd.date}</CommonText>
                                             </View>
-                                            
+
                                             <View
                                                 style={{
                                                     width: this.state.width / 4,
@@ -433,7 +417,7 @@ export default class ProfilePage extends Component {
                             }}
                         >
                             <LabelText color="white">Listed Vehicles</LabelText>
-                            
+
                             <View
                                 style={{
                                     flexDirection: 'row'
@@ -457,7 +441,7 @@ export default class ProfilePage extends Component {
                                 >
                                     |
                                 </Text>
-                                
+
                                 <TouchableOpacity>
                                     <Text
                                         style={[
@@ -470,9 +454,9 @@ export default class ProfilePage extends Component {
                                 </TouchableOpacity>
                             </View>
                         </View>
-                    
+
                         {/* content */}
-                        {this.state.vehicleData.map((vehicle, index) =>
+                        {this.props.user.vehicles.map((vehicle, index) =>
                             <View
                                 key={index}
                                 style={{
@@ -484,7 +468,7 @@ export default class ProfilePage extends Component {
                                 >
                                     <CardColumnContent
                                         firstChild={true}
-                                        backgroundColor={vehicle.vehicleImages.length !== 0 ? theme.COLOR_GRAY_HEAVY + '00' : theme.COLOR_GRAY_HEAVY}
+                                        backgroundColor={vehicle.photo.length !== 0 ? theme.COLOR_GRAY_HEAVY + '00' : theme.COLOR_GRAY_HEAVY}
                                         getCardSize={this.getCardSize}
                                         cardIndex={index}
                                     >
@@ -496,10 +480,10 @@ export default class ProfilePage extends Component {
                                             {
                                                 this.state.vehicleCardSize[index]
                                                 ? (
-                                                    vehicle.vehicleImages.length !== 0
+                                                    vehicle.photo.length !== 0
                                                     ? <View>
                                                         <Carousel
-                                                            data={vehicle.vehicleImages}
+                                                            data={vehicle.photo}
                                                             renderItem={this._renderVehicleImage(index)}
                                                             layout={'default'}
                                                             inactiveSlideScale={1}
@@ -528,7 +512,7 @@ export default class ProfilePage extends Component {
                                                                         flexDirection: 'row',
                                                                     }}
                                                                 >
-                                                                    {vehicle.vehicleImages.map((vi, viIdx) =>
+                                                                    {vehicle.photo.map((vi, viIdx) =>
                                                                         <View
                                                                             key={viIdx}
                                                                             style={{
@@ -563,14 +547,14 @@ export default class ProfilePage extends Component {
                                                     source={require('../assets/image/icons/gallery-icon.png')}
                                                 />
                                             }
-                                            
+
                                         </View>
                                     </CardColumnContent>
 
                                     <CardColumnContent
                                         lastChild={true}
-                                        carType={vehicle.carType}
-                                        carSize={vehicle.carSize}
+                                        carType={vehicle.type}
+                                        carSize={vehicle.vehicle[0].classification}
                                     >
                                         <CardColumnContentBody>
                                             <View
@@ -600,7 +584,7 @@ export default class ProfilePage extends Component {
                                                             color: theme.COLOR_NORMAL_FONT,
                                                         }}
                                                     >
-                                                        {vehicle.model}
+                                                        {vehicle.vehicle[0].model}
                                                     </Text>
                                                 </View>
                                             </View>
@@ -633,7 +617,7 @@ export default class ProfilePage extends Component {
                                                             color: theme.COLOR_NORMAL_FONT,
                                                         }}
                                                     >
-                                                        {vehicle.year}
+                                                        {vehicle.vehicle[0].year}
                                                     </Text>
                                                 </View>
                                             </View>
@@ -654,7 +638,13 @@ export default class ProfilePage extends Component {
                     menuButtonOnPress={this.menuButtonOnPress}
                     navigation={this.props.navigation}
                 />
-            </View>
+            </Page>
 		);
     }
 }
+
+const mapStateToProps = (state) => ({
+	user: state.userReducer.user
+});
+
+export default connect(mapStateToProps)(ProfilePage);

@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { View, Text, Image, TextInput } from 'react-native';
+import { View, Text, Image } from 'react-native';
 import ButtonBlue from '../components/ButtonBlue';
 import styles from '../styles/component.Card.style';
 import theme from '../styles/theme.style';
+import { VEHICLE } from '../config/variables';
 
 class Card extends Component {
     render() {
@@ -72,7 +73,7 @@ class CardBody extends Component {
                 >
                     {this.props.children}
                 </View>
-                
+
                 <View style={(this.props.divider ? styles.cardBodyDivider : {})}>
                 </View>
             </View>
@@ -136,21 +137,25 @@ class CardColumnContent extends Component {
     }
 
     additionalCarInfo = (type, size) => {
-        var sources = [
+        const classifications = [
             {
-                url: require('../assets/image/icons/car_small_white_icon.png')
-            },{
-                url: require('../assets/image/icons/car_mid_white_icon.png')
-            },{
-                url: require('../assets/image/icons/car_large_white_icon.png')
-            },{
-                url: require('../assets/image/icons/motorcycle_white_icon.png')
+                url: VEHICLE.CLASS.small.icon.white,
+            }, {
+                url: VEHICLE.CLASS.mid.icon.white
+            }, {
+                url: VEHICLE.CLASS.large.icon.white
+            }, {
+                url: VEHICLE.CLASS.motorcycle.icon.white
             }
         ];
 
-        var sizes = ['small','mid','large','motorcycle'];
+        const types = [
+          VEHICLE.TYPE.public.name,
+          VEHICLE.TYPE.private.name,
+          VEHICLE.TYPE.oncall.name
+        ];
 
-        if(type && sizes.indexOf(size) !== -1) {
+        if (type != null) {
             return (
                 <View style={styles.cardColumnContentCarInfo}>
                     <View
@@ -158,12 +163,12 @@ class CardColumnContent extends Component {
                     >
                         <Image
                             style={styles.cardColumnContentCarInfoImage}
-                            source={sources[sizes.indexOf(size)].url}
+                            source={classifications[size].url}
                             resizeMode="contain"
                         />
                     </View>
 
-                    <Text style={styles.cardColumnContentCarInfoType}>{type}</Text>
+                    <Text style={styles.cardColumnContentCarInfoType}>{types[type]}</Text>
                 </View>
             );
         }
@@ -222,7 +227,7 @@ class CardColumnContentBody extends Component {
                 >
                     {this.props.children}
                 </View>
-                
+
                 <View
                     style={
                         (

@@ -1,36 +1,51 @@
+
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import {
-    View,
     Text,
+    View,
     Image,
     TouchableOpacity
 } from 'react-native';
 import styles from '../styles/component.HeaderNav.style';
+import { UserController } from '../controllers';
 
-export default class UserInfo extends Component {
-    rating = (rate) => {
-        rate = Math.trunc(Math.round(this.props.userData.rate * 10) / 10);
+class UserInfo extends Component {
+  constructor(props) {
+    super(props);
 
-        return (
-            <View
-                style={styles.headerNavUserStarContainer}
-            >
-                {Array(5).fill(0).map((star, starIndex) =>
-                    <Image
-                        key={starIndex}
-                        style={styles.headerNavUserStar}
-                        source={
-                            (
-                                starIndex < rate
-                                ? require('../assets/image/icons/star_highlight_icon.png')
-                                : require('../assets/image/icons/star_icon.png')
-                            )
-                        }
-                    />
-                )}
-            </View>
-        );
-    }
+    this.state = {
+      user: [],
+      rate: 12
+    };
+  }
+
+  componentDidMount() {
+    this.setState({
+      user: this.props.user,
+      rate: UserController.rating(this.props.user.ratings)
+    });
+  }
+
+  rating = () => (
+      <View
+          style={styles.headerNavUserStarContainer}
+      >
+          {Array(5).fill(0).map((star, starIndex) =>
+              <Image
+                  key={starIndex}
+                  style={styles.headerNavUserStar}
+                  source={
+                      (
+                          starIndex < Math.trunc(this.state.rate.average)
+                          ? require('../assets/image/icons/star_highlight_icon.png')
+                          : require('../assets/image/icons/star_icon.png')
+                      )
+                  }
+              />
+          )}
+      </View>
+    );
 
 
     render() {
@@ -41,7 +56,10 @@ export default class UserInfo extends Component {
                 <View
                     style={[styles.headerNavCenter, styles.headerNavProfilePicture]}
                 >
-                    <TouchableOpacity activeOpacity={0.8}>
+                    <TouchableOpacity
+                        activeOpacity={0.8}
+                        onPress={() => this.props.navigation.navigate('Profile')}
+                    >
                         <Image
                             style={styles.headerNavProfilePictureImage}
                             source={this.props.profilePicture}
@@ -55,7 +73,7 @@ export default class UserInfo extends Component {
                     <Text
                         style={styles.headerNavUserName}
                     >
-                        {this.props.userData.name}
+                        { this.state.user.name }
                     </Text>
 
                     <View
@@ -64,15 +82,15 @@ export default class UserInfo extends Component {
                         <Text
                             style={styles.headerNavUserRating}
                         >
-                            {Math.round(this.props.userData.rate * 10) / 10}
+                            { this.state.rate.average }
                         </Text>
 
-                        {this.rating(this.props.userData.rate)}
+                        {this.rating()}
 
                         <Text
                             style={styles.headerNavUserTotalRating}
                         >
-                            ({this.props.userData.totalRate})
+                            ( {this.state.rate.count} )
                         </Text>
                     </View>
                 </View>
@@ -80,3 +98,8 @@ export default class UserInfo extends Component {
         );
     }
 }
+const mapStateToProps = (state) => ({
+  user: state.userReducer.user
+});
+
+export default connect(mapStateToProps)(UserInfo);

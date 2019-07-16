@@ -64,7 +64,77 @@ UserVehicle.schema = {
   }
 };
 
-const realm = new Realm({ schema: [Token, User, Rating, UserVehicle] });
+class Campaign extends Realm.Object {}
+Campaign.schema = {
+  name: 'Campaign',
+  primaryKey: 'id',
+  properties: {
+    id: 'int',
+    campaign_id: 'int',
+    client_id: 'int',
+    name: 'string',
+    description: 'string',
+    location: 'string',
+    media_id: 'int',
+    vehicle_classification: 'int',
+    vehicle_type: 'int',
+    vehicle_stickerArea: 'int',
+    slots: 'int',
+    pay_basic: 'float',
+    pay_additional: 'float',
+    pay_additional_km: 'float',
+    created_at: 'date',
+    slots_used: 'int',
+    active: 'bool',
+    completed: 'bool',
+    favorite: 'bool'
+  }
+};
+
+class CampaignTrip extends Realm.Object {}
+CampaignTrip.schema = {
+    name: 'CampaignTrip',
+    primaryKey: 'id',
+    properties: {
+      id: 'int',
+      campaign_id: 'int',
+      campaign_traveled: 'string',
+      car_traveled: 'string',
+      started: 'int',
+      ended: 'int',
+      started_lat: 'string',
+      started_lng: 'string',
+      ended_lat: 'string',
+      ended_lng: 'string'
+    }
+};
+
+class CampaignTripMap extends Realm.Object {}
+CampaignTripMap.schema = {
+    name: 'CampaignTripMap',
+    primaryKey: 'id',
+    properties: {
+      id: 'int',
+      campaign_id: 'int',
+      campaign_trip_id: 'int',
+      counted: 'int',
+      latitude: 'string',
+      longitude: 'string',
+      distance: 'string',
+      speed: 'string',
+      timestamp: 'int',
+    }
+};
+
+const realm = new Realm({ schema: [
+  Token,
+  User,
+  Rating,
+  UserVehicle,
+  Campaign,
+  CampaignTrip,
+  CampaignTripMap
+] });
 
 export const UserSchema = {
   update: (user, callbackSuccess, callbackFailed) => {
@@ -140,7 +210,8 @@ export const UserSchema = {
     }
 
     return u;
-  }
+  },
+
 };
 
 export const TokenSchema = {
@@ -162,7 +233,7 @@ export const TokenSchema = {
       return tok;
   },
 
-  update: (token, callbackSuccess, callbackFailed) => {
+  update: (token, callbackSuccess = null, callbackFailed = null) => {
     try {
       realm.write(() => {
         realm.delete(realm.objects('Token'));
@@ -191,7 +262,104 @@ export const TokenSchema = {
     }
     const api = API;
     api.headers.Authorization = `Bearer ${token}`;
-    console.log(api);
     return api;
   }
+};
+
+export const CampaignSchema = {
+  insert: (campaign, callbackFailed) => {
+    try {
+      realm.write(() => {
+        realm.create('Campaign', {
+          id: campaign.id,
+          campaign_id: campaign.id,
+          client_id: campaign.client_id,
+          name: campaign.name,
+          description: campaign.description,
+          location: campaign.location,
+          media_id: campaign.media_id,
+          vehicle_classification: campaign.vehicle_classification,
+          vehicle_type: campaign.vehicle_type,
+          vehicle_stickerArea: campaign.vehicle_stickerArea,
+          slots: campaign.slots,
+          pay_basic: parseFloat(campaign.pay_basic),
+          pay_additional: parseFloat(campaign.pay_additional),
+          pay_additional_km: parseFloat(campaign.pay_additional_km),
+          created_at: moment(campaign.created_at).format(DATETIME_FORMAT),
+          slots_used: campaign.slots_used,
+          active: true,
+          completed: false,
+          favorite: false
+        });
+      });
+    } catch (e) {
+      callbackFailed(e);
+    }
+  },
+
+  get: () => realm.objects('Campaign'),
+
+};
+
+export const CampaignTripSchema = {
+  insert: (campaigntrip, callbackFailed = null) => {
+    const m = realm.objects('CampaignTrip').max('id');
+    const maxId = m === undefined ? 0 : m;
+    const id = maxId + 1;
+
+    try {
+      realm.write(() => {
+        realm.create('CampaignTrip', {
+          id,
+          campaign_id: campaigntrip.campaign_id,
+          campaign_traveled: campaigntrip.campaign_traveled.toString(),
+          car_traveled: campaigntrip.car_traveled.toString(),
+          started: campaigntrip.started,
+          ended: campaigntrip.ended,
+          started_lat: campaigntrip.started_lat.toString(),
+          started_lng: campaigntrip.started_lng.toString(),
+          ended_lat: campaigntrip.ended_lat.toString(),
+          ended_lng: campaigntrip.ended_lng.toString()
+        });
+      });
+    } catch (e) {
+      console.log(e);
+      if (callbackFailed !== null) {
+        callbackFailed(e);
+      }
+    }
+
+    return id;
+  },
+  get: () => realm.objects('CampaignTrip')
+};
+
+export const CampaignTripMapSchema = {
+  insert: (campaigntripmap, callbackFailed = null) => {
+    const m = realm.objects('CampaignTripMap').max('id');
+    const maxId = m == null ? 0 : m;
+    const id = maxId + 1;
+
+    try {
+      realm.write(() => {
+        realm.create('CampaignTripMap', {
+          id,
+          campaign_id: campaigntripmap.campaign_id,
+          campaign_trip_id: campaigntripmap.campaign_trip_id,
+          counted: campaigntripmap.counted,
+          latitude: campaigntripmap.latitude.toString(),
+          longitude: campaigntripmap.longitude.toString(),
+          distance: campaigntripmap.distance.toString(),
+          speed: campaigntripmap.speed.toString(),
+          timestamp: campaigntripmap.timestamp,
+        });
+      });
+    } catch (e) {
+      console.log(e);
+      if (callbackFailed !== null) {
+        callbackFailed(e);
+      }
+    }
+  },
+  get: () => realm.objects('CampaignTripMap')
 };

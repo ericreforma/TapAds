@@ -17,15 +17,23 @@ import AddVehiclePage from '../pages/AddVehiclePage';
 export default class Route extends Component {
 	render() {
 		return (
-			<AppContainer />
+			<AppContainer
+				ref={(navigatorRef) => {
+					NavigationService.setTopLevelNavigator(navigatorRef);
+				}}
+			/>
 		);
 	}
 }
 
-const RouteStack = createStackNavigator(
-	{
-		Login: LogInPage,
-		Signup: SignUpPage,
+const AuthStack = createStackNavigator({
+	Login: LogInPage,
+	SignUp: SignUpPage
+	}, {
+		initialRouteName: 'Login'
+});
+
+const AppStack = createStackNavigator({
 		Home: HomePage,
 		Notification: NotificationPage,
 		Profile: ProfilePage,
@@ -43,7 +51,16 @@ const RouteStack = createStackNavigator(
 		navigationOptions: {
 			headerVisible: false,
 		}
+});
+
+const AppRoute = createSwitchNavigator({
+	Loading: LoadingPage,
+	Auth: AuthStack,
+	App: AppStack,
+	StartCampaign: StartCampaignPage
+	}, {
+		initialRouteName: 'Loading',
 	}
 );
 
-const AppContainer = createAppContainer(RouteStack);
+const AppContainer = createAppContainer(AppRoute);
