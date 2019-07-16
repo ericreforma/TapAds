@@ -5,7 +5,6 @@ import {
     Text,
     Image,
     ScrollView,
-    Animated,
     TouchableHighlight,
     TouchableOpacity,
     Dimensions
@@ -23,49 +22,25 @@ import UserInfo from '../components/UserInfo';
 import { LabelText, CommonText } from '../components/Text';
 import ButtonBlue from '../components/ButtonBlue';
 import { VEHICLE } from '../config/variables';
+import { CampaignAction } from '../redux/actions/campaign.action';
 import theme from '../styles/theme.style';
 import styles from '../styles/page.Home.style';
 
 class MyCampaignPage extends Component {
-  constructor(props) {
-    super(props);
+    constructor(props) {
+      super(props);
 
-    this.state = {
-        width: Dimensions.get('window').width,
-        myCampaignClick: 'active',
-        vehicleType: Object.values(VEHICLE.TYPE),
-    };
-  }
-
-
-    menuButtonOnPress = () => {
-        Animated.timing(this.state.modalFadeBackground, {
-            toValue: this.state.scrollEnable ? 0.7 : 0,
-            duration: 600
-        }).start(() => {
-            this.setState({
-                modalContainerzIndex: this.state.scrollEnable ? 0 : 1
-            });
-        });
-
-        Animated.timing(this.state.modalXValue, {
-            toValue: this.state.scrollEnable ? this.state.width - 330 : this.state.width,
-            duration: 500
-        }).start();
-
-        this.setState({
-            scrollEnable: !this.state.scrollEnable,
-            modalContainerzIndex: 1
-        });
+      this.state = {
+          width: Dimensions.get('window').width,
+          myCampaignClick: 'active',
+          vehicleType: Object.values(VEHICLE.TYPE),
+      };
     }
 
     clickCampaign = (active) => () => {
         this.setState({ myCampaignClick: active })
     }
 
-    viewCampaignFullDetails = (id) => () => {
-        this.props.navigation.navigate('CampaignCardActive');
-    }
 
     viewCampaignDashboard = (id) => () => {
         alert('View dashboard campaign id: ' + id);
@@ -103,7 +78,7 @@ class MyCampaignPage extends Component {
                                 <CommonText>{data.client.business_name}</CommonText>
 
                                 <TouchableOpacity
-                                    onPress={this.viewCampaignFullDetails(data.id)}
+                                    onPress={() => { this.props.campaignSelected(data.id); } }
                                 >
                                     <Text
                                         style={styles.homePageViewAll}
@@ -324,7 +299,7 @@ class MyCampaignPage extends Component {
                                 >
                                     <ButtonBlue
                                         label="Dashboard"
-                                        onPress={this.viewCampaignDashboard(data.id)}
+                                        onPress={() => { this.props.campaignSelected(data.id); }}
                                     />
                                 </View>
 
@@ -519,4 +494,8 @@ const mapStateToProps = (state) => ({
   myList: state.campaignReducer.mylist
 });
 
-export default connect(mapStateToProps)(MyCampaignPage);
+const mapDispatchToProps = (dispatch) => ({
+  campaignSelected: (id) => dispatch(CampaignAction.mylistSelected(id))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(MyCampaignPage);

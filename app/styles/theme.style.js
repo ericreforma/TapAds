@@ -14,7 +14,7 @@ export default {
   COLOR_LABEL: '#353a60',
   COLOR_NORMAL_FONT: '#5f5f5f',
   COLOR_SIGNUP_FONT: '#b5b5b5',
-
+  COLOR_ALARM: '#ff3333',
 // FONTS
   FONT_SIZE_SMALL: 12,
   FONT_SIZE_MEDIUM: 18,

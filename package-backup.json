@@ -3,23 +3,22 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "react-native start",
+    "start": "node node_modules/react-native/local-cli/cli.js start",
     "test": "jest",
-    "lint": "eslint ."
+    "fix-androidx": ".scripts/fix-androidx"
   },
   "dependencies": {
     "@react-native-community/cli": "^2.3.0",
-    "@react-native-community/eslint-config": "0.0.5",
     "axios": "^0.19.0",
     "jetifier": "^1.6.1",
     "moment": "^2.24.0",
-    "react": "16.8.6",
+    "react": "16.8.3",
     "react-native": "^0.60.0",
     "react-native-datepicker": "^1.7.2",
     "react-native-geolocation-service": "^2.0.1",
     "react-native-gesture-handler": "^1.1.0",
     "react-native-linear-gradient": "^2.5.4",
-    "react-native-maps": "^0.25.0",
+    "react-native-maps": "^0.24.2",
     "react-native-modal": "^11.1.0",
     "react-native-snap-carousel": "^3.7.5",
     "react-native-update-gradle": "^1.2.0",

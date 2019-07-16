@@ -3,13 +3,14 @@ package com.tapads;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
-import io.realm.react.RealmReactPackage;
-import com.BV.LinearGradient.LinearGradientPackage;
+import com.agontuk.RNFusedLocation.RNFusedLocationPackage;
+import com.airbnb.android.react.maps.MapsPackage;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
+import io.realm.react.RealmReactPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
-import com.facebook.soloader.SoLoader;
+import com.facebook.soloader.SoLoader;
 
 import java.util.Arrays;
 import java.util.List;
@@ -26,9 +27,10 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
-            new RealmReactPackage(),
-            new LinearGradientPackage(),
-            new RNGestureHandlerPackage()
+            new RNFusedLocationPackage(),
+            new MapsPackage(),
+            new RNGestureHandlerPackage(),
+            new RealmReactPackage()
       );
     }
 

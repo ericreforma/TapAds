@@ -9,7 +9,8 @@ const initialState = {
   isRequesting: false,
   isRequestDone: false,
   recommended: [],
-  mylist: []
+  mylist: [],
+  mylist_selected: {}
 };
 
 export function campaignReducer(state = initialState, action) {
@@ -76,6 +77,11 @@ export function campaignReducer(state = initialState, action) {
       return Object.assign({}, state, {
         mylist: action.mylist
       });
+
+      case CAMPAIGN.MYLIST.SELECTED:
+        return Object.assign({}, state, {
+          mylist_selected: action.campaign
+        });
 
     default:
       return state;

@@ -8,7 +8,9 @@ export const CampaignAction = {
     dispatch({ type: CAMPAIGN.LIST.REQUEST });
     const state = getState();
 
-    CampaignController.home.list(`?cl=${state.campaignReducer.vehicle_classification}&page=${state.campaignReducer.current_page + 1}`)
+    CampaignController.home.list(
+      `?cl=${state.campaignReducer.vehicle_classification}
+      &page=${state.campaignReducer.current_page + 1}`)
     .then(response => {
       dispatch({ type: CAMPAIGN.LIST.SUCCESS, data: response.data });
     })
@@ -17,6 +19,7 @@ export const CampaignAction = {
       dispatch({ type: CAMPAIGN.LIST.FAILED });
     });
   },
+
   mylist: () => (dispatch) => {
     CampaignController.mylist()
       .then(response => {
@@ -27,6 +30,7 @@ export const CampaignAction = {
         console.log(e);
       });
   },
+
   selected: (id) => (dispatch, getState) => {
     NavigationService.navigate('Campaign');
 
@@ -38,6 +42,16 @@ export const CampaignAction = {
                       campaignList.find(x => x.id === id);
 
     dispatch({ type: CAMPAIGN.SELECTED, campaign });
+  },
+
+  mylistSelected: (id) => (dispatch, getState) => {
+    const state = getState();
+    const campaignList = state.campaignReducer.mylist;
+    const campaign = campaignList.find(x => x.id === id);
+
+    dispatch({ type: CAMPAIGN.MYLIST.SELECTED, campaign });
+
+    NavigationService.navigate('CampaignCardActive');
   },
 
   interested: () => (dispatch, getState) => {
@@ -55,13 +69,20 @@ export const CampaignAction = {
 
       CampaignController.interested(0, selectedCampaign.id)
       .then(() => {
-        console.log('uploaded');
+
       }).catch((e) => {
         console.log('error');
         console.log(e);
       });
 
-      dispatch({ type: CAMPAIGN.MYLIST.ADD, campaign: selectedCampaign });
+      CampaignController.mylist()
+        .then(response => {
+          dispatch({ type: CAMPAIGN.MYLIST.GET, mylist: response.data });
+        })
+        .catch((e) => {
+          console.log('error');
+          console.log(e);
+        });
     }
   },
 

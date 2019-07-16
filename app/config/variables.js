@@ -73,3 +73,11 @@ export const VEHICLE = {
     }
   }
 };
+
+export const MAP = {
+  initialRegion: {
+    latitude: 14.1144363,
+    longitude: 120.1410504,
+  },
+
+};

@@ -7,3 +7,6 @@ export LoadingPage from './LoadingPage';
 export SamplePage from './SamplePage';
 export CampaignPage from './CampaignPage';
 export MyCampaignPage from './MyCampaignPage';
+export CampaignCardActive from './CampaignCardActive';
+export MapTest from './MapTest';
+export StartCampaignPage from './StartCampaignPage';

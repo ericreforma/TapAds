@@ -14,7 +14,9 @@ import {
 	ProfilePage,
 	LoadingPage,
 	CampaignPage,
-	MyCampaignPage
+	MyCampaignPage,
+	CampaignCardActive,
+	StartCampaignPage
 } from '../pages';
 
 export default class Route extends Component {
@@ -41,7 +43,9 @@ const AppStack = createStackNavigator({
 		Notification: NotificationPage,
 		Profile: ProfilePage,
 		Campaign: CampaignPage,
-		MyCampaign: MyCampaignPage
+		MyCampaign: MyCampaignPage,
+		CampaignCardActive,
+		StartCampaign: StartCampaignPage
 	}, {
     initialRouteName: 'Home',
 		headerMode: 'none',
@@ -54,6 +58,7 @@ const AppRoute = createSwitchNavigator({
 	Loading: LoadingPage,
 	Auth: AuthStack,
 	App: AppStack,
+	StartCampaign: StartCampaignPage
 	}, {
 		initialRouteName: 'Loading',
 	}

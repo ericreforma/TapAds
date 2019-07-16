@@ -79,7 +79,8 @@ export default class ModalMenu extends Component {
                                     <TouchableOpacity
                                         style={styles.navigationContentBodyTopSpaceBetween}
                                         onPress={() => {
-                                            if(index == 0) NavigationService.navigate('Profile')
+                                            if (index == 0) NavigationService.navigate('CampaignCardActive')
+                                            else if (index == 1) NavigationService.navigate('Profile')
                                         }}
                                     >
                                         <CommonText color="white">{'<'}</CommonText>
