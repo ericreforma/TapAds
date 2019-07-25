@@ -38,7 +38,7 @@ const RouteStack = createStackNavigator(
 		TermsAndCondition: TermsAndConditionPage,
 		Addvehicle: AddVehiclePage
 	}, {
-        initialRouteName: 'ProfileInfo',
+        initialRouteName: 'Login',
 		headerMode: 'none',
 		navigationOptions: {
 			headerVisible: false,
