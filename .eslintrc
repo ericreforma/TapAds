@@ -1,5 +1,8 @@
 {
-  "extends" : "rallycoding",
+  "extends" : [
+    "rallycoding",
+    "prettier"
+  ],
   "settings": {
     "import/resolver": {
       "node": {
@@ -8,6 +11,7 @@
     }
   },
   "rules" : {
-    "global-require" : 0
+    "global-require" : 0,
+    "prettier/prettier": ["error", {"singleQuote": false, "parser": "flow"}]
   }
 }

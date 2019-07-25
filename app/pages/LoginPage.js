@@ -11,6 +11,7 @@ import { connect } from 'react-redux';
 import Input from '../components/Input';
 import ButtonBlue from '../components/ButtonBlue';
 import { AuthAction } from '../redux/actions/auth.action';
+import NavigationService from '../services/navigation';
 import styles from '../styles/page.Login.style';
 
 class LogInPage extends Component {
@@ -83,7 +84,7 @@ class LogInPage extends Component {
 						Don't have an account?
 					</Text>
 					<TouchableOpacity
-						onPress={() => this.props.navigation.navigate('Signup')}
+						onPress={() => { NavigationService.navigate('SignUp') } }
 					>
 						<Text style={styles.textSignUp}>
 							Sign up
@@ -113,12 +114,13 @@ class LogInPage extends Component {
 								style={styles.loginAlternativeIconFacebook}
 								source={require('../assets/image/icons/facebook_icon.png')}
 							/>
+
 						</TouchableOpacity>
 					</View>
 				</View>
 			</ImageBackground>
 		);
-  	}
+  }
 }
 
 const mapStateToProps = (state) => ({

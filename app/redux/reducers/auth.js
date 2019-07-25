@@ -7,7 +7,7 @@ const initialState = {
     attempt_password: '',
 };
 
-export const loginReducer = (state = initialState, action) => {
+export function loginReducer(state = initialState, action) {
   switch (action.type) {
     case AUTH.LOGIN.REQUEST:
 
@@ -31,4 +31,4 @@ export const loginReducer = (state = initialState, action) => {
     default:
       return state;
   }
-};
+}

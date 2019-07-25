@@ -1,82 +1,60 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import {
     View,
     Text,
     ScrollView,
     Dimensions,
-    ImageBackground,
-    Animated,
+    PermissionsAndroid
 } from 'react-native';
+import { Page } from '../pages/Page';
 
-import ModalMenu from '../components/Modal/Navigation';
-import { HeaderNav, UserInfo } from '../components/HeaderNav';
+import UserInfo from '../components/UserInfo';
 import { LabelText, CommonText } from '../components/Text';
 import ButtonBlue from '../components/ButtonBlue';
 
 import theme from '../styles/theme.style';
 import styles from '../styles/page.Home.style';
+import MapCard from '../components/MapCard';
+import NavigationService from '../services/navigation';
+import { CampaignAction } from '../redux/actions/campaign.action';
 
-export default class CampaignCardActive extends Component {
-    state = {
-        modalFadeBackground: new Animated.Value(0),
-        modalContainerzIndex: 0,
-        modalXValue: new Animated.Value(Dimensions.get('window').width),
-        scrollEnable: true,
-        
-        height: Dimensions.get('window').height,
-        width: Dimensions.get('window').width,
-        userData: {
-            name: 'Patrick Cua',
-            rate: 4.60239,
-            totalRate: 35 //total number of clients(rating)
-        },
+class CampaignCardActive extends Component {
 
-        campaignData: {
-            status: 'Active',
-            campaign: 'Campaign Name',
-            client: 'Brand name here',
-            description: 'Porttitor congue quam ridiculus mi felis sollicitudin etiam non conubia blandit viverra ullamcorper. Torquent donec hac nulla.',
-            kmTravelled: '3',
-            frequentLocation: 'Quezon City',
-            basicPay: '5,000'
-        }
+    constructor(props) {
+      super(props);
+
+      this.state = {
+          height: Dimensions.get('window').height,
+          width: Dimensions.get('window').width,
+          campaign: {},
+      };
     }
 
-    menuButtonOnPress = () => {
-        Animated.timing(this.state.modalFadeBackground, {
-            toValue: this.state.scrollEnable ? 0.7 : 0,
-            duration: 600
-        }).start(() => {
-            this.setState({
-                modalContainerzIndex: this.state.scrollEnable ? 0 : 1
-            });
-        });
+    async requestCameraPermission() {
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+          {
+            title: 'TapAds',
+            message: `TapAds reuires your location`,
+            buttonNegative: 'Cancel',
+            buttonPositive: 'OK',
+          },
+        );
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          this.props.dispatchTrip()
+        } else {
 
-        Animated.timing(this.state.modalXValue, {
-            toValue: this.state.scrollEnable ? this.state.width - 330 : this.state.width,
-            duration: 500
-        }).start();
-
-        this.setState({
-            scrollEnable: !this.state.scrollEnable,
-            modalContainerzIndex: 1
-        });
+        }
+      } catch (err) {
+        console.warn(err);
+      }
     }
 
     render() {
         return (
-            <View>
-                <ImageBackground
-                    style={styles.homePageBackgroundImage}
-                    resizeMode="stretch"
-                    source={require('../assets/image/common_page_background.png')}
-                ></ImageBackground>
-                
-                <HeaderNav
-                    menuButtonOnPress={this.menuButtonOnPress}
-                    navigation={this.props.navigation}
-                />
-
+            <Page>
                 <ScrollView
                     style={styles.homePageScrollView}
                     overScrollMode='never'
@@ -84,11 +62,7 @@ export default class CampaignCardActive extends Component {
                     scrollEnabled={this.state.scrollEnable}
                 >
 
-                    <UserInfo
-                        profilePicture={require('../assets/image/male_avatar.png')}
-                        userData={this.state.userData}
-                        navigation={this.props.navigation}
-                    />
+                    <UserInfo />
 
                     <View
                         style={{
@@ -111,7 +85,7 @@ export default class CampaignCardActive extends Component {
                                     alignItems: 'center'
                                 }}
                             >
-                                <Text>this is the map</Text>
+                              <MapCard location_id={this.props.campaign.campaignDetails.location_id[0]} />
                             </View>
 
                             {/* header information */}
@@ -125,15 +99,15 @@ export default class CampaignCardActive extends Component {
                                 <CommonText
                                     color="blue"
                                 >
-                                    {this.state.campaignData.status}
+                                    Active
                                 </CommonText>
 
                                 <LabelText>
-                                    {this.state.campaignData.campaign}
+                                    {this.props.campaign.campaignDetails.name}
                                 </LabelText>
 
                                 <CommonText>
-                                    {this.state.campaignData.client}
+                                    {this.props.campaign.client.business_name}
                                 </CommonText>
                             </View>
 
@@ -154,7 +128,7 @@ export default class CampaignCardActive extends Component {
                                         paddingBottom: 5
                                     }}
                                 >
-                                    {this.state.campaignData.description}
+                                    {this.props.campaign.campaignDetails.description}
                                 </Text>
                             </View>
 
@@ -180,9 +154,9 @@ export default class CampaignCardActive extends Component {
                                         <LabelText
                                             large={true}
                                         >
-                                            {this.state.campaignData.kmTravelled}km
+                                            {this.props.campaign.campaign_traveled}km
                                         </LabelText>
-        
+
                                         <CommonText>
                                             km travelled counter
                                         </CommonText>
@@ -198,9 +172,9 @@ export default class CampaignCardActive extends Component {
                                         <LabelText
                                             large={true}
                                         >
-                                            {this.state.campaignData.frequentLocation}
+                                            {this.props.campaign.campaignDetails.location}
                                         </LabelText>
-        
+
                                         <CommonText>
                                             Frequent Location
                                         </CommonText>
@@ -230,7 +204,7 @@ export default class CampaignCardActive extends Component {
                                     <LabelText
                                         color="white"
                                     >
-                                        P{this.state.campaignData.basicPay}
+                                        P{this.props.campaign.campaignDetails.pay_basic}
                                     </LabelText>
 
                                     <CommonText
@@ -249,6 +223,7 @@ export default class CampaignCardActive extends Component {
                                 >
                                     <ButtonBlue
                                         label="Start Trip"
+                                        onPress={() => { this.requestCameraPermission() } }
                                     />
                                 </View>
                             </View>
@@ -256,16 +231,17 @@ export default class CampaignCardActive extends Component {
                     </View>
                 </ScrollView>
 
-                <ModalMenu
-                    modalContainerzIndex={this.state.modalContainerzIndex}
-                    width={this.state.width}
-                    height={this.state.scrollEnable ? 0 : this.state.height}
-                    modalFadeBackground={this.state.modalFadeBackground}
-                    modalXValue={this.state.modalXValue}
-                    menuButtonOnPress={this.menuButtonOnPress}
-                    navigation={this.props.navigation}
-                />
-            </View>
-        )
+            </Page>
+        );
     }
 }
+
+const mapStateToProps = (state) => ({
+  campaign: state.campaignReducer.mylist_selected
+});
+
+const mapDispatchToProps = dispatch => ({
+  dispatchTrip: () => dispatch(CampaignAction.startTrip())
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(CampaignCardActive);

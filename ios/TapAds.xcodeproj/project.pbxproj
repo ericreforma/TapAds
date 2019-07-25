@@ -51,9 +51,6 @@
 		FB7EF81282B84A91AA3F63B4 /* AvenirLTStd-MediumOblique.otf in Resources */ = {isa = PBXBuildFile; fileRef = 12B5B5BAB3D045BD8F0AF9AC /* AvenirLTStd-MediumOblique.otf */; };
 		63F21CFFF87C4CCEB30A2669 /* AvenirLTStd-Oblique.otf in Resources */ = {isa = PBXBuildFile; fileRef = 39943069638F4B178F250565 /* AvenirLTStd-Oblique.otf */; };
 		3FCF31017CF14D05B7A946F7 /* AvenirLTStd-Roman.otf in Resources */ = {isa = PBXBuildFile; fileRef = B8B6DAF0C09545268C3C1D93 /* AvenirLTStd-Roman.otf */; };
-		B229D70ABA7745109B1804BA /* libRNGestureHandler.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5016689FBBFD494DB082D43D /* libRNGestureHandler.a */; };
-		6A81958AC9B345D59AD471B3 /* libRNGestureHandler-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B82AA0DC4F344A5AC4380A2 /* libRNGestureHandler-tvOS.a */; };
-		9026B4EC9F244C0DBAC3F77E /* libBVLinearGradient.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BD747C87AA854BBDAE85B76C /* libBVLinearGradient.a */; };
 		4922595BC50A4A198A9DDC95 /* Montserrat-Black.otf in Resources */ = {isa = PBXBuildFile; fileRef = 1E20E481E441405E93E03E2F /* Montserrat-Black.otf */; };
 		0A89C6C84B2C42A2A4883123 /* Montserrat-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 9C2F6999676544CA9D546484 /* Montserrat-Bold.otf */; };
 		46223BF08DC94EA8BFE7FE03 /* Montserrat-ExtraLight.otf in Resources */ = {isa = PBXBuildFile; fileRef = 9E70F8C7981443FD83ED5896 /* Montserrat-ExtraLight.otf */; };
@@ -62,10 +59,15 @@
 		954002880D9B4801BC793B92 /* Montserrat-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 13E52BF283F7448FAC11DD22 /* Montserrat-Medium.otf */; };
 		82D817B50C6D4B1E906A76A8 /* Montserrat-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4EBB9881A0074078AC35DAB5 /* Montserrat-Regular.otf */; };
 		1047366D53CC476DB1B68943 /* Montserrat-Thin.otf in Resources */ = {isa = PBXBuildFile; fileRef = D36BA2AB2E9C44F8B3D11EAF /* Montserrat-Thin.otf */; };
-		95D0F9E8D9E244B28E79C5A4 /* libRealmReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1EE8D666219841A1BCEF2E1F /* libRealmReact.a */; };
-		7EE08B8436D94D89814D5CFC /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 2922E8838B534AF5A1D89776 /* libc++.tbd */; };
-		5F15FE1B9A934933B8A36D61 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 29685A612C6443A8A2DCC611 /* libz.tbd */; };
-		9EF0AC7B09764996A1798E8E /* libRNImagePicker.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4446C43CFB514103818FA82E /* libRNImagePicker.a */; };
+		64E803C90E664D7190BADB25 /* libRNGestureHandler.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0FD0FD3F6F294CB5865E957F /* libRNGestureHandler.a */; };
+		02B911683F8D425E8279A2D8 /* libRNGestureHandler-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 01FABC2EE4BA4C8DA0492C09 /* libRNGestureHandler-tvOS.a */; };
+		DF287300715C47839D77DA11 /* libBVLinearGradient.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 562F65E2A8774A1BB11BD384 /* libBVLinearGradient.a */; };
+		0D6D1B05E4414AC6AFA436D6 /* libRealmReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A58A319A27854473B95F6325 /* libRealmReact.a */; };
+		8A95A165FD094E27BAA406D0 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 18B9A621F1E74712A7A42884 /* libc++.tbd */; };
+		068B0443AD15494EA7B1F7B0 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = EC9E6C784230463897002C60 /* libz.tbd */; };
+		2DCAD22358F242EEADE46111 /* libAirMaps.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8BA3D304FBDD4469BDC4ACCD /* libAirMaps.a */; };
+		2CC0F5C2502845F588D541D5 /* libRNImagePicker.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A5E3625735744FE186670DED /* libRNImagePicker.a */; };
+		609B455C5D0A411FBF0C2EB1 /* libRNGeocoder.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E54CDC70E9684A0A8557B995 /* libRNGeocoder.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -385,11 +387,6 @@
 		12B5B5BAB3D045BD8F0AF9AC /* AvenirLTStd-MediumOblique.otf */ = {isa = PBXFileReference; name = "AvenirLTStd-MediumOblique.otf"; path = "../app/assets/fonts/AvenirLTStd-MediumOblique.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		39943069638F4B178F250565 /* AvenirLTStd-Oblique.otf */ = {isa = PBXFileReference; name = "AvenirLTStd-Oblique.otf"; path = "../app/assets/fonts/AvenirLTStd-Oblique.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		B8B6DAF0C09545268C3C1D93 /* AvenirLTStd-Roman.otf */ = {isa = PBXFileReference; name = "AvenirLTStd-Roman.otf"; path = "../app/assets/fonts/AvenirLTStd-Roman.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		1A57FACFF68448B2B0CF5039 /* RNGestureHandler.xcodeproj */ = {isa = PBXFileReference; name = "RNGestureHandler.xcodeproj"; path = "../node_modules/react-native-gesture-handler/ios/RNGestureHandler.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
-		5016689FBBFD494DB082D43D /* libRNGestureHandler.a */ = {isa = PBXFileReference; name = "libRNGestureHandler.a"; path = "libRNGestureHandler.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
-		4B82AA0DC4F344A5AC4380A2 /* libRNGestureHandler-tvOS.a */ = {isa = PBXFileReference; name = "libRNGestureHandler-tvOS.a"; path = "libRNGestureHandler-tvOS.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
-		2EBB38A9523D4322B9BA8AAD /* BVLinearGradient.xcodeproj */ = {isa = PBXFileReference; name = "BVLinearGradient.xcodeproj"; path = "../node_modules/react-native-linear-gradient/BVLinearGradient.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
-		BD747C87AA854BBDAE85B76C /* libBVLinearGradient.a */ = {isa = PBXFileReference; name = "libBVLinearGradient.a"; path = "libBVLinearGradient.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 		1E20E481E441405E93E03E2F /* Montserrat-Black.otf */ = {isa = PBXFileReference; name = "Montserrat-Black.otf"; path = "../app/assets/fonts/Montserrat-Black.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		9C2F6999676544CA9D546484 /* Montserrat-Bold.otf */ = {isa = PBXFileReference; name = "Montserrat-Bold.otf"; path = "../app/assets/fonts/Montserrat-Bold.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		9E70F8C7981443FD83ED5896 /* Montserrat-ExtraLight.otf */ = {isa = PBXFileReference; name = "Montserrat-ExtraLight.otf"; path = "../app/assets/fonts/Montserrat-ExtraLight.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
@@ -398,12 +395,21 @@
 		13E52BF283F7448FAC11DD22 /* Montserrat-Medium.otf */ = {isa = PBXFileReference; name = "Montserrat-Medium.otf"; path = "../app/assets/fonts/Montserrat-Medium.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		4EBB9881A0074078AC35DAB5 /* Montserrat-Regular.otf */ = {isa = PBXFileReference; name = "Montserrat-Regular.otf"; path = "../app/assets/fonts/Montserrat-Regular.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		D36BA2AB2E9C44F8B3D11EAF /* Montserrat-Thin.otf */ = {isa = PBXFileReference; name = "Montserrat-Thin.otf"; path = "../app/assets/fonts/Montserrat-Thin.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		B44F97C99BAA4009A1DF6476 /* RealmReact.xcodeproj */ = {isa = PBXFileReference; name = "RealmReact.xcodeproj"; path = "../node_modules/realm/react-native/ios/RealmReact.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
-		1EE8D666219841A1BCEF2E1F /* libRealmReact.a */ = {isa = PBXFileReference; name = "libRealmReact.a"; path = "libRealmReact.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
-		2922E8838B534AF5A1D89776 /* libc++.tbd */ = {isa = PBXFileReference; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; fileEncoding = undefined; lastKnownFileType = sourcecode.text-based-dylib-definition; explicitFileType = undefined; includeInIndex = 0; };
-		29685A612C6443A8A2DCC611 /* libz.tbd */ = {isa = PBXFileReference; name = "libz.tbd"; path = "usr/lib/libz.tbd"; sourceTree = SDKROOT; fileEncoding = undefined; lastKnownFileType = sourcecode.text-based-dylib-definition; explicitFileType = undefined; includeInIndex = 0; };
-		1B1A52777CD74ECD95758264 /* RNImagePicker.xcodeproj */ = {isa = PBXFileReference; name = "RNImagePicker.xcodeproj"; path = "../node_modules/react-native-image-picker/ios/RNImagePicker.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
-		4446C43CFB514103818FA82E /* libRNImagePicker.a */ = {isa = PBXFileReference; name = "libRNImagePicker.a"; path = "libRNImagePicker.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		78654BAE3F8545B790F18185 /* RNGestureHandler.xcodeproj */ = {isa = PBXFileReference; name = "RNGestureHandler.xcodeproj"; path = "../node_modules/react-native-gesture-handler/ios/RNGestureHandler.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		0FD0FD3F6F294CB5865E957F /* libRNGestureHandler.a */ = {isa = PBXFileReference; name = "libRNGestureHandler.a"; path = "libRNGestureHandler.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		01FABC2EE4BA4C8DA0492C09 /* libRNGestureHandler-tvOS.a */ = {isa = PBXFileReference; name = "libRNGestureHandler-tvOS.a"; path = "libRNGestureHandler-tvOS.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		813CCDB6687F48BE84C96319 /* BVLinearGradient.xcodeproj */ = {isa = PBXFileReference; name = "BVLinearGradient.xcodeproj"; path = "../node_modules/react-native-linear-gradient/BVLinearGradient.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		562F65E2A8774A1BB11BD384 /* libBVLinearGradient.a */ = {isa = PBXFileReference; name = "libBVLinearGradient.a"; path = "libBVLinearGradient.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		15F1EFFD5823476AA2C31C4D /* RealmReact.xcodeproj */ = {isa = PBXFileReference; name = "RealmReact.xcodeproj"; path = "../node_modules/realm/react-native/ios/RealmReact.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		A58A319A27854473B95F6325 /* libRealmReact.a */ = {isa = PBXFileReference; name = "libRealmReact.a"; path = "libRealmReact.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		18B9A621F1E74712A7A42884 /* libc++.tbd */ = {isa = PBXFileReference; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; fileEncoding = undefined; lastKnownFileType = sourcecode.text-based-dylib-definition; explicitFileType = undefined; includeInIndex = 0; };
+		EC9E6C784230463897002C60 /* libz.tbd */ = {isa = PBXFileReference; name = "libz.tbd"; path = "usr/lib/libz.tbd"; sourceTree = SDKROOT; fileEncoding = undefined; lastKnownFileType = sourcecode.text-based-dylib-definition; explicitFileType = undefined; includeInIndex = 0; };
+		83B6D0D7852049029BBB03A3 /* AirMaps.xcodeproj */ = {isa = PBXFileReference; name = "AirMaps.xcodeproj"; path = "../node_modules/react-native-maps/lib/ios/AirMaps.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		8BA3D304FBDD4469BDC4ACCD /* libAirMaps.a */ = {isa = PBXFileReference; name = "libAirMaps.a"; path = "libAirMaps.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		DF78D812AF59406E9FCA0DA3 /* RNImagePicker.xcodeproj */ = {isa = PBXFileReference; name = "RNImagePicker.xcodeproj"; path = "../node_modules/react-native-image-picker/ios/RNImagePicker.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		A5E3625735744FE186670DED /* libRNImagePicker.a */ = {isa = PBXFileReference; name = "libRNImagePicker.a"; path = "libRNImagePicker.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		A22DCB9C442C4EACB5AA7818 /* RNGeocoder.xcodeproj */ = {isa = PBXFileReference; name = "RNGeocoder.xcodeproj"; path = "../node_modules/react-native-geocoder/ios/RNGeocoder.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		E54CDC70E9684A0A8557B995 /* libRNGeocoder.a */ = {isa = PBXFileReference; name = "libRNGeocoder.a"; path = "libRNGeocoder.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -432,12 +438,14 @@
 				832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */,
 				00C302EA1ABCBA2D00DB3ED1 /* libRCTVibration.a in Frameworks */,
 				139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */,
-				B229D70ABA7745109B1804BA /* libRNGestureHandler.a in Frameworks */,
-				9026B4EC9F244C0DBAC3F77E /* libBVLinearGradient.a in Frameworks */,
-				95D0F9E8D9E244B28E79C5A4 /* libRealmReact.a in Frameworks */,
-				7EE08B8436D94D89814D5CFC /* libc++.tbd in Frameworks */,
-				5F15FE1B9A934933B8A36D61 /* libz.tbd in Frameworks */,
-				9EF0AC7B09764996A1798E8E /* libRNImagePicker.a in Frameworks */,
+				64E803C90E664D7190BADB25 /* libRNGestureHandler.a in Frameworks */,
+				DF287300715C47839D77DA11 /* libBVLinearGradient.a in Frameworks */,
+				0D6D1B05E4414AC6AFA436D6 /* libRealmReact.a in Frameworks */,
+				8A95A165FD094E27BAA406D0 /* libc++.tbd in Frameworks */,
+				068B0443AD15494EA7B1F7B0 /* libz.tbd in Frameworks */,
+				2DCAD22358F242EEADE46111 /* libAirMaps.a in Frameworks */,
+				2CC0F5C2502845F588D541D5 /* libRNImagePicker.a in Frameworks */,
+				609B455C5D0A411FBF0C2EB1 /* libRNGeocoder.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -455,6 +463,8 @@
 				2D02E4C71E0B4AEC006451C7 /* libRCTText-tvOS.a in Frameworks */,
 				2D02E4C81E0B4AEC006451C7 /* libRCTWebSocket-tvOS.a in Frameworks */,
 				6A81958AC9B345D59AD471B3 /* libRNGestureHandler-tvOS.a in Frameworks */,
+				408353FD3F6044DE83EA8EB9 /* libRNCNetInfo-tvOS.a in Frameworks */,
+				02B911683F8D425E8279A2D8 /* libRNGestureHandler-tvOS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -591,8 +601,8 @@
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				ED2971642150620600B7C4FE /* JavaScriptCore.framework */,
 				2D16E6891FA4F8E400B85C8A /* libReact.a */,
-				2922E8838B534AF5A1D89776 /* libc++.tbd */,
-				29685A612C6443A8A2DCC611 /* libz.tbd */,
+				18B9A621F1E74712A7A42884 /* libc++.tbd */,
+				EC9E6C784230463897002C60 /* libz.tbd */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -630,10 +640,12 @@
 				832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */,
 				00C302DF1ABCB9EE00DB3ED1 /* RCTVibration.xcodeproj */,
 				139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */,
-				1A57FACFF68448B2B0CF5039 /* RNGestureHandler.xcodeproj */,
-				2EBB38A9523D4322B9BA8AAD /* BVLinearGradient.xcodeproj */,
-				B44F97C99BAA4009A1DF6476 /* RealmReact.xcodeproj */,
-				1B1A52777CD74ECD95758264 /* RNImagePicker.xcodeproj */,
+				78654BAE3F8545B790F18185 /* RNGestureHandler.xcodeproj */,
+				813CCDB6687F48BE84C96319 /* BVLinearGradient.xcodeproj */,
+				15F1EFFD5823476AA2C31C4D /* RealmReact.xcodeproj */,
+				83B6D0D7852049029BBB03A3 /* AirMaps.xcodeproj */,
+				DF78D812AF59406E9FCA0DA3 /* RNImagePicker.xcodeproj */,
+				A22DCB9C442C4EACB5AA7818 /* RNGeocoder.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -1318,6 +1330,9 @@
 					"$(SRCROOT)\..\node_modules\react-native-linear-gradient\BVLinearGradient",
 					"$(SRCROOT)\..\node_modules\realm\src/**",
 					"$(SRCROOT)\..\node_modules\react-native-image-picker\ios",
+					"$(SRCROOT)\..\node_modules\react-native-maps\lib\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-image-picker\ios",
+					"$(SRCROOT)\..\node_modules\react-native-geocoder\ios\RNGeocoder",
 				);
 			};
 			name = Debug;
@@ -1347,6 +1362,9 @@
 					"$(SRCROOT)\..\node_modules\react-native-linear-gradient\BVLinearGradient",
 					"$(SRCROOT)\..\node_modules\realm\src/**",
 					"$(SRCROOT)\..\node_modules\react-native-image-picker\ios",
+					"$(SRCROOT)\..\node_modules\react-native-maps\lib\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-image-picker\ios",
+					"$(SRCROOT)\..\node_modules\react-native-geocoder\ios\RNGeocoder",
 				);
 			};
 			name = Release;
@@ -1373,6 +1391,9 @@
 					"$(SRCROOT)\..\node_modules\react-native-linear-gradient\BVLinearGradient",
 					"$(SRCROOT)\..\node_modules\realm\src/**",
 					"$(SRCROOT)\..\node_modules\react-native-image-picker\ios",
+					"$(SRCROOT)\..\node_modules\react-native-maps\lib\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-image-picker\ios",
+					"$(SRCROOT)\..\node_modules\react-native-geocoder\ios\RNGeocoder",
 				);
 			};
 			name = Debug;
@@ -1398,6 +1419,9 @@
 					"$(SRCROOT)\..\node_modules\react-native-linear-gradient\BVLinearGradient",
 					"$(SRCROOT)\..\node_modules\realm\src/**",
 					"$(SRCROOT)\..\node_modules\react-native-image-picker\ios",
+					"$(SRCROOT)\..\node_modules\react-native-maps\lib\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-image-picker\ios",
+					"$(SRCROOT)\..\node_modules\react-native-geocoder\ios\RNGeocoder",
 				);
 			};
 			name = Release;
@@ -1435,6 +1459,9 @@
 					"$(SRCROOT)\..\node_modules\react-native-linear-gradient\BVLinearGradient",
 					"$(SRCROOT)\..\node_modules\realm\src/**",
 					"$(SRCROOT)\..\node_modules\react-native-image-picker\ios",
+					"$(SRCROOT)\..\node_modules\react-native-maps\lib\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-image-picker\ios",
+					"$(SRCROOT)\..\node_modules\react-native-geocoder\ios\RNGeocoder",
 				);
 			};
 			name = Debug;
@@ -1472,6 +1499,9 @@
 					"$(SRCROOT)\..\node_modules\react-native-linear-gradient\BVLinearGradient",
 					"$(SRCROOT)\..\node_modules\realm\src/**",
 					"$(SRCROOT)\..\node_modules\react-native-image-picker\ios",
+					"$(SRCROOT)\..\node_modules\react-native-maps\lib\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-image-picker\ios",
+					"$(SRCROOT)\..\node_modules\react-native-geocoder\ios\RNGeocoder",
 				);
 			};
 			name = Release;
@@ -1508,6 +1538,9 @@
 					"$(SRCROOT)\..\node_modules\react-native-linear-gradient\BVLinearGradient",
 					"$(SRCROOT)\..\node_modules\realm\src/**",
 					"$(SRCROOT)\..\node_modules\react-native-image-picker\ios",
+					"$(SRCROOT)\..\node_modules\react-native-maps\lib\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-image-picker\ios",
+					"$(SRCROOT)\..\node_modules\react-native-geocoder\ios\RNGeocoder",
 				);
 			};
 			name = Debug;
@@ -1544,6 +1577,9 @@
 					"$(SRCROOT)\..\node_modules\react-native-linear-gradient\BVLinearGradient",
 					"$(SRCROOT)\..\node_modules\realm\src/**",
 					"$(SRCROOT)\..\node_modules\react-native-image-picker\ios",
+					"$(SRCROOT)\..\node_modules\react-native-maps\lib\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-image-picker\ios",
+					"$(SRCROOT)\..\node_modules\react-native-geocoder\ios\RNGeocoder",
 				);
 			};
 			name = Release;

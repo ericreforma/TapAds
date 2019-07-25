@@ -12,22 +12,21 @@ import {
 } from 'react-native';
 import ImagePicker from 'react-native-image-picker';
 import DatePicker from 'react-native-datepicker';
-
-import { HeaderNav, UserInfo } from '../components/HeaderNav';
+import { connect } from 'react-redux';
 import { LabelText, CommonText, Label } from '../components/Text';
 import {
     Card,
     CardBody
 } from '../components/Card';
-import ModalMenu from '../components/Modal/Navigation';
+import { Page } from '../pages/Page';
 
 import theme from '../styles/theme.style';
 import styles from '../styles/page.Home.style';
 import lang from '../assets/language';
 
-export default class ProfileInfoPage extends Component {
-    constructor() {
-        super();
+class ProfileInfoPage extends Component {
+    constructor(props) {
+        super(props);
         this.state = {
             // navigation menu
             modalFadeBackground: new Animated.Value(0),
@@ -50,6 +49,7 @@ export default class ProfileInfoPage extends Component {
                 image_url: null,
                 totalRate: 35 //total number of clients(rating)
             },
+
             editUserData: {
                 name: 'Patrick Cua',
                 username: 'patrickcua',
@@ -83,7 +83,7 @@ export default class ProfileInfoPage extends Component {
                     vehicleType: 2
                 }
             ],
-        
+
             personalDetailsData: [
                 [
                     {
@@ -117,30 +117,18 @@ export default class ProfileInfoPage extends Component {
         };
     }
 
-    componentDidMount = () => {
-
-    }
-
-    menuButtonOnPress = () => {
-        Animated.timing(this.state.modalFadeBackground, {
-            toValue: this.state.scrollEnable ? 0.7 : 0,
-            duration: 600
-        }).start(() => {
-            this.setState({
-                modalContainerzIndex: this.state.scrollEnable ? 0 : 1
-            });
-        });
-
-        Animated.timing(this.state.modalXValue, {
-            toValue: this.state.scrollEnable ? this.state.width - 330 : this.state.width,
-            duration: 500
-        }).start();
-
-        this.setState({
-            scrollEnable: !this.state.scrollEnable,
-            modalContainerzIndex: 1
-        });
-    }
+		componentDidMount() {
+				this.setState({
+					userData: {
+							name: this.props.user.name,
+							username: this.props.user.username,
+							email: this.props.user.email,
+							contact_number: this.props.user.contact_number,
+							birthdate: this.props.user.birthdate,
+							location: this.props.user.location,
+					},
+				})
+		}
 
     updateUploadPhoto = (name) => () => {
         ImagePicker.launchImageLibrary({
@@ -155,7 +143,7 @@ export default class ProfileInfoPage extends Component {
             } else {
                 const source = { uri: response.uri };
                 var { userData } = this.state;
-            
+
                 // You can also display the image using data:
                 // const source = { uri: 'data:image/jpeg;base64,' + response.data };
 
@@ -196,7 +184,7 @@ export default class ProfileInfoPage extends Component {
             toValue: 0,
             duration: 300
         }).start();
-        
+
         var {
             editUserData,
             userData } = this.state;
@@ -239,30 +227,13 @@ export default class ProfileInfoPage extends Component {
 
 	render() {
 		return (
-            <View>
-                <ImageBackground
-                    style={styles.homePageBackgroundImage}
-                    resizeMode="stretch"
-                    source={require('../assets/image/common_page_background.png')}
-                ></ImageBackground>
-                
-                <HeaderNav
-                    menuButtonOnPress={this.menuButtonOnPress}
-                    navigation={this.props.navigation}
-                />
-
+            <Page>
                 <ScrollView
                     style={styles.homePageScrollView}
                     overScrollMode='never'
                     showsVerticalScrollIndicator={false}
                     scrollEnabled={this.state.scrollEnable}
                 >
-                    <UserInfo 
-                        profilePicture={this.state.userData.image_url ? this.state.userData.image_url : require('../assets/image/male_avatar.png')}
-                        userData={this.state.userData}
-                        navigation={this.props.navigation}
-                    />
-
                     <View
                         style={{
                             justifyContent: 'center',
@@ -303,7 +274,7 @@ export default class ProfileInfoPage extends Component {
                                             }}
                                         >
                                             <LabelText>Personal Details</LabelText>
-                                            
+
                                             <View
                                                 style={{
                                                     flexDirection: 'row',
@@ -381,7 +352,7 @@ export default class ProfileInfoPage extends Component {
                                                                         alignItems: 'center'
                                                                     }}
                                                                 >
-                                                                    {data.map((d, dIdx) => 
+                                                                    {data.map((d, dIdx) =>
                                                                         <View
                                                                             key={dIdx}
                                                                             style={{
@@ -432,7 +403,7 @@ export default class ProfileInfoPage extends Component {
                                                                             xsmall={true}
                                                                         >{this.state.userData.image_url ? 'Edit' : 'Upload'}</CommonText>
                                                                     </TouchableOpacity>
-                                                                    
+
                                                                     {this.state.userData.image_url ? (
                                                                         <TouchableOpacity
                                                                             style={{
@@ -441,7 +412,7 @@ export default class ProfileInfoPage extends Component {
                                                                             }}
                                                                             onPress={this.removeImage('image_url')}
                                                                         >
-                                                                            <CommonText 
+                                                                            <CommonText
                                                                                 xsmall={true}
                                                                                 color="gray"
                                                                             >Remove Current Photo</CommonText>
@@ -474,7 +445,7 @@ export default class ProfileInfoPage extends Component {
                                                                         <CommonText
                                                                             bold={true}
                                                                         >{d.label}</CommonText>
-        
+
                                                                         {d.name == 'birthdate' ? (
                                                                             <DatePicker
                                                                                 style={{
@@ -542,7 +513,7 @@ export default class ProfileInfoPage extends Component {
                                 </CardBody>
                             </Card>
                         </View>
-                        
+
                         {/* drivers license */}
                         <View
                             style={{
@@ -585,7 +556,7 @@ export default class ProfileInfoPage extends Component {
                                                         xsmall={true}
                                                     >{this.state.userData.licenseImage ? 'Update' : 'Upload'} Photo</CommonText>
                                                 </TouchableOpacity>
-                                                
+
                                                 {this.state.userData.licenseImage ? (
                                                     <TouchableOpacity
                                                         style={{
@@ -651,7 +622,7 @@ export default class ProfileInfoPage extends Component {
                                 </CardBody>
                             </Card>
                         </View>
-                        
+
                         {/* owned cars */}
                         <View
                             style={{
@@ -696,7 +667,7 @@ export default class ProfileInfoPage extends Component {
                                                         Add Vehicle
                                                     </Text>
                                                 </TouchableOpacity>
-                
+
                                                 <Text
                                                         style={{
                                                             fontFamily: 'Montserrat-Regular',
@@ -707,7 +678,7 @@ export default class ProfileInfoPage extends Component {
                                                 >
                                                     |
                                                 </Text>
-                                                
+
                                                 <TouchableOpacity>
                                                     <Text
                                                         style={{
@@ -721,7 +692,7 @@ export default class ProfileInfoPage extends Component {
                                                 </TouchableOpacity>
                                             </View>
                                         </View>
-                                    
+
                                         <View
                                             style={{
                                                 marginTop: 30,
@@ -763,7 +734,7 @@ export default class ProfileInfoPage extends Component {
                                                             small={true}
                                                         >Car Year</LabelText>
                                                     </View>
-                                                    
+
                                                     <View
                                                         style={{
                                                             flex: 1,
@@ -815,7 +786,7 @@ export default class ProfileInfoPage extends Component {
                                                                 xsmall={true}
                                                             >{car.carYear}</CommonText>
                                                         </View>
-                                                        
+
                                                         <View
                                                             style={{
                                                                 flex: 1,
@@ -870,7 +841,7 @@ export default class ProfileInfoPage extends Component {
                                     </Text>
                                 </TouchableOpacity>
                             </View>
-                            
+
                             <View
                                 style={{
                                     flex: 3,
@@ -902,16 +873,12 @@ export default class ProfileInfoPage extends Component {
                     </View>
                 </ScrollView>
 
-                <ModalMenu
-                    modalContainerzIndex={this.state.modalContainerzIndex}
-                    width={this.state.width}
-                    height={this.state.scrollEnable ? 0 : this.state.height}
-                    modalFadeBackground={this.state.modalFadeBackground}
-                    modalXValue={this.state.modalXValue}
-                    menuButtonOnPress={this.menuButtonOnPress}
-                    navigation={this.props.navigation}
-                />
-            </View>
+            </Page>
         );
     }
 }
+const mapStateToProps = (state) => ({
+	user: state.userReducer.user
+});
+
+export default connect(mapStateToProps)(ProfileInfoPage)

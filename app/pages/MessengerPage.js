@@ -9,8 +9,7 @@ import {
     Image
 } from 'react-native';
 
-import ModalMenu from '../components/Modal/Navigation';
-import { HeaderNav, UserInfo } from '../components/HeaderNav';
+import Page from './Page';
 import {
     LabelText,
     Common,
@@ -22,23 +21,10 @@ import theme from '../styles/theme.style';
 import styles from '../styles/page.Home.style';
 
 export default class MessengerPage extends Component {
-    state = {
-        modalFadeBackground: new Animated.Value(0),
-        modalContainerzIndex: 0,
-        modalXValue: new Animated.Value(Dimensions.get('window').width),
-        scrollEnable: true,
-        width: Dimensions.get('window').width,
-        height: Dimensions.get('window').height,
-
+    constructor(props){
+      super(props);
+      this.state = {
         textInputHeight: '10%',
-
-        userData: {
-            name: 'Patrick Cua',
-            rate: 4.60239,
-            totalRate: 35, //total number of clients(rating)
-            userType: 'user'
-        },
-
         conversations: [
             {
                 id: 5,
@@ -98,28 +84,9 @@ export default class MessengerPage extends Component {
                 created_at: '2019-07-09 17:00:00'
             }
         ]
+      }
     }
 
-    menuButtonOnPress = () => {
-        Animated.timing(this.state.modalFadeBackground, {
-            toValue: this.state.scrollEnable ? 0.7 : 0,
-            duration: 600
-        }).start(() => {
-            this.setState({
-                modalContainerzIndex: this.state.scrollEnable ? 0 : 1
-            });
-        });
-
-        Animated.timing(this.state.modalXValue, {
-            toValue: this.state.scrollEnable ? this.state.width - 330 : this.state.width,
-            duration: 500
-        }).start();
-
-        this.setState({
-            scrollEnable: !this.state.scrollEnable,
-            modalContainerzIndex: 1
-        });
-    }
 
     convert12HourTime = (timestamp) => {
         var time = timestamp.split(' ')[1],
@@ -134,27 +101,7 @@ export default class MessengerPage extends Component {
 
     render() {
         return (
-            <View
-                style={{
-                    flex: 1
-                }}
-            >
-                <ImageBackground
-                    style={styles.homePageBackgroundImage}
-                    resizeMode="stretch"
-                    source={require('../assets/image/common_page_background.png')}
-                ></ImageBackground>
-
-                <HeaderNav
-                    menuButtonOnPress={this.menuButtonOnPress}
-                    navigation={this.props.navigation}
-                />
-                
-                <View
-                    style={{
-                        flex: 1,
-                    }}
-                >
+            <Page>
                     <ScrollView
                         overScrollMode='never'
                         showsVerticalScrollIndicator={false}
@@ -180,7 +127,7 @@ export default class MessengerPage extends Component {
                             >
                                 <LabelText color="white">Messenger</LabelText>
                             </View>
-                            
+
                             <View
                                 style={{
                                     borderRadius: 15,
@@ -237,7 +184,7 @@ export default class MessengerPage extends Component {
                                                 />
                                             )}
                                         </View>
-                                    
+
                                         {/* client name and message and time*/}
                                         <View
                                             style={{
@@ -278,18 +225,7 @@ export default class MessengerPage extends Component {
                             </View>
                         </View>
                     </ScrollView>
-                </View>
-                    
-                <ModalMenu
-                    modalContainerzIndex={this.state.modalContainerzIndex}
-                    width={this.state.width}
-                    height={this.state.scrollEnable ? 0 : this.state.height}
-                    modalFadeBackground={this.state.modalFadeBackground}
-                    modalXValue={this.state.modalXValue}
-                    menuButtonOnPress={this.menuButtonOnPress}
-                    navigation={this.props.navigation}
-                />
-            </View>
+                </Page>
         );
     }
 }

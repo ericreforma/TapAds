@@ -9,9 +9,24 @@ import {
   LabelText,
   CommonText
 } from '../Text';
+import { AuthController } from '../../controllers';
+import NavigationService from '../../services/navigation';
 import styles from '../../styles/component.Navigation.style';
 
+
 export default class ModalMenu extends Component {
+
+    logout() {
+      AuthController.logout()
+      .then(() => {
+        NavigationService.navigate('Loading');
+      })
+      .catch((e) => {
+        console.log("error");
+        console.log(e);
+      })
+    }
+
     render() {
         return (
             <View
@@ -78,19 +93,13 @@ export default class ModalMenu extends Component {
                                     <TouchableOpacity
                                         style={styles.navigationContentBodyTopSpaceBetween}
                                         onPress={() => {
-                                            this.props.menuButtonOnPress();
-                                            switch(index) {
+                                            switch(index){
                                                 case 0:
-                                                    return this.props.navigation.navigate('Mycampaign');
-
-                                                case 1: 
-                                                    return this.props.navigation.navigate('Profile');
-                                                
-                                                case 2: 
-                                                    return this.props.navigation.navigate('Messenger');
-                                                
-                                                case 3:
-                                                    return this.props.navigation.navigate('TermsAndCondition');
+                                                    NavigationService.navigate('MyCampaign')
+                                                    break;
+                                                case 1:
+                                                    NavigationService.navigate('Profile')
+                                                    break;
                                             }
                                         }}
                                     >
@@ -118,7 +127,7 @@ export default class ModalMenu extends Component {
                                 style={styles.navigationContentBodyBottomLogout}
                             >
                                 <TouchableOpacity
-                                    onPress={() => this.props.navigation.replace('Login')}
+                                    onPress={() => { this.logout() }}
                                 >
                                     <LabelText color="white">Log out</LabelText>
                                 </TouchableOpacity>
