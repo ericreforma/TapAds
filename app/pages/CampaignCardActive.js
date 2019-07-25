@@ -5,6 +5,7 @@ import {
     Text,
     ScrollView,
     Dimensions,
+    PermissionsAndroid
 } from 'react-native';
 import { Page } from '../pages/Page';
 
@@ -16,6 +17,7 @@ import theme from '../styles/theme.style';
 import styles from '../styles/page.Home.style';
 import MapCard from '../components/MapCard';
 import NavigationService from '../services/navigation';
+import { CampaignAction } from '../redux/actions/campaign.action';
 
 class CampaignCardActive extends Component {
 
@@ -27,6 +29,27 @@ class CampaignCardActive extends Component {
           width: Dimensions.get('window').width,
           campaign: {},
       };
+    }
+
+    async requestCameraPermission() {
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+          {
+            title: 'TapAds',
+            message: `TapAds reuires your location`,
+            buttonNegative: 'Cancel',
+            buttonPositive: 'OK',
+          },
+        );
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          this.props.dispatchTrip()
+        } else {
+
+        }
+      } catch (err) {
+        console.warn(err);
+      }
     }
 
     render() {
@@ -62,7 +85,7 @@ class CampaignCardActive extends Component {
                                     alignItems: 'center'
                                 }}
                             >
-                              <MapCard location_id={this.props.campaign.campaignDetails.location_id} />
+                              <MapCard location_id={this.props.campaign.campaignDetails.location_id[0]} />
                             </View>
 
                             {/* header information */}
@@ -131,7 +154,7 @@ class CampaignCardActive extends Component {
                                         <LabelText
                                             large={true}
                                         >
-                                            {0}km
+                                            {this.props.campaign.campaign_traveled}km
                                         </LabelText>
 
                                         <CommonText>
@@ -200,7 +223,7 @@ class CampaignCardActive extends Component {
                                 >
                                     <ButtonBlue
                                         label="Start Trip"
-                                        onPress={() => { NavigationService.navigate('StartCampaign'); } }
+                                        onPress={() => { this.requestCameraPermission() } }
                                     />
                                 </View>
                             </View>
@@ -217,4 +240,8 @@ const mapStateToProps = (state) => ({
   campaign: state.campaignReducer.mylist_selected
 });
 
-export default connect(mapStateToProps)(CampaignCardActive);
+const mapDispatchToProps = dispatch => ({
+  dispatchTrip: () => dispatch(CampaignAction.startTrip())
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(CampaignCardActive);

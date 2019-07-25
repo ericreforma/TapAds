@@ -10,7 +10,8 @@ const initialState = {
   isRequestDone: false,
   recommended: [],
   mylist: [],
-  mylist_selected: {}
+  mylist_selected: {},
+  trip: {}
 };
 
 export function campaignReducer(state = initialState, action) {
@@ -63,8 +64,9 @@ export function campaignReducer(state = initialState, action) {
 
     case CAMPAIGN.MYLIST.UPDATE:
       return Object.assign({}, state, {
-        mylist: state.mylist === [] ? action.campaign :
-          [...state.mylist, ...action.campaign]
+        mylist: state.mylist === []
+          ? action.campaign
+          : [...state.mylist, ...action.campaign]
       });
 
     case CAMPAIGN.MYLIST.ADD:
@@ -78,10 +80,15 @@ export function campaignReducer(state = initialState, action) {
         mylist: action.mylist
       });
 
-      case CAMPAIGN.MYLIST.SELECTED:
-        return Object.assign({}, state, {
-          mylist_selected: action.campaign
-        });
+    case CAMPAIGN.MYLIST.SELECTED:
+      return Object.assign({}, state, {
+        mylist_selected: action.campaign
+      });
+
+    case CAMPAIGN.TRIP.START:
+      return Object.assign({}, state, {
+        trip: action.trip
+      });
 
     default:
       return state;

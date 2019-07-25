@@ -10,8 +10,8 @@ Token.schema = {
   properties: {
     token: 'string',
     created_at: 'date',
-    valid: 'bool'
-  }
+    valid: 'bool',
+  },
 };
 
 class User extends Realm.Object {}
@@ -23,12 +23,10 @@ User.schema = {
     name: 'string',
     username: 'string',
     media_id: 'int',
-    description: 'string',
     birthdate: 'string',
     contact_number: 'string',
     location: 'string',
     email: 'string',
-    email_verified_at: 'string',
     created_at: 'date',
     updated_at: 'date',
     ratings: 'Rating[]'
@@ -67,9 +65,8 @@ UserVehicle.schema = {
 class Campaign extends Realm.Object {}
 Campaign.schema = {
   name: 'Campaign',
-  primaryKey: 'id',
+  primaryKey: 'campaign_id',
   properties: {
-    id: 'int',
     campaign_id: 'int',
     client_id: 'int',
     name: 'string',
@@ -93,48 +90,50 @@ Campaign.schema = {
 
 class CampaignTrip extends Realm.Object {}
 CampaignTrip.schema = {
-    name: 'CampaignTrip',
-    primaryKey: 'id',
-    properties: {
-      id: 'int',
-      campaign_id: 'int',
-      campaign_traveled: 'string',
-      car_traveled: 'string',
-      started: 'int',
-      ended: 'int',
-      started_lat: 'string',
-      started_lng: 'string',
-      ended_lat: 'string',
-      ended_lng: 'string'
-    }
+  name: 'CampaignTrip',
+  primaryKey: 'id',
+  properties: {
+    id: 'int',
+    campaign_id: 'int',
+    campaign_traveled: 'string',
+    car_traveled: 'string',
+    started: 'int',
+    ended: 'int',
+    started_lat: 'string',
+    started_lng: 'string',
+    ended_lat: 'string',
+    ended_lng: 'string',
+  },
 };
 
 class CampaignTripMap extends Realm.Object {}
 CampaignTripMap.schema = {
-    name: 'CampaignTripMap',
-    primaryKey: 'id',
-    properties: {
-      id: 'int',
-      campaign_id: 'int',
-      campaign_trip_id: 'int',
-      counted: 'int',
-      latitude: 'string',
-      longitude: 'string',
-      distance: 'string',
-      speed: 'string',
-      timestamp: 'int',
-    }
+  name: 'CampaignTripMap',
+  primaryKey: 'id',
+  properties: {
+    id: 'int',
+    campaign_id: 'int',
+    campaign_trip_id: 'int',
+    counted: 'int',
+    latitude: 'string',
+    longitude: 'string',
+    distance: 'string',
+    speed: 'string',
+    timestamp: 'int',
+  },
 };
 
-const realm = new Realm({ schema: [
-  Token,
-  User,
-  Rating,
-  UserVehicle,
-  Campaign,
-  CampaignTrip,
-  CampaignTripMap
-] });
+const realm = new Realm({
+  schema: [
+    Token,
+    User,
+    Rating,
+    UserVehicle,
+    Campaign,
+    CampaignTrip,
+    CampaignTripMap,
+  ],
+});
 
 export const UserSchema = {
   update: (user, callbackSuccess, callbackFailed) => {
@@ -146,12 +145,10 @@ export const UserSchema = {
           name: user.name,
           username: user.username,
           media_id: user.media_id,
-          description: user.description,
           birthdate: user.birthdate,
           contact_number: user.contact_number,
           location: user.location,
           email: user.email,
-          email_verified_at: user.email_verified_at,
           created_at: moment(user.created_at).format(DATETIME_FORMAT),
           updated_at: moment(user.updated_at).format(DATETIME_FORMAT),
           ratings: []
@@ -181,7 +178,6 @@ export const UserSchema = {
       name: '',
       username: '',
       media_id: 0,
-      description: '',
       birthdate: '',
       contact_number: '',
       location: '',
@@ -198,12 +194,10 @@ export const UserSchema = {
       u.name = usr.name;
       u.username = usr.username;
       u.media_id = usr.media_id;
-      u.description = usr.description;
       u.birthdate = usr.birthdate;
       u.contact_number = usr.contact_number;
       u.location = usr.location;
       u.email = usr.email;
-      u.email_verified_at = usr.email_verified_at;
       u.created_at = usr.created_at;
       u.updated_at = usr.updated_at;
       u.ratings = usr.ratings;
@@ -217,20 +211,19 @@ export const UserSchema = {
 export const TokenSchema = {
 
   get() {
-      const tok = {
-        token: '',
-        created_at: '',
-        valid: false
-      };
+    const tok = {
+      token: '',
+      created_at: '',
+      valid: false
+    };
+    const to = realm.objects('Token');
+    for (const t of to) {
+      tok.token = t.token;
+      tok.created_at = t.created_at;
+      tok.valid = t.valid;
+    }
 
-      const to = realm.objects('Token');
-      for (const t of to) {
-        tok.token = t.token;
-        tok.created_at = t.created_at;
-        tok.valid = t.valid;
-      }
-
-      return tok;
+    return tok;
   },
 
   update: (token, callbackSuccess = null, callbackFailed = null) => {
@@ -254,6 +247,7 @@ export const TokenSchema = {
   }),
 
   api: () => {
+
     const schema = realm.objects('Token');
     let token = '';
 

@@ -1,6 +1,7 @@
-const SERVER_MAIN = 'http://192.168.0.108/tapads/public/';
-const SERVER_API = 'http://192.168.0.108/tapads/public/api';
-const SERVER_MEDIA = 'http://192.168.0.108/tapads/public/storage/media';
+const SERVER_MAIN = 'http://10.0.2.2/tapads/public/';
+
+const SERVER_API = `${SERVER_MAIN}api`;
+const SERVER_MEDIA = `${SERVER_MAIN}storage/media`;
 
 export const URL = {
   SERVER_MAIN,
@@ -8,12 +9,18 @@ export const URL = {
   SERVER_MEDIA,
   PAGE: {
     USER: '/user',
-    CAMPAIGN: '/user/campaign/browse',
-    MYLIST: '/user/campaign/mylist',
-    ADDLIST: '/user/campaign/addmylist'
-  }
+    CAMPAIGN: {
+      BROWSE: '/user/campaign/browse',
+      LIST: '/user/campaign/list',
+      ADD: '/user/campaign/add',
+    },
+    TRIP: {
+      ADD: '/user/campaign/trip/add',
+      MAP: '/user/campaign/trip/map',
+      END: '/user/campaign/trip/end',
+    },
+  },
 };
-
 
 export const VEHICLE = {
   CLASS: {
@@ -24,8 +31,8 @@ export const VEHICLE = {
       icon: {
         large: require('../assets/image/category_car_small.png'),
         black: require('../assets/image/icons/car_small_black_icon.png'),
-        white: require('../assets/image/icons/car_small_white_icon.png')
-      }
+        white: require('../assets/image/icons/car_small_white_icon.png'),
+      },
     },
     mid: {
       id: 1,
@@ -34,8 +41,8 @@ export const VEHICLE = {
       icon: {
         large: require('../assets/image/category_car_mid.png'),
         black: require('../assets/image/icons/car_mid_black_icon.png'),
-        white: require('../assets/image/icons/car_mid_white_icon.png')
-      }
+        white: require('../assets/image/icons/car_mid_white_icon.png'),
+      },
     },
     large: {
       id: 2,
@@ -44,8 +51,8 @@ export const VEHICLE = {
       icon: {
         large: require('../assets/image/category_car_large.png'),
         black: require('../assets/image/icons/car_large_black_icon.png'),
-        white: require('../assets/image/icons/car_large_white_icon.png')
-      }
+        white: require('../assets/image/icons/car_large_white_icon.png'),
+      },
     },
     motorcycle: {
       id: 3,
@@ -54,24 +61,24 @@ export const VEHICLE = {
       icon: {
         large: require('../assets/image/category_motorcycle.png'),
         black: require('../assets/image/icons/motorcycle_black_icon.png'),
-        white: require('../assets/image/icons/motorcycle_white_icon.png')
-      }
-    }
+        white: require('../assets/image/icons/motorcycle_white_icon.png'),
+      },
+    },
   },
   TYPE: {
     public: {
       id: 0,
-      name: 'public'
+      name: 'public',
     },
     private: {
       id: 1,
-      name: 'private'
+      name: 'private',
     },
     oncall: {
       id: 2,
-      name: 'on-call'
-    }
-  }
+      name: 'on-call',
+    },
+  },
 };
 
 export const MAP = {
@@ -79,5 +86,4 @@ export const MAP = {
     latitude: 14.1144363,
     longitude: 120.1410504,
   },
-
 };

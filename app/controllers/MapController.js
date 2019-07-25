@@ -1,4 +1,5 @@
 import { CampaignTripSchema, CampaignTripMapSchema } from '../database';
+import Geocoder from 'react-native-geocoder';
 
 const rad = (x) => (x * Math.PI / 180);
 
@@ -9,15 +10,15 @@ export const MapController = {
     let latitudeDelta = 0;
     let longitudeDelta = 0;
 
-    const coordinates = dataMap.map(c => c.map(geo => geo.map(coord => {
-        lats.push(coord[1]);
-        lons.push(coord[0]);
-
-        const coor = {
-          latitude: coord[1],
-          longitude: coord[0]
-        };
-        return coor;
+    const coordinates = dataMap.map(c => c.map(geo => geo.map(coord =>
+      {
+          lats.push(coord[1]);
+          lons.push(coord[0]);
+          const coor = {
+            latitude: coord[1],
+            longitude: coord[0],
+          };
+          return coor;
       }))
     );
     const minX = Math.min.apply(null, lats);
@@ -56,12 +57,18 @@ export const MapController = {
         const intersect = ((yLat > y) !== (yLon > y)) &&
           (x < (xLon - xLat) * (y - yLat) / (yLon - yLat) + xLat);
 
-        if (intersect) inside = !inside;
+        if (intersect) {
+          inside = !inside;
+        }
       }
 
-      if (inside) counter += 1;
+      if (inside) {
+        counter += 1;
+      }
     }
-    if (counter > 0) isInside = true;
+    if (counter > 0) {
+      isInside = true;
+    }
     return isInside;
   },
 
@@ -74,22 +81,50 @@ export const MapController = {
       Math.sin(dLong / 2) * Math.sin(dLong / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     const d = R * c;
-    return d;
-  },
-
-  insertTripMap: (campaignTripMap) => {
-
+    return (d / 1000).toFixed(2);
   },
 
   DBInsert: (campaignTrip, campaignTripMap) => {
     const tripId = CampaignTripSchema.insert(campaignTrip);
-    campaignTripMap.forEach((trip) => {
+    campaignTripMap.forEach(trip => {
       let ctrip = trip;
       ctrip.campaign_id = campaignTrip.campaign_id;
       ctrip.campaign_trip_id = tripId;
 
       CampaignTripMapSchema.insert(ctrip);
     });
-  }
+  },
 
+  getAddress: coords =>
+    new Promise((resolve, reject) => {
+      const co = {
+        lat: coords.latitude,
+        lng: coords.longitude,
+      };
+
+      let address = {
+        formattedAddress: '',
+        feature: '',
+        streetNumber: '',
+        streetName: '',
+        postalCode: '',
+        locality: '',
+        country: '',
+        countryCode: '',
+        adminArea: '',
+        subAdminArea: '',
+        subLocality: '',
+      };
+
+      const res = Geocoder.geocodePosition(co);
+
+      res
+        .then(reso => {
+          resolve(reso[0]);
+        })
+        .catch(err => {
+          resolve(address);
+          console.log(err);
+        });
+    }),
 };

@@ -1,0 +1,12 @@
+{
+  "plugins": ["prettier"],
+  "rules": {
+    "prettier/prettier": ["error", {"singleQuote": false, "parser": "flow"}]
+  },
+  "extends": [
+    "plugin:prettier/recommended",
+    "prettier/flowtype",
+    "prettier/react",
+    "prettier/standard"
+  ]
+}

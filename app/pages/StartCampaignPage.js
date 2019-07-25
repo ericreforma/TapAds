@@ -15,6 +15,8 @@ import { CampaignTripSchema, CampaignTripMapSchema } from '../database';
 import MapView, { Marker, Polygon, PROVIDER_GOOGLE, Polyline } from 'react-native-maps';
 import { MapController } from '../controllers';
 import NavigationService from '../services/navigation';
+import { CampaignController } from '../controllers';
+import { CampaignAction } from '../redux/actions/campaign.action';
 import { timeConverter } from '../utils';
 import style from '../styles/page.StartCampaign.style';
 import mapStyle from '../styles/map.style';
@@ -66,18 +68,21 @@ class StartCampaignPage extends Component {
       endTime: null,
       spanTime: '',
       timeInterval: null,
+      startAddress: '',
+      endAddress: '',
       start_location: {
         latitude: 14.6307252,
         longitude: 121.0436033
       },
       end_location: {
-        latitude: 14.6307252,
-        longitude: 121.0436033
+        latitude: 0,
+        longitude: 0
       },
       watchId: null,
       savingModalVisible: false,
       summaryModalVisible: false,
-      markerImage: require('../assets/image/car_blue_marker.png')
+      markerImage: require('../assets/image/car_blue_marker.png'),
+      unsentLocations: []
     };
 
     console.disableYellowBox = true;
@@ -135,9 +140,45 @@ class StartCampaignPage extends Component {
     });
   }
 
-  onMapReady() {
-    Geolocation.getCurrentPosition(
+  watchPosition() {
+    const watchId = Geolocation.watchPosition(
       (position) => {
+        console.log(position);
+
+        this.setState({
+          prevPosition: this.state.myPosition,
+          myPosition: {
+            coords: {
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude
+            },
+            heading: position.coords.heading,
+            timestamp: position.timestamp,
+            speed: position.coords.speed
+          }
+        });
+
+        this.zoomToMe(this.state.myPosition.coords);
+        this.checkIfWithinLocation(position);
+      },
+      (error) => {
+        console.log(error);
+      },
+      {
+        enableHighAccuracy: true,
+        fastestInterval: 3000,
+        interval: 5000,
+        distanceFilter: 100
+      }
+    );
+
+    this.setState({ watchId });
+  }
+
+  async onMapReady() {
+    Geolocation.getCurrentPosition(
+      async (position) => {
+
         this.setState({
           myPosition: {
             coords: {
@@ -160,75 +201,78 @@ class StartCampaignPage extends Component {
           start_location: {
             latitude: position.coords.latitude,
             longitude: position.coords.longitude
-          }
+          },
         });
-      }
-    );
 
-    const watchId = Geolocation.watchPosition(
-      (position) => {
+        const startAddress = await MapController.getAddress(this.state.myPosition.coords);
 
         this.setState({
-          prevPosition: this.state.myPosition,
-          myPosition: {
-            coords: {
-              latitude: position.coords.latitude,
-              longitude: position.coords.longitude
-            },
-            heading: position.coords.heading,
-            timestamp: position.timestamp,
-            speed: position.coords.speed
-          }
+          startAddress: startAddress.formattedAddress
         });
 
-        this.checkIfWithinLocation();
-        this.zoomToMe(this.state.myPosition.coords);
-      },
-      (error) => {
-        console.log(error);
-      },
-      {
-        enableHighAccuracy: true,
-        fastestInterval: 50,
-        interval: 100,
-        distanceFilter: 10
+        this.watchPosition();
       }
     );
 
-    this.setState({ watchId });
+
   }
 
-  save() {
+  async save() {
     this.setState({
       savingModalVisible: true,
       endTime: new Date().getTime(),
+      end_location: {
+        latitude: this.state.myPosition.coords.latitude,
+        longitude: this.state.myPosition.coords.longitude
+      }
     });
 
     clearInterval(this.state.timeInterval);
-    
-    setTimeout(() => {
-      Geolocation.clearWatch(this.state.watchId);
-      Geolocation.stopObserving();
 
-      const campaignTrip = {
-        campaign_id: this.state.campaign.campaignDetails.id,
-        campaign_traveled: this.state.totalCampaignTraveled,
-        car_traveled: this.state.totalCarTraveled,
-        started: this.state.startTime,
-        ended: new Date().getTime(),
-        started_lat: this.state.start_location.latitude,
-        started_lng: this.state.start_location.longitude,
-        ended_lat: this.state.end_location.latitude,
-        ended_lng: this.state.end_location.longitude,
-      };
+    Geolocation.clearWatch(this.state.watchId);
+    Geolocation.stopObserving();
 
-      MapController.DBInsert(campaignTrip, this.state.campaignTripMap);
+    const endlocation = {
+      latitude: this.state.myPosition.coords.latitude,
+      longitude: this.state.myPosition.coords.longitude
+    };
+    const endAddress = await MapController.getAddress(endlocation);
 
-      this.setState({
-        savingModalVisible: false,
-        summaryModalVisible: true
+    this.setState({
+      endAddress: endAddress.formattedAddress
+    });
+
+    const campaignTrip = {
+      user_campaign_id: this.props.trip.user_campaign_id,
+      trip_id: this.props.trip.id,
+      campaign_traveled: this.state.totalCampaignTraveled,
+      trip_traveled: this.state.totalCarTraveled,
+      location_start_latitude: this.state.start_location.latitude,
+      location_start_longitude: this.state.start_location.longitude,
+      location_start_address: this.state.startAddress,
+      location_end_latitude: this.state.end_location.latitude,
+      location_end_longitude: this.state.end_location.longitude,
+      location_end_address: this.state.endAddress
+    };
+
+    CampaignController.trip_end(campaignTrip)
+      .then(response => {
+
+        this.props.dispatchMyList(() => {
+          this.props.dispatchUpdateSelected();
+        });
+
+      })
+      .catch(error => {
+        console.log(error);
+        console.log(error.message);
+        console.log(error.response);
       });
-    }, 500);
+
+    this.setState({
+      savingModalVisible: false,
+      summaryModalVisible: true
+    });
   }
 
   zoomToMe(coords) {
@@ -242,7 +286,8 @@ class StartCampaignPage extends Component {
     this.mapView.animateToRegion(c, 0);
   }
 
-  checkIfWithinLocation() {
+  checkIfWithinLocation(position) {
+
     if (MapController.isInsidePolygon(this.state.polygons, this.state.myPosition.coords)) {
       // inside campaign
       this.setState({
@@ -274,11 +319,11 @@ class StartCampaignPage extends Component {
 
     if (this.state.counted && this.state.prevCounted) {
       this.setState({
-        totalCampaignTraveled: this.state.totalCampaignTraveled + distance
+        totalCampaignTraveled: this.state.totalCampaignTraveled + parseFloat(distance)
       });
     }
     this.setState({
-      totalCarTraveled: this.state.totalCarTraveled + distance
+      totalCarTraveled: this.state.totalCarTraveled + parseFloat(distance)
     });
 
     const locationDataNew = {
@@ -287,22 +332,20 @@ class StartCampaignPage extends Component {
     };
 
     const campaignTripMapArr = {
-      campaign_id: '',
-      campaign_trip_id: '',
+      user_trip_id: this.props.trip.id,
+      campaign_id: this.props.trip.campaign_id,
+      user_id: this.props.trip.user_id,
+      user_campaign_id: this.props.trip.user_campaign_id,
+      client_id: this.state.campaign.client.id,
       counted: this.state.counted,
-      latitude: this.state.myPosition.coords.latitude,
-      longitude: this.state.myPosition.coords.longitude,
+      latitude: position.coords.latitude,
+      longitude: position.coords.longitude,
+      heading: position.coords.heading,
       distance,
-      speed: this.state.myPosition.speed,
-      timestamp: this.state.myPosition.timestamp
+      speed: position.coords.speed,
+      timestamp: position.timestamp
     };
-
-    CampaignTripMapSchema.insert(
-      campaignTripMapArr,
-      (error) => {
-
-      });
-
+    console.log(campaignTripMapArr);
     let campaignTripMap =
       (this.state.campaignTripMap === undefined || this.state.campaignTripMap.length === 0) ?
       [] : [...this.state.campaignTripMap];
@@ -311,12 +354,30 @@ class StartCampaignPage extends Component {
       (this.state.locationData === undefined || this.state.locationData.length === 0) ?
       [] : [...this.state.locationData];
 
+    CampaignController.trip_send_location(JSON.stringify(campaignTripMapArr))
+      .then(() => {
+      })
+      .catch((e) => {
+        console.log(e);
+        console.log(e.message);
+        console.log(e.response);
+
+        let unsentLocations =
+          (this.state.campaignTripMap === undefined || this.state.campaignTripMap.length === 0) ?
+          [] : [...this.state.campaignTripMap];
+
+        unsentLocations.push(campaignTripMapArr);
+
+        this.setState({ unsentLocations });
+      });
+
+
     campaignTripMap.push(campaignTripMapArr);
     locationData.push(locationDataNew);
 
     this.setState({
       campaignTripMap,
-      locationData
+      locationData,
     });
   }
 
@@ -419,7 +480,7 @@ class StartCampaignPage extends Component {
           <View style={style.modalSummaryRow}>
             <Text style={style.modalSummaryTextKey}>Acquired Travel Distance</Text>
             <Text style={style.modalSummaryTextValue}>
-              {((this.state.totalCampaignTraveled) / 1000).toFixed(2)}km
+              {(this.state.totalCampaignTraveled).toFixed(2)}km
             </Text>
           </View>
 
@@ -433,7 +494,7 @@ class StartCampaignPage extends Component {
           <View style={style.modalSummaryRow}>
             <Text style={style.modalSummaryTextKey}>Distance Traveled</Text>
             <Text style={style.modalSummaryTextValue}>
-              {((this.state.totalCarTraveled) / 1000).toFixed(2)}km
+              {(this.state.totalCarTraveled).toFixed(2)}km
             </Text>
           </View>
 
@@ -474,10 +535,7 @@ class StartCampaignPage extends Component {
     </Modal>
 
   closeTrip = () => {
-    this.setState({
-      summaryModalVisible: false
-    });
-    NavigationService.navigate('CampaignCardActive');
+      NavigationService.navigate('CampaignCardActive');
   }
 
   render() {
@@ -503,10 +561,10 @@ class StartCampaignPage extends Component {
 
             <View style={style.viewColumn}>
               <Text style={style.textCampaignTraveled}>
-                {((this.state.totalCampaignTraveled) / 1000).toFixed(2)}km
+                {((this.state.totalCampaignTraveled)).toFixed(2)}km
               </Text>
               <Text style={style.textCarTraveled}>
-                {((this.state.totalCarTraveled) / 1000).toFixed(2)}km
+                {((this.state.totalCarTraveled)).toFixed(2)}km
               </Text>
             </View>
 
@@ -542,7 +600,13 @@ class StartCampaignPage extends Component {
 }
 
 const mapStateToProps = (state) => ({
-  campaign: state.campaignReducer.mylist_selected
+  campaign: state.campaignReducer.mylist_selected,
+  trip: state.campaignReducer.trip
 });
 
-export default connect(mapStateToProps)(StartCampaignPage);
+const mapDispatchToProps = dispatch => ({
+  dispatchMyList: (successCallback) => dispatch(CampaignAction.mylist(successCallback)),
+  dispatchUpdateSelected: () => dispatch(CampaignAction.updateSelected())
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(StartCampaignPage);

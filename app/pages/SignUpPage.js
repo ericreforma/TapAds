@@ -2,42 +2,42 @@ import React, { Component } from 'react';
 import {
 	Text,
 	View,
-    Image,
-    TextInput,
-    ScrollView,
+  Image,
+  TextInput,
+  ScrollView,
 	TouchableOpacity,
-    ImageBackground,
-    Dimensions,
-    Picker
+  ImageBackground,
+  Dimensions,
+  Picker,
+	Alert
 } from 'react-native';
-import axios from 'axios';
+import { connect } from 'react-redux';
 import theme from '../styles/theme.style';
 import ButtonBlue from '../components/ButtonBlue';
 import DatePicker from 'react-native-datepicker';
+import { AuthController } from '../controllers';
+import { AuthAction } from '../redux/actions/auth.action';
 
-export default class SignUpPage extends Component {
+class SignUpPage extends Component {
     constructor() {
         super();
         this.state = {
             inputData: [
                 {
-                    placeholder: 'First Name',
-                    dataName: 'firstName',
+                    placeholder: 'Name',
+                    dataName: 'name',
                 },{
-                    placeholder: 'Middle Name',
-                    dataName: 'middleName',
-                },{
-                    placeholder: 'Last Name',
-                    dataName: 'lastName'
+                    placeholder: 'User Name',
+                    dataName: 'username',
                 },{
                     placeholder: 'Birthdate',
-                    dataName: 'birthDate'
+                    dataName: 'birthdate'
                 },{
                     placeholder: 'Location',
                     dataName: 'location'
                 },{
                     placeholder: 'Contact Number',
-                    dataName: 'contactNumber'
+                    dataName: 'contact_number'
                 },{
                     placeholder: 'E-mail Address',
                     dataName: 'email'
@@ -51,11 +51,10 @@ export default class SignUpPage extends Component {
             ],
 
             // signup input values
-            firstName: '',
-            middleName: '',
-            lastName: '',
-            birthDate: '',
-            contactNumber: '',
+						name: '',
+            username: '',
+            birthdate: '',
+            contact_number: '',
             location: '',
             email: '',
             password: '',
@@ -70,9 +69,26 @@ export default class SignUpPage extends Component {
     }
 
     signUpButtonOnSubmit = () => {
+				const userData = {};
+
         this.state.inputData.map(i => {
-            console.log([i.placeholder] + ': ' + this.state[i.dataName]);
+						userData[i.dataName] = this.state[i.dataName];
         });
+
+				AuthController.register(JSON.stringify(userData))
+					.then((e) => {
+						this.props.login(userData.email, userData.password);
+					})
+					.catch((error) => {
+						const errArr = error.response.data;
+						let msg = '';
+
+						errArr.map((item, i) => {
+							msg += errArr[i] + '\n';
+						});
+
+						Alert.alert('Error',`Please check the following fields:\n${msg}`);
+					})
     }
 
 	render() {
@@ -119,14 +135,14 @@ export default class SignUpPage extends Component {
                             }}
                         >
                             {this.state.inputData.map((input, index) =>
-                                input.dataName == 'birthDate'
+                                input.dataName == 'birthdate'
                                 ? <DatePicker
                                     key={index}
                                     style={{
                                         width: Dimensions.get('window').width - (Dimensions.get('window').width * 2 / 10),
                                         marginVertical: 10
                                     }}
-                                    date={this.state.birthDate}
+                                    date={this.state.birthdate}
                                     mode="date"
                                     showIcon={false}
                                     placeholder={input.placeholder}
@@ -171,7 +187,7 @@ export default class SignUpPage extends Component {
                                                 color: theme.COLOR_BLACK
                                             }
                                         ]}
-                                        keyboardType={input.dataName == 'contactNumber' ? 'number-pad' : 'default'}
+                                        keyboardType={input.dataName == 'contact_number' ? 'number-pad' : 'default'}
                                         secureTextEntry={input.dataName == 'password' || input.dataName == 'confirmPassword' ? true : false}
                                         placeholder={input.placeholder}
                                         placeholderTextColor={theme.COLOR_NORMAL_FONT + '70'}
@@ -227,7 +243,7 @@ export default class SignUpPage extends Component {
                                             Terms of Use
                                         </Text>
                                     </TouchableOpacity>
-                                    
+
                                     <Text
                                         style={{
                                             fontSize: theme.FONT_SIZE_SMALL,
@@ -235,7 +251,7 @@ export default class SignUpPage extends Component {
                                             fontFamily: 'Montserrat-Light'
                                         }}
                                     > and </Text>
-                                    
+
                                     <TouchableOpacity
                                         style={{
                                             borderBottomColor: theme.COLOR_NORMAL_FONT + '70',
@@ -327,3 +343,9 @@ export default class SignUpPage extends Component {
 		);
   }
 }
+
+const mapDispatchToProps = (dispatch) => ({
+	login: (email, password) => dispatch(AuthAction.login(email, password))
+});
+
+export default connect(null, mapDispatchToProps)(SignUpPage);

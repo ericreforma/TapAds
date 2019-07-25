@@ -129,7 +129,7 @@ class MyCampaignPage extends Component {
                                     justifyContent: 'space-between'
                                 }}
                             >
-                                <LabelText color="blue" large={true}>{0}</LabelText>
+                                <LabelText color="blue" large={true}>{data.campaign_traveled}km</LabelText>
                                 <LabelText color="blue" large={true}>P{0}</LabelText>
                             </View>
 

@@ -8,12 +8,14 @@ import { AUTH, USER } from '../redux/actions/types.action';
 import { UserController } from '../controllers';
 import { UserSchema } from '../database';
 import theme from '../styles/theme.style';
+import { CampaignAction } from '../redux/actions/campaign.action';
 
 class LoadingPage extends Component {
 
   constructor(props) {
     super(props);
     this.authenticate();
+    
   }
 
   authenticate = () => {
@@ -22,6 +24,7 @@ class LoadingPage extends Component {
       .then((authResponse) => {
         this.props.dispatchLoginSuccess();
         this.props.dispatchGetProfile(authResponse.data);
+        this.props.dispatchGetMyList();
         UserSchema.update(authResponse.data,
         () => {
           this.props.navigation.navigate('Home');
@@ -49,6 +52,7 @@ class LoadingPage extends Component {
 }
 
 const mapDispatchToProps = (dispatch) => ({
+  dispatchGetMyList: () => dispatch(CampaignAction.mylist()),
   dispatchGetProfile: (user) => dispatch({ type: USER.GET.PROFILE.SUCCESS, user }),
   dispatchLoginRequest: () => dispatch({ type: AUTH.LOGIN.REQUEST }),
   dispatchLoginSuccess: () => dispatch({ type: AUTH.LOGIN.SUCCESS }),
