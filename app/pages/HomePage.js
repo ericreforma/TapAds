@@ -61,7 +61,6 @@ class HomePage extends Component {
                     style={styles.homePageScrollView}
                     overScrollMode='never'
                     showsVerticalScrollIndicator={false}
-                    scrollEnabled={this.state.scrollEnable}
                 >
                     <UserInfo />
 
@@ -146,6 +145,9 @@ class HomePage extends Component {
                               <View style={styles.homePageAlignCenter} >
                                   <TouchableOpacity
                                       onPress={() => { this.props.CampaignListRequest(); }}
+                                      style={{
+                                          marginTop: 20
+                                      }}
                                   >
                                       <LabelText color="white">Load more</LabelText>
                                   </TouchableOpacity>
@@ -154,8 +156,6 @@ class HomePage extends Component {
                               <ActivityIndicator color="#fff" style={{ height: 75 }} />
                             }
                         </View>
-
-
                     </View>
                 </ScrollView>
             </Page>

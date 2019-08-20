@@ -2,99 +2,81 @@ import React, { Component } from 'react';
 import {
     View,
     ScrollView,
-    Dimensions,
-    ImageBackground,
     TouchableOpacity,
-    Animated,
-    Image
+    Image,
+    ActivityIndicator
 } from 'react-native';
 
-import Page from './Page';
+import { Page } from './Page';
 import {
     LabelText,
     Common,
     CommonOverflow,
     LabelOverflow
 } from '../components/Text';
+import UserInfo from '../components/UserInfo';
+import { UserController } from '../controllers/UserController';
+import { URL } from '../config/variables';
 
 import theme from '../styles/theme.style';
-import styles from '../styles/page.Home.style';
 
 export default class MessengerPage extends Component {
     constructor(props){
-      super(props);
-      this.state = {
-        textInputHeight: '10%',
-        conversations: [
-            {
-                id: 5,
-                client_id: 4,
-                business_name: 'Mcdonalds Philippines',
-                message: 'Greetings! We are pleased to announce that lorem ipsum dolor sit amet',
-                sender: 1,
-                client_media_url: require('../assets/image/sample_client_mcdo.png'),
-                created_at: '2019-07-09 10:00:00'
-            },{
-                id: 10,
-                client_id: 5,
-                business_name: 'Kia Philippines',
-                message: 'Hello! We are pleased to announce that lorem ipsum dolor sit amet',
-                sender: 1,
-                client_media_url: require('../assets/image/sample_client_kia.png'),
-                created_at: '2019-07-09 09:00:00'
-            },{
-                id: 11,
-                client_id: 6,
-                business_name: 'Davies Paints',
-                message: 'Thank you! I hope to be lorem ipsum dolor sit amet',
-                sender: 0,
-                client_media_url: require('../assets/image/sample_client_davies.png'),
-                created_at: '2019-07-09 22:00:00'
-            },{
-                id: 12,
-                client_id: 7,
-                business_name: 'Pioneer Adhesives',
-                message: 'Hi! I have some inquiries regarding the lorem ipsum dolor sit amet',
-                sender: 0,
-                client_media_url: require('../assets/image/sample_client_pioneer.png'),
-                created_at: '2019-07-09 21:00:00'
-            },{
-                id: 13,
-                client_id: 8,
-                business_name: 'Manulife Philippines',
-                message: 'Hello! Thank you for this! I love the lorem ipsum dolor sit amet',
-                sender: 0,
-                client_media_url: require('../assets/image/sample_client_manulife.png'),
-                created_at: '2019-07-09 19:00:00'
-            },{
-                id: 14,
-                client_id: 9,
-                business_name: 'Fujifilm Philippines',
-                message: 'Thank you so much! I would love to lorem ipsum dolor sit amet',
-                sender: 0,
-                client_media_url: require('../assets/image/sample_client_fuji.png'),
-                created_at: '2019-07-09 17:00:00'
-            },{
-                id: 15,
-                client_id: 10,
-                business_name: 'Lorem Philippines',
-                message: 'Thank you so much! I would love to lorem ipsum dolor sit amet',
-                sender: 0,
-                client_media_url: null,
-                created_at: '2019-07-09 17:00:00'
-            }
-        ]
-      }
+        super(props);
+        this.state = {
+            loader: true,
+            conversations: []
+        };
     }
 
+    componentDidMount = () => {
+        this.getChatList();
+    }
+
+    getChatList = () => {
+        UserController.request.chatList()
+        .then(conversations => {
+            var loader = false,
+                conversations = conversations.data;
+            this.setState({conversations, loader})
+        })
+        .catch(e => {
+            console.log(e);
+            setTimeout(() => this.getChatList(), 1000);
+        });
+    }
 
     convert12HourTime = (timestamp) => {
-        var time = timestamp.split(' ')[1],
+        var date = timestamp.split(' ')[0],
+            year = parseInt(date.split('-')[0]),
+            month = parseInt(date.split('-')[1]),
+            day = parseInt(date.split('-')[2]),
+            time = timestamp.split(' ')[1],
             hour = parseInt(time.split(':')[0]),
             min = time.split(':')[1],
-            time = hour == 0 ? '12' : (
+            dateNow = new Date(),
+            dateDB = new Date(year, month - 1, day, time.split(':')[0], time.split(':')[1], time.split(':')[2]),
+            yearNow = dateNow.getFullYear(),
+            millis = dateDB.getTime(),
+            millisNow = dateNow.getTime(),
+            hourDiff = Math.abs(millisNow - millis) / 36e5,
+            months = [
+                'Jan', 'Feb', 'Mar',
+                'Apr', 'May', 'Jun',
+                'Jul', 'Aug', 'Sep',
+                'Oct', 'Nov', 'Dec'
+            ],
+            time;
+
+        if(yearNow > year) {
+            time = date.replace(/-/g,'/');
+        } else if(hourDiff >= 48) {
+            time = `${months[month - 1]} ${day}`;
+        } else {
+            time = (hour == 0 ? '12' : (
                 hour < 12 ? hour : hour - 12
-            ) + `:${min} ${hour < 12 ? 'AM' : 'PM'}`;
+            )) + `:${min} ${hour < 12 ? 'AM' : 'PM'}`;
+        }
 
         return time;
     }
@@ -102,130 +84,141 @@ export default class MessengerPage extends Component {
     render() {
         return (
             <Page>
-                    <ScrollView
-                        overScrollMode='never'
-                        showsVerticalScrollIndicator={false}
-                        scrollEnabled={this.state.scrollEnable}
+                <ScrollView
+                    overScrollMode='never'
+                    showsVerticalScrollIndicator={false}
+                >
+                    <UserInfo />
+
+                    <View
+                        style={{
+                            margin: 20,
+                            marginBottom: 90
+                        }}
                     >
-                        <UserInfo
-                            profilePicture={require('../assets/image/male_avatar.png')}
-                            userData={this.state.userData}
-                            navigation={this.props.navigation}
-                        />
+                        <View
+                            style={{
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                marginBottom: 20,
+                            }}
+                        >
+                            <LabelText color="white">Messenger</LabelText>
+                        </View>
 
                         <View
                             style={{
-                                margin: 20,
+                                borderRadius: 15,
+                                paddingHorizontal: 10,
+                                paddingVertical: 20,
+                                backgroundColor: theme.COLOR_WHITE
                             }}
                         >
-                            <View
-                                style={{
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                    marginBottom: 20,
-                                }}
-                            >
-                                <LabelText color="white">Messenger</LabelText>
-                            </View>
-
-                            <View
-                                style={{
-                                    borderRadius: 15,
-                                    paddingHorizontal: 10,
-                                    paddingVertical: 20,
-                                    backgroundColor: theme.COLOR_WHITE
-                                }}
-                            >
-                                {this.state.conversations.map(c =>
-                                    <TouchableOpacity
-                                        key={c.id}
+                            {this.state.loader ? (
+                                <ActivityIndicator color="#000" style={{ height: 75 }} />
+                            ) : (this.state.conversations.length === 0 ? (
+                                <View
+                                    style={{
+                                        flex: 1,
+                                        alignItems: 'center',
+                                        justifyContent: 'center'
+                                    }}
+                                >
+                                    <CommonOverflow
+                                        label="-- No message available --"
+                                        nonActive={true}
+                                    />
+                                </View>
+                            ) : this.state.conversations.map(c =>
+                                <TouchableOpacity
+                                    key={c.id}
+                                    style={{
+                                        marginVertical: 7,
+                                        borderRadius: 15,
+                                        paddingVertical: 10,
+                                        paddingHorizontal: 20,
+                                        backgroundColor: theme.COLOR_WHITE,
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                        elevation: 3
+                                    }}
+                                    onPress={e => this.props.navigation.navigate('Chat', {id: c.id})}
+                                >
+                                    {/* client image */}
+                                    <View
                                         style={{
-                                            marginVertical: 7,
-                                            borderRadius: 15,
-                                            paddingVertical: 10,
-                                            paddingHorizontal: 20,
-                                            backgroundColor: theme.COLOR_WHITE,
-                                            flexDirection: 'row',
-                                            alignItems: 'center',
-                                            elevation: 3
+                                            width: 50,
+                                            height: 50,
+                                            borderRadius: 30,
+                                            backgroundColor: theme.COLOR_GRAY_HEAVY,
+                                            justifyContent: 'center',
+                                            alignItems: 'center'
                                         }}
-                                        onPress={e => this.props.navigation.navigate('Chat')}
                                     >
-                                        {/* client image */}
-                                        <View
-                                            style={{
-                                                width: 50,
-                                                height: 50,
-                                                borderRadius: 30,
-                                                backgroundColor: theme.COLOR_GRAY_HEAVY,
-                                                justifyContent: 'center',
-                                                alignItems: 'center'
-                                            }}
-                                        >
-                                            {c.client_media_url ? (
-                                                <Image
-                                                    style={{
-                                                        width: 50,
-                                                        height: 50,
-                                                        borderRadius: 30
-                                                    }}
-                                                    resizeMode="cover"
-                                                    source={c.client_media_url}
-                                                />
-                                            ) : (
-                                                <Image
-                                                    style={{
-                                                        width: 30,
-                                                        height: 30,
-                                                        borderRadius: 30
-                                                    }}
-                                                    resizeMode="cover"
-                                                    source={require('../assets/image/icons/gallery-icon.png')}
-                                                />
-                                            )}
-                                        </View>
-
-                                        {/* client name and message and time*/}
-                                        <View
-                                            style={{
-                                                flex: 1,
-                                                marginLeft: 15,
-                                                flexDirection: 'row',
-                                                alignItems: 'flex-end'
-                                            }}
-                                        >
-                                            <View
+                                        {c.url ? (
+                                            <Image
                                                 style={{
-                                                    marginRight: 10,
-                                                    flex: 1,
+                                                    width: 50,
+                                                    height: 50,
+                                                    borderRadius: 30
                                                 }}
-                                            >
-                                                <LabelOverflow
-                                                    label={c.business_name}
-                                                    nonActive={c.sender == 0 ? true : false}
-                                                    numberOfLines={1}
-                                                />
+                                                resizeMode="cover"
+                                                source={{uri: URL.SERVER_MAIN + c.url}}
+                                            />
+                                        ) : (
+                                            <Image
+                                                style={{
+                                                    width: 30,
+                                                    height: 30,
+                                                    borderRadius: 30
+                                                }}
+                                                resizeMode="cover"
+                                                source={require('../assets/image/icons/gallery-icon.png')}
+                                            />
+                                        )}
+                                    </View>
 
-                                                <CommonOverflow
-                                                    label={c.sender == 0 ? `You: ${c.message}` : c.message}
-                                                    numberOfLines={1}
-                                                    nonActive={c.sender == 0 ? true : false}
-                                                />
-                                            </View>
+                                    {/* client name and message and time*/}
+                                    <View
+                                        style={{
+                                            flex: 1,
+                                            marginLeft: 15,
+                                            flexDirection: 'row',
+                                            alignItems: 'flex-end'
+                                        }}
+                                    >
+                                        <View
+                                            style={{
+                                                marginRight: 10,
+                                                flex: 1,
+                                            }}
+                                        >
+                                            <LabelOverflow
+                                                label={c.business_name}
+                                                nonActive={c.sender == 0 ? true : false}
+                                                numberOfLines={1}
+                                            />
 
-                                            <View>
-                                                <Common
-                                                    label={this.convert12HourTime(c.created_at)}
-                                                    nonActive={c.sender == 0 ? true : false}
-                                                />
-                                            </View>
+                                            <CommonOverflow
+                                                label={c.sender == 0 ? `You: ${c.message}` : c.message}
+                                                numberOfLines={1}
+                                                nonActive={c.sender == 0 ? true : false}
+                                            />
                                         </View>
-                                    </TouchableOpacity>
-                                )}
-                            </View>
+
+                                        <View>
+                                            <Common
+                                                label={this.convert12HourTime(c.created_at)}
+                                                nonActive={c.sender == 0 ? true : false}
+                                            />
+                                        </View>
+                                    </View>
+                                </TouchableOpacity>
+                            ))}
                         </View>
-                    </ScrollView>
-                </Page>
+                    </View>
+                </ScrollView>
+            </Page>
         );
     }
 }

@@ -19,6 +19,7 @@ import {
     CardBody
 } from '../components/Card';
 import { Page } from '../pages/Page';
+import UserInfo from '../components/UserInfo';
 
 import theme from '../styles/theme.style';
 import styles from '../styles/page.Home.style';
@@ -29,10 +30,6 @@ class ProfileInfoPage extends Component {
         super(props);
         this.state = {
             // navigation menu
-            modalFadeBackground: new Animated.Value(0),
-            modalContainerzIndex: 0,
-            modalXValue: new Animated.Value(Dimensions.get('window').width),
-            scrollEnable: true,
             width: Dimensions.get('window').width,
             height: Dimensions.get('window').height,
 
@@ -117,18 +114,18 @@ class ProfileInfoPage extends Component {
         };
     }
 
-		componentDidMount() {
-				this.setState({
-					userData: {
-							name: this.props.user.name,
-							username: this.props.user.username,
-							email: this.props.user.email,
-							contact_number: this.props.user.contact_number,
-							birthdate: this.props.user.birthdate,
-							location: this.props.user.location,
-					},
-				})
-		}
+    componentDidMount() {
+        this.setState({
+            userData: {
+                name: this.props.user.name,
+                username: this.props.user.username,
+                email: this.props.user.email,
+                contact_number: this.props.user.contact_number,
+                birthdate: this.props.user.birthdate,
+                location: this.props.user.location,
+            },
+        })
+    }
 
     updateUploadPhoto = (name) => () => {
         ImagePicker.launchImageLibrary({
@@ -232,8 +229,9 @@ class ProfileInfoPage extends Component {
                     style={styles.homePageScrollView}
                     overScrollMode='never'
                     showsVerticalScrollIndicator={false}
-                    scrollEnabled={this.state.scrollEnable}
                 >
+                    <UserInfo />
+
                     <View
                         style={{
                             justifyContent: 'center',

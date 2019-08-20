@@ -44,7 +44,11 @@ export class VehicleCategoryCard extends Component {
                         <View
                             style={styles.homePageCategoryDescriptionWrapper}
                         >
-                            <CommonText color="white">{this.props.vehicle.description}</CommonText>
+                            <CommonText 
+                                color="white"
+                            >
+                                {this.props.vehicle.description}
+                            </CommonText>
                         </View>
                     </View>
                 </CardFooter>

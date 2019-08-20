@@ -58,7 +58,7 @@ const AppStack = createStackNavigator({
 		Addvehicle: AddVehiclePage,
 		StartCampaign: StartCampaignPage
 	}, {
-        initialRouteName: 'Login',
+        initialRouteName: 'Home',
 		headerMode: 'none',
 		navigationOptions: {
 			headerVisible: false,

@@ -32,7 +32,11 @@ export const CampaignCardList = ({ campaigns, viewDetails }) =>
             >
                 <CardColumnContentBody divider >
                     <LabelText>{campaign.name}</LabelText>
-                    <CommonText>{campaign.client[0].business_name}</CommonText>
+                    <CommonText
+                        numberOfLines={1}
+                    >
+                        {campaign.client[0].business_name}
+                    </CommonText>
                 </CardColumnContentBody>
 
                 <View style={{ height: 2 }} />
@@ -54,7 +58,7 @@ export const CampaignCardList = ({ campaigns, viewDetails }) =>
                       </Text>
 
                       <Text style={styles.homePageCampaignCardInfoValue}>
-                          {toMoney(campaign.pay_basic)}
+                          P {toMoney(campaign.pay_basic)}
                       </Text>
                   </View>
 
@@ -82,6 +86,7 @@ export const CampaignCardList = ({ campaigns, viewDetails }) =>
                             styles.homePageCommonText,
                             styles.homePageTextWhite
                         ]}
+                        numberOfLines={10}
                     >
                         {campaign.description}
                     </Text>
@@ -106,17 +111,14 @@ export const CampaignCardRec = ({ campaigns, viewDetails }) => {
             <View key={data.id}>
               <CardBody divider>
                   <Text
-                      style={[
-                          styles.homePageCommonText,
-                          styles.homePageTextCommonColor,
-                          styles.homePageDescriptionText
-                      ]}
+                    style={[
+                        styles.homePageCommonText,
+                        styles.homePageTextCommonColor,
+                        styles.homePageDescriptionText
+                    ]}
+                    numberOfLines={5}
                   >
-                      {
-                          data.item.description.length <= 200
-                          ? data.item.description
-                          : `${data.item.description.substring(0, 200)}...`
-                      }
+                      {data.item.description}
                   </Text>
               </CardBody>
 

@@ -1,7 +1,14 @@
-const SERVER_MAIN = 'http://10.0.2.2/tapads/public/';
+import { TokenSchema } from '../database';
 
-const SERVER_API = `${SERVER_MAIN}api`;
-const SERVER_MEDIA = `${SERVER_MAIN}storage/media`;
+const SERVER_MAIN = 'http://10.0.2.2';
+const SERVER_WEBSOCKET = 'http://127.0.0.1';
+const WEBSOCKET_PORT = '3000';
+const WEBSOCKET_API = `${SERVER_WEBSOCKET}:${WEBSOCKET_PORT}`;
+
+const SERVER_API = `${SERVER_MAIN}/api`;
+const SERVER_MEDIA = `${SERVER_MAIN}/storage/media`;
+
+const schema = TokenSchema.get();
 
 export const URL = {
   SERVER_MAIN,
@@ -86,4 +93,18 @@ export const MAP = {
     latitude: 14.1144363,
     longitude: 120.1410504,
   },
+};
+
+export const WEBSOCKET = {
+  WEBSOCKET_API,
+  CONNECT: {
+    MESSAGE: `/chat/authentication?token=${schema.token}&userType=0`
+  },
+  EVENTS: {
+    ON_CONNECT: 'connect',
+    ONLINE_USERS: 'online users',
+    ONLINE_USER: 'online user',
+    NEW_MESSAGE: 'new message',
+    DC_USER: 'disconnected user'
+  }
 };

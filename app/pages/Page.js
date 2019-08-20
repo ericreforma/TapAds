@@ -7,6 +7,7 @@ import {
 import { AppBackground } from '../components/AppBackground';
 import { HeaderNav } from '../components/HeaderNav';
 import ModalMenu from '../components/Modal/Navigation';
+import NavigationService from '../services/navigation';
 
 export class Page extends Component {
 
@@ -17,7 +18,6 @@ export class Page extends Component {
       modalFadeBackground: new Animated.Value(0),
       modalContainerzIndex: 0,
       modalXValue: new Animated.Value(Dimensions.get('window').width),
-      scrollEnable: true,
       carouselPage: 0,
       width: Dimensions.get('window').width,
       height: Dimensions.get('window').height,
@@ -45,6 +45,11 @@ export class Page extends Component {
       });
   }
 
+  navigateToPage = (page) => {
+    this.menuButtonOnPress();
+    NavigationService.navigate(page);
+  }
+
   render() {
     return (
       <View>
@@ -64,6 +69,7 @@ export class Page extends Component {
             modalXValue={this.state.modalXValue}
             menuButtonOnPress={this.menuButtonOnPress}
             navigation={this.props.navigation}
+            navigateToPage={this.navigateToPage}
         />
 
       </View>

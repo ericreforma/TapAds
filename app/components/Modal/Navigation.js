@@ -27,6 +27,23 @@ export default class ModalMenu extends Component {
       })
     }
 
+    menuNavOnPress = (index) => (e) => {
+        switch(index){
+            case 0:
+                this.props.navigateToPage('MyCampaign')
+                break;
+            case 1:
+                this.props.navigateToPage('Profile')
+                break;
+            case 2:
+                this.props.navigateToPage('Messenger')
+                break;
+            case 3:
+                this.props.navigateToPage('TermsAndCondition')
+                break;
+        }
+    }
+
     render() {
         return (
             <View
@@ -92,16 +109,7 @@ export default class ModalMenu extends Component {
                                 >
                                     <TouchableOpacity
                                         style={styles.navigationContentBodyTopSpaceBetween}
-                                        onPress={() => {
-                                            switch(index){
-                                                case 0:
-                                                    NavigationService.navigate('MyCampaign')
-                                                    break;
-                                                case 1:
-                                                    NavigationService.navigate('Profile')
-                                                    break;
-                                            }
-                                        }}
+                                        onPress={this.menuNavOnPress(index)}
                                     >
                                         <CommonText color="white">{'<'}</CommonText>
                                         <LabelText color="white">{value}</LabelText>

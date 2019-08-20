@@ -32,6 +32,7 @@ class CommonText extends Component {
                         )
                     )
                 ]}
+                numberOfLines={this.props.numberOfLines ? this.props.numberOfLines : 0}
             >
                 {this.props.children}
             </Text>

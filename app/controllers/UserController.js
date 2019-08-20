@@ -2,7 +2,9 @@ import { HttpRequest } from '../services/http';
 
 export const UserController = {
   request: {
-    profile: () => HttpRequest.get('/user')
+    profile: () => HttpRequest.get('/user'),
+    chatList: () => HttpRequest.get('/user/chat/list'),
+    messages: (cid) => HttpRequest.get(`/user/chat/${cid}`),
   },
 
   rating: (ratings) => {

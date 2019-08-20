@@ -23,6 +23,7 @@ User.schema = {
     name: 'string',
     username: 'string',
     media_id: 'int',
+    profilePicture: 'string',
     birthdate: 'string',
     contact_number: 'string',
     location: 'string',
@@ -145,6 +146,7 @@ export const UserSchema = {
           name: user.name,
           username: user.username,
           media_id: user.media_id,
+          profilePicture: user.profilePicture,
           birthdate: user.birthdate,
           contact_number: user.contact_number,
           location: user.location,
@@ -194,6 +196,7 @@ export const UserSchema = {
       u.name = usr.name;
       u.username = usr.username;
       u.media_id = usr.media_id;
+      u.profilePicture = usr.profilePicture;
       u.birthdate = usr.birthdate;
       u.contact_number = usr.contact_number;
       u.location = usr.location;
@@ -357,3 +360,4 @@ export const CampaignTripMapSchema = {
   },
   get: () => realm.objects('CampaignTripMap')
 };
+``

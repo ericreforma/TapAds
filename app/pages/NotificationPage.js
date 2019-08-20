@@ -2,61 +2,49 @@ import React, { Component } from 'react';
 import {
     View,
     Text,
-    Image,
-    ImageBackground,
     ScrollView,
     Animated,
     Dimensions
 } from 'react-native';
-import { HeaderNav, UserInfo } from '../components/HeaderNav';
 import styles from '../styles/page.Notification.style';
-import ModalMenu from '../components/Modal/Navigation';
 import NotificationCard from '../components/NotificationCard';
+import { Page } from './Page';
+import UserInfo from '../components/UserInfo';
+import NavigationService from '../services/navigation';
 
 export default class NotificationPage extends Component {
-    state = {
-        // menu data
-        width: Dimensions.get('window').width,
-        height: Dimensions.get('window').height,
-        scrollEnable: true,
-        modalFadeBackground: new Animated.Value(0),
-        modalContainerzIndex: 0,
-        modalXValue: new Animated.Value(Dimensions.get('window').width),
+    constructor(props) {
+        super(props);
 
-        // user data
-        userData: {
-            name: 'Patrick Cua',
-            rate: 4.60239,
-            totalRate: 35 //total number of clients(rating)
-        },
-
-        /*
-            notification data
-            1 - sent a message
-            2 - approve post
-            3 - payment sent
-        */
-        notification: [
-            {
-                client: 'Mcdonalds Philippines',
-                action: 1
-            },{
-                client: 'KIA Philippines',
-                action: 2
-            },{
-                client: 'Davies Paint',
-                action: 3
-            },{
-                client: 'Mcdonalds Philippines',
-                action: 1
-            },{
-                client: 'KIA Philippines',
-                action: 2
-            },{
-                client: 'Davies Paint',
-                action: 3
-            }
-        ]
+        this.state = {
+            /*
+                notification data
+                1 - sent a message
+                2 - approve post
+                3 - payment sent
+            */
+            notification: [
+                {
+                    client: 'Mcdonalds Philippines',
+                    action: 1
+                },{
+                    client: 'KIA Philippines',
+                    action: 2
+                },{
+                    client: 'Davies Paint',
+                    action: 3
+                },{
+                    client: 'Mcdonalds Philippines',
+                    action: 1
+                },{
+                    client: 'KIA Philippines',
+                    action: 2
+                },{
+                    client: 'Davies Paint',
+                    action: 3
+                }
+            ]
+        };
     }
     
     menuButtonOnPress = () => {
@@ -82,36 +70,20 @@ export default class NotificationPage extends Component {
 
     notificationOnPress = (action) => () => {
         if(action == 1) {
-            this.props.navigation.navigate('Chat');
+            NavigationService.navigate('Chat');
         }
     }
 
     render() {
         return (
-            <View>
-                <ImageBackground
-                    style={styles.notifPageBackgroundImage}
-                    resizeMode="stretch"
-                    source={require('../assets/image/common_page_background.png')}
-                ></ImageBackground>
-                
-                <HeaderNav
-                    menuButtonOnPress={this.menuButtonOnPress}
-                    navigation={this.props.navigation}
-                />
-
+            <Page>
                 <ScrollView
                     style={styles.notifPageScrollView}
                     overScrollMode='never'
                     showsVerticalScrollIndicator={false}
-                    scrollEnabled={this.state.scrollEnable}
                 >
                 
-                    <UserInfo 
-                        profilePicture={require('../assets/image/male_avatar.png')}
-                        userData={this.state.userData}
-                        navigation={this.props.navigation}
-                    />
+                    <UserInfo />
 
                     {/* notification content */}
                     <View
@@ -148,18 +120,7 @@ export default class NotificationPage extends Component {
                     </View>
 
                 </ScrollView>
-
-                <ModalMenu
-                    modalContainerzIndex={this.state.modalContainerzIndex}
-                    modalContainerTop={this.state.modalContainerTop}
-                    width={this.state.width}
-                    height={this.state.scrollEnable ? 0 : this.state.height}
-                    modalFadeBackground={this.state.modalFadeBackground}
-                    modalXValue={this.state.modalXValue}
-                    menuButtonOnPress={this.menuButtonOnPress}
-                    navigation={this.props.navigation}
-                />
-            </View>
+            </Page>
         );
     }
 }

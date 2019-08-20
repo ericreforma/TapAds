@@ -1,15 +1,33 @@
-export HomePage from './HomePage';
-export LogInPage from './LoginPage';
-export NotificationPage from './NotificationPage';
-export ProfilePage from './ProfilePage';
-export SignUpPage from './SignUpPage';
-export LoadingPage from './LoadingPage';
-export CampaignPage from './CampaignPage';
-export MyCampaignPage from './MyCampaignPage';
-export CampaignCardActive from './CampaignCardActive';
-export StartCampaignPage from './StartCampaignPage';
-export ProfileInfoPage from './ProfileInfoPage';
-export MessengerPage from './MessengerPage';
-export ChatPage from './ChatPage';
-export TermsAndConditionPage from './TermsAndConditionPage';
-export AddVehiclePage from './AddVehiclePage';
+import HomePage from './HomePage';
+import LogInPage from './LoginPage';
+import NotificationPage from './NotificationPage';
+import ProfilePage from './ProfilePage';
+import SignUpPage from './SignUpPage';
+import LoadingPage from './LoadingPage';
+import CampaignPage from './CampaignPage';
+import MyCampaignPage from './MyCampaignPage';
+import CampaignCardActive from './CampaignCardActive';
+import StartCampaignPage from './StartCampaignPage';
+import ProfileInfoPage from './ProfileInfoPage';
+import MessengerPage from './MessengerPage';
+import ChatPage from './ChatPage';
+import TermsAndConditionPage from './TermsAndConditionPage';
+import AddVehiclePage from './AddVehiclePage';
+
+export {
+	LogInPage,
+	HomePage,
+	NotificationPage,
+	SignUpPage,
+	ProfilePage,
+	LoadingPage,
+	CampaignPage,
+	MyCampaignPage,
+	CampaignCardActive,
+	StartCampaignPage,
+	ProfileInfoPage,
+	MessengerPage,
+	ChatPage,
+	TermsAndConditionPage,
+	AddVehiclePage
+};

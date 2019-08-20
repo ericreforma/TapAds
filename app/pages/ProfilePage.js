@@ -31,7 +31,7 @@ class ProfilePage extends Component {
     constructor(props) {
         super(props);
         this.state = {
-						user: [],
+            user: [],
             // navigation menu
             modalFadeBackground: new Animated.Value(0),
             modalContainerzIndex: 0,
@@ -114,10 +114,10 @@ class ProfilePage extends Component {
             vehicleCardSize: [],
         };
     }
-		componentDidMount() {
-			this.setState({ user: this.props.user });
 
-		}
+    componentDidMount() {
+        this.setState({ user: this.props.user });
+    }
 
     menuButtonOnPress = () => {
         Animated.timing(this.state.modalFadeBackground, {
@@ -167,6 +167,7 @@ class ProfilePage extends Component {
                 height: this.state.vehicleCardSize[idx].height,
                 borderBottomLeftRadius: 15,
                 borderTopLeftRadius: 15,
+                backgroundColor: theme.COLOR_GRAY_BUTTON
             }}
             source={{ uri: `${URL.SERVER_MEDIA}/${item.url}` }}
         />

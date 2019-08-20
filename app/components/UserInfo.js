@@ -9,6 +9,8 @@ import {
 } from 'react-native';
 import styles from '../styles/component.HeaderNav.style';
 import { UserController } from '../controllers';
+import NavigationService from '../services/navigation';
+import { URL } from '../config/variables';
 
 class UserInfo extends Component {
   constructor(props) {
@@ -58,12 +60,19 @@ class UserInfo extends Component {
                 >
                     <TouchableOpacity
                         activeOpacity={0.8}
-                        onPress={() => this.props.navigation.navigate('Profile')}
+                        onPress={() => NavigationService.navigate('Profile')}
                     >
-                        <Image
-                            style={styles.headerNavProfilePictureImage}
-                            source={this.props.profilePicture}
-                        />
+                        {this.state.user.profilePicture ? (
+                            <Image
+                                style={styles.headerNavProfilePictureImage}
+                                source={{uri: URL.SERVER_MAIN + this.state.user.profilePicture}}
+                            />
+                        ) : (
+                            <Image
+                                style={styles.headerNavProfilePictureImage}
+                                source={require('../assets/image/male_avatar.png')}
+                            />
+                        )}
                     </TouchableOpacity>
                 </View>
 

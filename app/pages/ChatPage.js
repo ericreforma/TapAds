@@ -3,70 +3,122 @@ import {
     View,
     ScrollView,
     Dimensions,
-    ImageBackground,
     TouchableOpacity,
     TextInput,
     Animated,
     Image,
-    Keyboard
+    Keyboard,
+    ActivityIndicator
 } from 'react-native';
 
-import ModalMenu from '../components/Modal/Navigation';
-import { HeaderNav, UserInfo } from '../components/HeaderNav';
 import { LabelText, CommonText } from '../components/Text';
+import UserInfo from '../components/UserInfo';
+import { AppBackground } from '../components/AppBackground';
+import { HeaderNav } from '../components/HeaderNav';
+import ModalMenu from '../components/Modal/Navigation';
+import { UserController } from '../controllers/UserController';
+import NavigationService from '../services/navigation';
 
 import theme from '../styles/theme.style';
-import styles from '../styles/page.Home.style';
 
 export default class ChatPage extends Component {
-    state = {
-        modalFadeBackground: new Animated.Value(0),
-        modalContainerzIndex: 0,
-        modalXValue: new Animated.Value(Dimensions.get('window').width),
-        scrollEnable: true,
-        width: Dimensions.get('window').width,
-        height: Dimensions.get('window').height,
+    constructor(props) {
+        super(props);
 
-        textInputHeight: '10%',
+        const cid = this.props.navigation.getParam('id', null);
 
-        userData: {
-            name: 'Patrick Cua',
-            rate: 4.60239,
-            totalRate: 35, //total number of clients(rating)
-            userType: 'user'
-        },
+        if(!cid) {
+            this.props.navigation.navigate('Messenger');
+        }
 
-        message: '',
-        messengerData: {
-            id: 5,
-            brand: 'Brand Name',
-        },
-        messengerMessages: [
-            {
-                from: 'client',
-                message: 'Hi! Lorem ipsum dolor'
-            },{
-                from: 'client',
-                message: 'Consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labo re et dolore magna aliqua'
-            },{
-                from: 'user',
-                message: 'Hey man! Ut enim ad minim'
-            },{
-                from: 'user',
-                message: 'What\'s up?'
-            },{
-                from: 'client',
-                message: 'Veniam, quis nostrud'
-            }
-        ]
+        this.state = {
+            modalFadeBackground: new Animated.Value(0),
+            modalContainerzIndex: 0,
+            modalXValue: new Animated.Value(Dimensions.get('window').width),
+            width: Dimensions.get('window').width,
+            height: Dimensions.get('window').height,
+    
+            message: '',
+            keyboardPress: true,
+            loadMore: 15,
+            loader: true,
+            loderLoadMore: false,
+            messengerData: {
+                id: '',
+                brand: ''
+            },
+            messengerMessages: []
+        };
+
+        // alert(this.props.navigation.getParam('id', null));
+        this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow);
+        this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide);
+    }
+
+    componentDidMount = () => {
+        this.getMessages();
+    }
+
+    componentWillUnmount = () => {
+        this.keyboardDidShowListener.remove();
+        this.keyboardDidHideListener.remove();
     }
     
-    componentWillMount = () => {
-        this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow);
+    getMessages = () => {
+        var cid = this.props.navigation.getParam('id');
+        UserController.request.messages(cid)
+        .then(response => {
+            var { chat,
+                client } = response.data,
+                { messengerData } = this.state,
+                loader = false,
+                messengerMessages = [];
+            
+            messengerData = {
+                id: client.id,
+                brand: client.business_name
+            }
+
+            messengerMessages = chat.map(c => {
+                return {
+                    from: c.sender == 0 ? 'user' : 'client',
+                    message: c.message
+                }
+            });
+
+            this.setState({loader, messengerData, messengerMessages});
+        })
+        .catch(e => {
+            console.log(e);
+            setTimeout(() => this.getMessages(), 1000);
+        });
+    }
+
+    menuButtonOnPress = () => {
+        Animated.timing(this.state.modalFadeBackground, {
+            toValue: this.state.scrollEnable ? 0.7 : 0,
+            duration: 600
+        }).start(() => {
+            this.setState({
+                modalContainerzIndex: this.state.scrollEnable ? 0 : 1
+            });
+        });
+  
+        Animated.timing(this.state.modalXValue, {
+            toValue: this.state.scrollEnable ? this.state.width - 330 : this.state.width,
+            duration: 500
+        }).start();
+  
+        this.setState({
+            scrollEnable: !this.state.scrollEnable,
+            modalContainerzIndex: 1
+        });
     }
     
     _keyboardDidShow = () => {
-        this._scrollView.scrollToEnd({animated: true});
+        setTimeout(() => this._scrollView.scrollToEnd({animated: true}), 500);
+        var keyboardPress = true;
+        this.setState({keyboardPress});
     }
 
     menuButtonOnPress = () => {
@@ -100,7 +152,7 @@ export default class ChatPage extends Component {
 
         if(message !== '') {
             messengerMessages.push({
-                from: this.state.userData.userType,
+                from: 'user',
                 message: message
             });
 
@@ -111,24 +163,39 @@ export default class ChatPage extends Component {
         }
     }
 
+    seeMoreOnPress = () => {
+        var { loadMore } = this.state,
+            loaderLoadMore = true,
+            keyboardPress = false;
+        loadMore += 15;
+
+        this.setState({
+            loadMore,
+            loaderLoadMore,
+            keyboardPress
+        });
+    }
+
+    navigateToPage = (page) => {
+        this.menuButtonOnPress();
+        NavigationService.navigate(page);
+    }
+
     render() {
         return (
             <View
                 style={{
-                    flex: 1
+                    flexDirection: 'column',
+                    flex: 1,
                 }}
             >
-                <ImageBackground
-                    style={styles.homePageBackgroundImage}
-                    resizeMode="stretch"
-                    source={require('../assets/image/common_page_background.png')}
-                ></ImageBackground>
+                <AppBackground />
 
                 <HeaderNav
                     menuButtonOnPress={this.menuButtonOnPress}
                     navigation={this.props.navigation}
                 />
-                
+      
                 <View
                     style={{
                         flex: 1,
@@ -137,17 +204,17 @@ export default class ChatPage extends Component {
                     <ScrollView
                         overScrollMode='never'
                         showsVerticalScrollIndicator={false}
-                        scrollEnabled={this.state.scrollEnable}
                         ref={ref => this._scrollView = ref}
                         onContentSizeChange={(contentWidth, contentHeight) => {
-                            this._scrollView.scrollToEnd({animated: true});
+                            var { keyboardPress } = this.state;
+                            if(keyboardPress) {
+                                this._scrollView.scrollToEnd({animated: true});
+                            } else {
+                                this.setState({loaderLoadMore: false});
+                            }
                         }}
                     >
-                        <UserInfo
-                            profilePicture={require('../assets/image/male_avatar.png')}
-                            userData={this.state.userData}
-                            navigation={this.props.navigation}
-                        />
+                        <UserInfo />
 
                         <View
                             style={{
@@ -174,69 +241,118 @@ export default class ChatPage extends Component {
                                 style={{
                                     backgroundColor: theme.COLOR_WHITE,
                                     paddingHorizontal: 10,
-                                    flex: 1
                                 }}
                             >
-                                {this.state.messengerMessages.map((message, index) =>
-                                    <View
-                                        key={index}
-                                        style={{
-                                            marginTop: index == 0 ? 20 : 5,
-                                            marginBottom: index == (this.state.messengerMessages.length - 1) ? 20 : 5,
-                                            justifyContent: message.from == 'client' ? 'flex-start' : 'flex-end',
-                                            alignItems: message.from == 'client' ? 'flex-end' : 'flex-end',
-                                            flexDirection: 'row',
-                                        }}
-                                    >
+                                {this.state.loader ? (
+                                    <ActivityIndicator color="#000" style={{ height: 75 }} />
+                                ) : (
+                                    this.state.messengerMessages.length === 0 ? (
                                         <View
                                             style={{
-                                                backgroundColor: message.from == 'client' ? theme.COLOR_GRAY_CHAT : theme.COLOR_LIGHT_BLUE,
-                                                position: 'absolute',
-                                                left: message.from == 'client' ? 0 : null,
-                                                right: message.from == 'client' ? null : 0,
-                                                bottom: 0
+                                                justifyContent: 'center',
+                                                alignItems: 'center',
+                                                flex: 1
                                             }}
                                         >
-                                            <View
-                                                style={{
-                                                    backgroundColor: theme.COLOR_WHITE,
-                                                    borderBottomRightRadius: message.from == 'client' ? 12 : 0,
-                                                    borderBottomLeftRadius: message.from == 'client' ? 0 : 12,
-                                                    width: 21,
-                                                    height: 20
-                                                }}
-                                            ></View>
-                                        </View>
-
-                                        <View
-                                            style={{
-                                                backgroundColor: message.from == 'client' ? theme.COLOR_GRAY_CHAT : theme.COLOR_LIGHT_BLUE,
-                                                borderRadius: 20,
-                                                borderBottomLeftRadius: message.from == 'client' ? 0 : 20,
-                                                borderBottomRightRadius: message.from == 'client' ? 20 : 0,
-                                                paddingVertical: 10,
-                                                paddingHorizontal: 20,
-                                                maxWidth: '80%',
-                                                zIndex: 10,
-                                                marginLeft: message.from == 'client' ? 20 : 0,
-                                                marginRight: message.from == 'client' ? 0 : 20,
-                                                flexWrap: 'wrap'
-                                            }}
-                                        >
-                                            <CommonText
-                                                color={message.from == 'client' ? 'black' : 'white'}
-                                            >
-                                                {message.message}
+                                            <CommonText color={'black'} >
+                                                -- No message available --
                                             </CommonText>
                                         </View>
-                                    </View>
+                                    ) : (
+                                        <View>
+                                            {this.state.messengerMessages.length > this.state.loadMore ? (
+                                                this.state.loaderLoadMore ? (
+                                                    <View
+                                                        style={{
+                                                            justifyContent: 'center',
+                                                            alignItems: 'center',
+                                                            paddingVertical: 20
+                                                        }}
+                                                    >
+                                                        <ActivityIndicator color="#000" />
+                                                    </View>
+                                                ) : (
+                                                    <TouchableOpacity
+                                                        style={{
+                                                            justifyContent: 'center',
+                                                            alignItems: 'center',
+                                                            paddingVertical: 20
+                                                        }}
+                                                        onPress={this.seeMoreOnPress}
+                                                    >
+                                                        <CommonText color={'black'} >
+                                                            -- See More --
+                                                        </CommonText>
+                                                    </TouchableOpacity>
+                                                )
+                                            ) : null}
+                                            
+                                            {this.state.messengerMessages.map((message, index) =>
+                                                (this.state.messengerMessages.length - this.state.loadMore) <= index ? (
+                                                    <View
+                                                        key={index}
+                                                        style={{
+                                                            marginTop: index == 0 ? 20 : 5,
+                                                            marginBottom: index == (this.state.messengerMessages.length - 1) ? 20 : 5,
+                                                            justifyContent: message.from == 'client' ? 'flex-start' : 'flex-end',
+                                                            alignItems: message.from == 'client' ? 'flex-end' : 'flex-end',
+                                                            flexDirection: 'row',
+                                                        }}
+                                                    >
+                                                        <View
+                                                            style={{
+                                                                backgroundColor: message.from == 'client' ? theme.COLOR_GRAY_CHAT : theme.COLOR_LIGHT_BLUE,
+                                                                position: 'absolute',
+                                                                left: message.from == 'client' ? 0 : null,
+                                                                right: message.from == 'client' ? null : 0,
+                                                                bottom: 0
+                                                            }}
+                                                        >
+                                                            <View
+                                                                style={{
+                                                                    backgroundColor: theme.COLOR_WHITE,
+                                                                    borderBottomRightRadius: message.from == 'client' ? 12 : 0,
+                                                                    borderBottomLeftRadius: message.from == 'client' ? 0 : 12,
+                                                                    width: 21,
+                                                                    height: 20
+                                                                }}
+                                                            ></View>
+                                                        </View>
+
+                                                        <View
+                                                            style={{
+                                                                backgroundColor: message.from == 'client' ? theme.COLOR_GRAY_CHAT : theme.COLOR_LIGHT_BLUE,
+                                                                borderRadius: 20,
+                                                                borderBottomLeftRadius: message.from == 'client' ? 0 : 20,
+                                                                borderBottomRightRadius: message.from == 'client' ? 20 : 0,
+                                                                paddingVertical: 10,
+                                                                paddingHorizontal: 20,
+                                                                maxWidth: '80%',
+                                                                zIndex: 10,
+                                                                marginLeft: message.from == 'client' ? 20 : 0,
+                                                                marginRight: message.from == 'client' ? 0 : 20,
+                                                                flexWrap: 'wrap',
+                                                                flexDirection: 'row'
+                                                            }}
+                                                        >
+                                                            <CommonText
+                                                                color={message.from == 'client' ? 'black' : 'white'}
+                                                            >
+                                                                {message.message}
+                                                            </CommonText>
+                                                        </View>
+                                                    </View>
+                                                ) : null
+                                            )}
+                                        </View>
+                                    )
                                 )}
                             </View>
                         </View>
                     </ScrollView>
                 </View>
                 
-                {/* message container */}
+                {/* message input container */}
                 <View
                     style={{
                         width: '100%',
@@ -339,7 +455,7 @@ export default class ChatPage extends Component {
                         </TouchableOpacity>
                     </View>
                 </View>
-
+      
                 <ModalMenu
                     modalContainerzIndex={this.state.modalContainerzIndex}
                     width={this.state.width}
@@ -348,7 +464,9 @@ export default class ChatPage extends Component {
                     modalXValue={this.state.modalXValue}
                     menuButtonOnPress={this.menuButtonOnPress}
                     navigation={this.props.navigation}
+                    navigateToPage={this.navigateToPage}
                 />
+      
             </View>
         )
     }
