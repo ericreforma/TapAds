@@ -25,20 +25,23 @@ export default class MessengerPage extends Component {
         super(props);
         this.state = {
             loader: true,
-            conversations: []
+            conversations: [],
+            websocketData: {}
         };
-    }
-
-    componentDidMount = () => {
+        
         this.getChatList();
     }
 
     getChatList = () => {
         UserController.request.chatList()
         .then(conversations => {
-            var loader = false,
-                conversations = conversations.data;
-            this.setState({conversations, loader})
+            var conversations = conversations.data,
+                loader = false;
+            conversations = conversations.map(c => {
+                c.online = false;
+                return c;
+            });
+            this.setState({conversations, loader});
         })
         .catch(e => {
             console.log(e);
@@ -152,7 +155,8 @@ export default class MessengerPage extends Component {
                                             borderRadius: 30,
                                             backgroundColor: theme.COLOR_GRAY_HEAVY,
                                             justifyContent: 'center',
-                                            alignItems: 'center'
+                                            alignItems: 'center',
+                                            position: 'relative'
                                         }}
                                     >
                                         {c.url ? (
@@ -176,6 +180,22 @@ export default class MessengerPage extends Component {
                                                 source={require('../assets/image/icons/gallery-icon.png')}
                                             />
                                         )}
+
+                                        {c.online ? (
+                                            <View
+                                                style={{
+                                                    position: 'absolute',
+                                                    right: -5,
+                                                    bottom: -3,
+                                                    backgroundColor: theme.COLOR_GREEN,
+                                                    height: 20,
+                                                    width: 20,
+                                                    borderRadius: 10,
+                                                    borderWidth: 3,
+                                                    borderColor: theme.COLOR_WHITE
+                                                }}
+                                            ></View>
+                                        ) : null}
                                     </View>
 
                                     {/* client name and message and time*/}

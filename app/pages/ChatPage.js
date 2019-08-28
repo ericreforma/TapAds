@@ -13,11 +13,8 @@ import {
 
 import { LabelText, CommonText } from '../components/Text';
 import UserInfo from '../components/UserInfo';
-import { AppBackground } from '../components/AppBackground';
-import { HeaderNav } from '../components/HeaderNav';
-import ModalMenu from '../components/Modal/Navigation';
 import { UserController } from '../controllers/UserController';
-import NavigationService from '../services/navigation';
+import { Page } from './Page';
 
 import theme from '../styles/theme.style';
 
@@ -32,9 +29,6 @@ export default class ChatPage extends Component {
         }
 
         this.state = {
-            modalFadeBackground: new Animated.Value(0),
-            modalContainerzIndex: 0,
-            modalXValue: new Animated.Value(Dimensions.get('window').width),
             width: Dimensions.get('window').width,
             height: Dimensions.get('window').height,
     
@@ -120,27 +114,6 @@ export default class ChatPage extends Component {
         var keyboardPress = true;
         this.setState({keyboardPress});
     }
-
-    menuButtonOnPress = () => {
-        Animated.timing(this.state.modalFadeBackground, {
-            toValue: this.state.scrollEnable ? 0.7 : 0,
-            duration: 600
-        }).start(() => {
-            this.setState({
-                modalContainerzIndex: this.state.scrollEnable ? 0 : 1
-            });
-        });
-
-        Animated.timing(this.state.modalXValue, {
-            toValue: this.state.scrollEnable ? this.state.width - 330 : this.state.width,
-            duration: 500
-        }).start();
-
-        this.setState({
-            scrollEnable: !this.state.scrollEnable,
-            modalContainerzIndex: 1
-        });
-    }
     
     messageInputOnChangeText = (text) => {
         this.setState({ message: text });
@@ -176,26 +149,12 @@ export default class ChatPage extends Component {
         });
     }
 
-    navigateToPage = (page) => {
-        this.menuButtonOnPress();
-        NavigationService.navigate(page);
-    }
-
     render() {
         return (
-            <View
-                style={{
-                    flexDirection: 'column',
-                    flex: 1,
-                }}
+            <Page
+                {...this.props}
+                message
             >
-                <AppBackground />
-
-                <HeaderNav
-                    menuButtonOnPress={this.menuButtonOnPress}
-                    navigation={this.props.navigation}
-                />
-      
                 <View
                     style={{
                         flex: 1,
@@ -455,19 +414,7 @@ export default class ChatPage extends Component {
                         </TouchableOpacity>
                     </View>
                 </View>
-      
-                <ModalMenu
-                    modalContainerzIndex={this.state.modalContainerzIndex}
-                    width={this.state.width}
-                    height={this.state.scrollEnable ? 0 : this.state.height}
-                    modalFadeBackground={this.state.modalFadeBackground}
-                    modalXValue={this.state.modalXValue}
-                    menuButtonOnPress={this.menuButtonOnPress}
-                    navigation={this.props.navigation}
-                    navigateToPage={this.navigateToPage}
-                />
-      
-            </View>
+            </Page>
         )
     }
 }

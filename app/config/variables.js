@@ -1,14 +1,12 @@
 import { TokenSchema } from '../database';
 
 const SERVER_MAIN = 'http://10.0.2.2';
-const SERVER_WEBSOCKET = 'http://127.0.0.1';
+const SERVER_WEBSOCKET = 'http://10.0.2.2';
 const WEBSOCKET_PORT = '3000';
 const WEBSOCKET_API = `${SERVER_WEBSOCKET}:${WEBSOCKET_PORT}`;
 
 const SERVER_API = `${SERVER_MAIN}/api`;
 const SERVER_MEDIA = `${SERVER_MAIN}/storage/media`;
-
-const schema = TokenSchema.get();
 
 export const URL = {
   SERVER_MAIN,
@@ -98,13 +96,19 @@ export const MAP = {
 export const WEBSOCKET = {
   WEBSOCKET_API,
   CONNECT: {
-    MESSAGE: `/chat/authentication?token=${schema.token}&userType=0`
+    MESSAGE: () => {
+      var outputToken = TokenSchema.get(),
+        returnData = `chat/authentication?token=${outputToken.token}&userType=0`;
+
+      return returnData;
+    } 
   },
   EVENTS: {
     ON_CONNECT: 'connect',
     ONLINE_USERS: 'online users',
-    ONLINE_USER: 'online user',
+    ONLINE_CLIENT: 'online client',
     NEW_MESSAGE: 'new message',
-    DC_USER: 'disconnected user'
+    DC_USER: 'disconnected user',
+    ERROR_CONN: 'connect_error'
   }
 };
