@@ -1,29 +1,28 @@
 import React, { Component } from 'react';
 import {
-	Text,
     View,
-    Image,
     ScrollView,
-    TouchableOpacity,
-    ImageBackground,
     Dimensions,
-    TextInput,
     Animated
 } from 'react-native';
 import ImagePicker from 'react-native-image-picker';
-import DatePicker from 'react-native-datepicker';
 import { connect } from 'react-redux';
-import { LabelText, CommonText, Label } from '../components/Text';
-import {
-    Card,
-    CardBody
-} from '../components/Card';
+import FlashMessage, { showMessage, hideMessage } from "react-native-flash-message";
+
+import { LabelText } from '../components/Text';
 import { Page } from '../pages/Page';
 import UserInfo from '../components/UserInfo';
+import { USER } from '../redux/actions/types.action';
+import { UserController } from '../controllers/UserController';
 
 import theme from '../styles/theme.style';
 import styles from '../styles/page.Home.style';
-import lang from '../assets/language';
+import { URL, VEHICLE } from '../config/variables';
+
+import PersonalDetails from '../components/profile/profileInfo/PersonalDetails';
+import DriverLicense from '../components/profile/profileInfo/DriverLicense';
+import OwnedCars from '../components/profile/profileInfo/OwnedCars';
+import ActionButton from '../components/profile/profileInfo/ActionButton';
 
 class ProfileInfoPage extends Component {
     constructor(props) {
@@ -32,55 +31,25 @@ class ProfileInfoPage extends Component {
             // navigation menu
             width: Dimensions.get('window').width,
             height: Dimensions.get('window').height,
-
             userData: {
-                name: 'Patrick Cua',
-                username: 'patrickcua',
-                email: 'PatrickCua@Cmail.com',
-                contact_number: '0915 000 0000',
-                birthdate: '1997-02-17',
-                location: 'Rpapa Tondo Manila',
-                rate: 4.60239,
-                // licenseImage: require('../assets/image/license_sample.png'),
+                name: '',
+                username: '',
+                email: '',
+                contact_number: '',
+                birthdate: '',
+                location: '',
                 licenseImage: null,
                 image_url: null,
-                totalRate: 35 //total number of clients(rating)
             },
-
             editUserData: {
-                name: 'Patrick Cua',
-                username: 'patrickcua',
-                email: 'PatrickCua@Cmail.com',
-                contact_number: '0915 000 0000',
-                birthdate: '1997-02-17',
-                location: 'Rpapa Tondo Manila',
-                rate: 4.60239,
-                // licenseImage: require('../assets/image/license_sample.png'),
-                licenseImage: null,
-                image_url: null,
-                totalRate: 35 //total number of clients(rating)
+                name: '',
+                username: '',
+                email: '',
+                contact_number: '',
+                birthdate: '',
+                location: '',
             },
-
-            carsOwned: [
-                {
-                    model: 'Kia Rio',
-                    carYear: 2016,
-                    vehicleType: 0
-                },{
-                    model: 'Toyota Hi-Ace',
-                    carYear: 2019,
-                    vehicleType: 0
-                },{
-                    model: 'Ford Ecosport',
-                    carYear: 2016,
-                    vehicleType: 1
-                },{
-                    model: 'Kia Rio',
-                    carYear: 2016,
-                    vehicleType: 2
-                }
-            ],
-
+            carsOwned: [],
             personalDetailsData: [
                 [
                     {
@@ -111,12 +80,26 @@ class ProfileInfoPage extends Component {
             editMode: false,
             personalDetailsXPos: new Animated.Value(0),
             secondViewXPos: 0,
+            loaders: {
+                personalDetails: false,
+                displayPhoto: false,
+                driverLicense: false
+            }
         };
     }
 
     componentDidMount() {
-        this.setState({
-            userData: {
+        var userData = {
+                name: this.props.user.name,
+                username: this.props.user.username,
+                email: this.props.user.email,
+                contact_number: this.props.user.contact_number,
+                birthdate: this.props.user.birthdate,
+                location: this.props.user.location,
+                licenseImage: this.props.user.licenseImage ? { uri: `${URL.SERVER_MEDIA}/${this.props.user.licenseImage}` } : '',
+                image_url: this.props.user.profilePicture,
+            },
+            editUserData = {
                 name: this.props.user.name,
                 username: this.props.user.username,
                 email: this.props.user.email,
@@ -124,7 +107,46 @@ class ProfileInfoPage extends Component {
                 birthdate: this.props.user.birthdate,
                 location: this.props.user.location,
             },
-        })
+            { vehicles } = this.props.user,
+            carsOwned = vehicles.map(v => {
+                var {vehicle} = v,
+                    vehicleType = Object.keys(VEHICLE.TYPE)[v.type];
+                return {
+                    model: vehicle.model,
+                    carYear: vehicle.year,
+                    vehicleType: vehicleType.charAt(0).toUpperCase() + vehicleType.slice(1)
+                };
+            });
+            
+        this.setState({
+            userData,
+            editUserData,
+            carsOwned
+        });
+    }
+
+    static getDerivedStateFromProps = (props, state) => {
+        // var userData = {
+        //         name: props.user.name,
+        //         username: props.user.username,
+        //         email: props.user.email,
+        //         contact_number: props.user.contact_number,
+        //         birthdate: props.user.birthdate,
+        //         location: props.user.location,
+        //         licenseImage: props.user.licenseImage ? { uri: `${URL.SERVER_MEDIA}/${props.user.licenseImage}` } : '',
+        //         image_url: props.user.profilePicture,
+        //     },
+        //     editUserData = {
+        //         name: props.user.name,
+        //         username: props.user.username,
+        //         email: props.user.email,
+        //         contact_number: props.user.contact_number,
+        //         birthdate: props.user.birthdate,
+        //         location: props.user.location,
+        //     };
+
+        var { userData, editUserData } = state;
+        return {userData, editUserData};
     }
 
     updateUploadPhoto = (name) => () => {
@@ -138,55 +160,76 @@ class ProfileInfoPage extends Component {
             } else if (response.customButton) {
                 console.log('User tapped custom button: ', response.customButton);
             } else {
-                const source = { uri: response.uri };
-                var { userData } = this.state;
+                var { data, type } = response;
 
-                // You can also display the image using data:
-                // const source = { uri: 'data:image/jpeg;base64,' + response.data };
+                if(name === 'image_url') {
+                    this.loadersToggle('displayPhoto');
 
-                userData[name] = source;
-                this.setState({userData});
+                    UserController.request.update.photo({file: data, type: type})
+                    .then(res => {
+                        var { imageResponse, media } = res.data;
+                        if(imageResponse) {
+                            this.dispatchUserProfile(media);
+                            this.successFlashMessage('Display photo successfully uploaded!');
+                        } else {
+                            this.failedFlashMessage('Error occured while uploading image.\nCan you try again later? Thanks!');
+                        }
+                        this.loadersToggle('displayPhoto');
+                    })
+                    .catch(error => {
+                        console.log(error);
+                        this.loadersToggle('displayPhoto');
+                        this.failedFlashMessage('Error occured while uploading image.\nCan you try again later? Thanks!');
+                    });
+                } else if(name === 'licenseImage') {
+                    this.loadersToggle('driverLicense');
+
+                    UserController.request.update.license({file: data, type: type})
+                    .then(res => {
+                        var { imageResponse, media } = res.data;
+                        if(imageResponse) {
+                            var { userData } = this.state;
+                            userData.licenseImage = { uri: `${URL.SERVER_MEDIA}/${media.url}` }
+                            this.setState({userData});
+                            this.dispatchUserProfile(false, media);
+                            this.successFlashMessage('License photo successfully uploaded!');
+                        } else {
+                            this.failedFlashMessage('Error occured while uploading image.\nCan you try again later? Thanks!');
+                        }
+                        this.loadersToggle('driverLicense');
+                    })
+                    .catch(error => {
+                        console.log(error);
+                        this.loadersToggle('driverLicense');
+                        this.failedFlashMessage('Error occured while uploading image.\nCan you try again later? Thanks!');
+                    });
+                }
             }
         });
     }
 
     removeImage = (name) => () => {
-        var { userData } = this.state;
-        userData[name] = null;
-        this.setState({userData});
-    }
+        if(name === 'image_url') {
+            this.loadersToggle('displayPhoto');
+        } else if(name === 'licenseImage') {
+            this.loadersToggle('driverLicense');
+        }
 
-    readableDate = (date) => {
-        var year = date.split('-')[0],
-            month = parseInt(date.split('-')[1]) - 1,
-            day = date.split('-')[2],
-            months = [
-                'Jan', 'Feb', 'Mar', 'Apr',
-                'May', 'Jun', 'Jul', 'Aug',
-                'Sep', 'Oct', 'Nov', 'Dec'
-            ];
-
-        return `${months[month]}-${day}-${year}`;
-    }
-
-    // personal details edit >>>>>>>>>>>>>>
-    personalDetailsOnChange = (name) => (value) => {
-        var {editUserData} = this.state;
-        editUserData[name] = value;
-        this.setState({editUserData});
+        // var { userData } = this.state;
+        // userData[name] = null;
+        // this.setState({userData});
     }
 
     newPersonalDetailsSave = (cancel) => () => {
-        Animated.timing(this.state.personalDetailsXPos, {
-            toValue: 0,
-            duration: 300
-        }).start();
-
-        var {
-            editUserData,
+        var { editUserData,
             userData } = this.state;
 
         if(cancel) {
+            Animated.timing(this.state.personalDetailsXPos, {
+                toValue: 0,
+                duration: 300
+            }).start();
+
             editUserData.name           = userData.name;
             editUserData.username       = userData.username;
             editUserData.email          = userData.email;
@@ -194,21 +237,34 @@ class ProfileInfoPage extends Component {
             editUserData.birthdate      = userData.birthdate;
             editUserData.location       = userData.location;
 
-            this.setState({
-                editMode: false,
-                editUserData: editUserData
-            });
+            this.setState({ editUserData: editUserData });
+            this.editModeToggle();
         } else {
-            userData.name           = editUserData.name;
-            userData.username       = editUserData.username;
-            userData.email          = editUserData.email;
-            userData.contact_number = editUserData.contact_number;
-            userData.birthdate      = editUserData.birthdate;
-            userData.location       = editUserData.location;
+            this.loadersToggle('personalDetails');
+            UserController.request.update.details(editUserData)
+            .then(res => {
+                Animated.timing(this.state.personalDetailsXPos, {
+                    toValue: 0,
+                    duration: 300
+                }).start();
 
-            this.setState({
-                editMode: false,
-                userData: userData
+                userData.name           = editUserData.name;
+                userData.username       = editUserData.username;
+                userData.email          = editUserData.email;
+                userData.contact_number = editUserData.contact_number;
+                userData.birthdate      = editUserData.birthdate;
+                userData.location       = editUserData.location;
+                
+                this.setState({ userData });
+                this.loadersToggle('personalDetails');
+                this.editModeToggle();
+                this.dispatchUserProfile();
+                this.successFlashMessage("Edited details saved successfully!");
+            })
+            .catch(error => {
+                console.log(error);
+                this.loadersToggle('personalDetails');
+                this.failedFlashMessage("Error occured while saving.\nYou can try again later. Thanks!");
             });
         }
     }
@@ -219,7 +275,69 @@ class ProfileInfoPage extends Component {
             duration: 300
         }).start();
 
-        this.setState({editMode: true});
+        this.editModeToggle();
+    }
+
+    loadersToggle = (cardName) => {
+        var {loaders} = this.state;
+        loaders[cardName] = !loaders[cardName];
+        this.setState({loaders});
+    }
+
+    editModeToggle = () => {
+        this.setState({editMode: !this.state.editMode});
+    }
+
+    dispatchUserProfile = (ppUpdate = false, lpUpdate = false) => {
+        var { user } = this.props,
+            { userData } = this.state,
+            created_at = ppUpdate ? ppUpdate.created_at : (lpUpdate ? lpUpdate.created_at : user.updated_at);
+            userDispatch = {
+                id: user.id,
+                name: userData.name,
+                username: userData.username,
+                media_id: user.media_id,
+                profilePicture: ppUpdate ? ppUpdate.url : user.profilePicture,
+                licenseImage: lpUpdate ? lpUpdate.url : user.licenseImage,
+                birthdate: userData.birthdate,
+                contact_number: userData.contact_number,
+                location: userData.location,
+                email: userData.email,
+                created_at: user.created_at,
+                updated_at: created_at ? created_at : user.updated_at,
+                ratings: user.ratings
+            };
+        this.props.dispatchUpdateProfile(userDispatch);
+    }
+
+    mainSetState = (data) => {
+        var dataKeys = Object.keys(data),
+            dataValues = Object.values(data);
+        
+        for(var x in dataKeys) {
+            var key = dataKeys[x], val = dataValues[x];
+            this.setState({ [key]: val });
+        }
+    }
+
+    successFlashMessage = (description) => {
+        showMessage({
+            message: 'Wonderful!',
+            description,
+            duration: 5000,
+            type: "success",
+            icon: "success"
+        });
+    }
+
+    failedFlashMessage = (description) => {
+        showMessage({
+            message: 'Error!',
+            description,
+            duration: 5000,
+            type: "danger",
+            icon: "danger"
+        });
     }
 
 	render() {
@@ -248,629 +366,14 @@ class ProfileInfoPage extends Component {
                             marginHorizontal: theme.PAGE_PADDING_HORIZONTAL
                         }}
                     >
-                        {/* personal details */}
-                        <View
-                            style={{
-                                marginVertical: 7
-                            }}
-                        >
-                            <Card>
-                                <CardBody
-                                    header={true}
-                                    footer={true}
-                                >
-                                    <View
-                                        style={{
-                                            paddingHorizontal: 5
-                                        }}
-                                    >
-                                        <View
-                                            style={{
-                                                flexDirection: 'row',
-                                                justifyContent: 'space-between',
-                                                alignItems: 'center'
-                                            }}
-                                        >
-                                            <LabelText>Personal Details</LabelText>
-
-                                            <View
-                                                style={{
-                                                    flexDirection: 'row',
-                                                    alignItems: 'center'
-                                                }}
-                                            >
-                                                <TouchableOpacity
-                                                    onPress={!this.state.editMode ? this.editPersonalDetails : this.newPersonalDetailsSave(false)}
-                                                >
-                                                    <CommonText
-                                                        color="gray"
-                                                        bold={!this.state.editMode ? false : true}
-                                                    >{!this.state.editMode ? 'Edit' : 'Save'}</CommonText>
-                                                </TouchableOpacity>
-
-                                                {this.state.editMode ? (
-                                                    <View
-                                                        style={{
-                                                            flexDirection: 'row',
-                                                            alignItems: 'center'
-                                                        }}
-                                                    >
-                                                        <View
-                                                            style={{
-                                                                marginHorizontal: 5
-                                                            }}
-                                                        >
-                                                            <CommonText
-                                                                color="gray"
-                                                            >|</CommonText>
-                                                        </View>
-
-                                                        <TouchableOpacity
-                                                            onPress={this.newPersonalDetailsSave(true)}
-                                                        >
-                                                            <CommonText
-                                                                color="gray"
-                                                            >Cancel</CommonText>
-                                                        </TouchableOpacity>
-                                                    </View>
-                                                ) : null}
-                                            </View>
-                                        </View>
-
-                                        <View
-                                            style={{
-                                                width: '100%',
-                                                overflow: 'hidden'
-                                            }}
-                                        >
-                                            <Animated.View
-                                                style={{
-                                                    marginTop: 30,
-                                                    marginBottom: 20,
-                                                    flexDirection: 'row',
-                                                    width: '200%',
-                                                    left: this.state.personalDetailsXPos
-                                                }}
-                                            >
-                                                {/* show personal details */}
-                                                <View
-                                                    style={{
-                                                        width: '50%'
-                                                    }}
-                                                >
-                                                    {!this.state.editMode ?
-                                                        <View>
-                                                            {/* personal details */}
-                                                            {this.state.personalDetailsData.map((data, index) =>
-                                                                <View
-                                                                    key={index}
-                                                                    style={{
-                                                                        marginBottom: 20,
-                                                                        flexDirection: 'row',
-                                                                        alignItems: 'center'
-                                                                    }}
-                                                                >
-                                                                    {data.map((d, dIdx) =>
-                                                                        <View
-                                                                            key={dIdx}
-                                                                            style={{
-                                                                                flex: 1
-                                                                            }}
-                                                                        >
-                                                                            <View
-                                                                                style={{
-                                                                                    marginBottom: 5
-                                                                                }}
-                                                                            >
-                                                                                <CommonText bold={true}>{d.label}</CommonText>
-                                                                            </View>
-
-                                                                            <CommonText
-                                                                                xsmall={true}
-                                                                            >{d.name == 'birthdate' ? this.readableDate(this.state.userData[d.name]) : this.state.userData[d.name]}</CommonText>
-                                                                        </View>
-                                                                    )}
-                                                                </View>
-                                                            )}
-
-                                                            {/* display photo */}
-                                                            <View>
-                                                                <View
-                                                                    style={{
-                                                                        marginBottom: 5
-                                                                    }}
-                                                                >
-                                                                    <CommonText bold={true}>Display Photo</CommonText>
-                                                                </View>
-
-                                                                <View
-                                                                    style={{
-                                                                        flexDirection: 'row',
-                                                                        alignItems: 'center'
-                                                                    }}
-                                                                >
-                                                                    <TouchableOpacity
-                                                                        style={{
-                                                                            borderBottomColor: theme.COLOR_BLACK,
-                                                                            borderBottomWidth: 0.5,
-                                                                            marginRight: this.state.userData.image_url ? 20 : 0,
-                                                                        }}
-                                                                        onPress={this.updateUploadPhoto('image_url')}
-                                                                    >
-                                                                        <CommonText
-                                                                            xsmall={true}
-                                                                        >{this.state.userData.image_url ? 'Edit' : 'Upload'}</CommonText>
-                                                                    </TouchableOpacity>
-
-                                                                    {this.state.userData.image_url ? (
-                                                                        <TouchableOpacity
-                                                                            style={{
-                                                                                borderBottomColor: theme.COLOR_GRAY_MEDIUM,
-                                                                                borderBottomWidth: 0.5,
-                                                                            }}
-                                                                            onPress={this.removeImage('image_url')}
-                                                                        >
-                                                                            <CommonText
-                                                                                xsmall={true}
-                                                                                color="gray"
-                                                                            >Remove Current Photo</CommonText>
-                                                                        </TouchableOpacity>
-                                                                    ) : null}
-                                                                </View>
-                                                            </View>
-                                                        </View>
-                                                    : null}
-                                                </View>
-
-                                                {/* edit personal details */}
-                                                <View
-                                                    style={{
-                                                        width: '50%'
-                                                    }}
-                                                    onLayout={e => this.setState({secondViewXPos: e.nativeEvent.layout.x})}
-                                                >
-                                                    {this.state.editMode ?
-                                                        <View>
-                                                            {this.state.personalDetailsData.map((data, index) =>
-                                                                data.map((d, dIdx) =>
-                                                                    <View
-                                                                        key={index + dIdx}
-                                                                        style={{
-                                                                            marginTop: index == 0 ? 0 : 10,
-                                                                            marginBottom: 10
-                                                                        }}
-                                                                    >
-                                                                        <CommonText
-                                                                            bold={true}
-                                                                        >{d.label}</CommonText>
-
-                                                                        {d.name == 'birthdate' ? (
-                                                                            <DatePicker
-                                                                                style={{
-                                                                                    width: '100%',
-                                                                                }}
-                                                                                date={this.state.editUserData[d.name]}
-                                                                                mode="date"
-                                                                                showIcon={false}
-                                                                                placeholder="Birthdate"
-                                                                                format="YYYY-MM-DD"
-                                                                                confirmBtnText="Confirm"
-                                                                                cancelBtnText="Cancel"
-                                                                                androidMode="spinner"
-                                                                                customStyles={{
-                                                                                    dateInput: {
-                                                                                        borderWidth: 0,
-                                                                                        borderBottomWidth: 1,
-                                                                                        borderBottomColor: theme.COLOR_LIGHT_BLUE,
-                                                                                        justifyContent: 'center',
-                                                                                        alignItems: 'flex-start',
-                                                                                        padding: 0,
-                                                                                    },
-                                                                                    dateText: {
-                                                                                        fontFamily: 'Montserrat-Light',
-                                                                                        fontSize: theme.FONT_SIZE_SMALL,
-                                                                                        color: theme.COLOR_BLACK
-                                                                                    },
-                                                                                    placeholderText: {
-                                                                                        fontFamily: 'Montserrat-Light',
-                                                                                        fontSize: theme.FONT_SIZE_SMALL,
-                                                                                        color: theme.COLOR_NORMAL_FONT + '70'
-                                                                                    }
-                                                                                }}
-                                                                                onDateChange={this.personalDetailsOnChange(d.name)}
-                                                                            />
-                                                                        ) : (
-                                                                            <TextInput
-                                                                                style={[
-                                                                                    {
-                                                                                        borderBottomWidth: 1,
-                                                                                        borderBottomColor: theme.COLOR_LIGHT_BLUE,
-                                                                                        fontFamily: 'Montserrat-Light',
-                                                                                        fontSize: theme.FONT_SIZE_SMALL,
-                                                                                        paddingVertical: 6,
-                                                                                        paddingHorizontal: 0,
-                                                                                        color: theme.COLOR_BLACK
-                                                                                    }
-                                                                                ]}
-                                                                                keyboardType={d.name == 'contact_number' ? 'number-pad' : 'default'}
-                                                                                placeholder={d.label}
-                                                                                placeholderTextColor={theme.COLOR_NORMAL_FONT + '70'}
-                                                                                onChangeText={this.personalDetailsOnChange(d.name)}
-                                                                                value={this.state.editUserData[d.name]}
-                                                                            />
-                                                                        )}
-                                                                    </View>
-                                                                )
-                                                            )}
-                                                        </View>
-                                                    : null}
-                                                </View>
-                                            </Animated.View>
-                                        </View>
-                                    </View>
-                                </CardBody>
-                            </Card>
-                        </View>
-
-                        {/* drivers license */}
-                        <View
-                            style={{
-                                marginVertical: 7
-                            }}
-                        >
-                            <Card>
-                                <CardBody
-                                    header={true}
-                                    footer={true}
-                                >
-                                    <View
-                                        style={{
-                                            paddingHorizontal: 5,
-                                            flex: 1,
-                                        }}
-                                    >
-                                        <View
-                                            style={{
-                                                flexDirection: 'row',
-                                                justifyContent: 'space-between',
-                                                alignItems: 'center'
-                                            }}
-                                        >
-                                            <LabelText>Driver's License</LabelText>
-                                            <View
-                                                style={{
-                                                    flexDirection: 'row'
-                                                }}
-                                            >
-                                                <TouchableOpacity
-                                                    style={{
-                                                        marginRight: this.state.userData.licenseImage ? 15 : 0,
-                                                        borderBottomColor: theme.COLOR_BLACK,
-                                                        borderBottomWidth: 0.5,
-                                                    }}
-                                                    onPress={this.updateUploadPhoto('licenseImage')}
-                                                >
-                                                    <CommonText
-                                                        xsmall={true}
-                                                    >{this.state.userData.licenseImage ? 'Update' : 'Upload'} Photo</CommonText>
-                                                </TouchableOpacity>
-
-                                                {this.state.userData.licenseImage ? (
-                                                    <TouchableOpacity
-                                                        style={{
-                                                            borderBottomColor: theme.COLOR_GRAY_MEDIUM,
-                                                            borderBottomWidth: 0.5,
-                                                        }}
-                                                        onPress={this.removeImage('licenseImage')}
-                                                    >
-                                                        <CommonText
-                                                            xsmall={true}
-                                                            color="gray"
-                                                        >Remove</CommonText>
-                                                    </TouchableOpacity>
-                                                ) : null}
-                                            </View>
-                                        </View>
-
-                                        <View
-                                            style={{
-                                                marginVertical: 20
-                                            }}
-                                        >
-                                            {this.state.userData.licenseImage ? (
-                                                <View
-                                                    style={{
-                                                        width: this.state.width / 1.75,
-                                                        height: this.state.width / 3,
-                                                    }}
-                                                >
-                                                    <Image
-                                                        style={{
-                                                            width: '100%',
-                                                            height: 150,
-                                                        }}
-                                                        resizeMode="contain"
-                                                        source={this.state.userData.licenseImage}
-                                                    />
-                                                </View>
-                                            ) : (
-                                                <View
-                                                    style={{
-                                                        width: this.state.width / 1.75,
-                                                        height: this.state.width / 3,
-                                                        padding: 20,
-                                                        justifyContent: 'center',
-                                                        alignItems: 'center',
-                                                        borderRadius: 5,
-                                                        backgroundColor: theme.COLOR_GRAY_HEAVY,
-                                                    }}
-                                                >
-                                                    <Image
-                                                        style={{
-                                                            width: '100%',
-                                                            height: '100%',
-                                                        }}
-                                                        resizeMode="contain"
-                                                        source={require('../assets/image/icons/gallery-icon.png')}
-                                                    />
-                                                </View>
-                                            )}
-                                        </View>
-                                    </View>
-                                </CardBody>
-                            </Card>
-                        </View>
-
-                        {/* owned cars */}
-                        <View
-                            style={{
-                                marginVertical: 7
-                            }}
-                        >
-                            <Card>
-                                <CardBody
-                                    header={true}
-                                    footer={true}
-                                >
-                                    <View
-                                        style={{
-                                            paddingHorizontal: 5
-                                        }}
-                                    >
-                                        <View
-                                            style={{
-                                                flexDirection: 'row',
-                                                justifyContent: 'space-between',
-                                                alignItems: 'center'
-                                            }}
-                                        >
-                                            <LabelText>Owned Cars</LabelText>
-
-                                            <View
-                                                style={{
-                                                    flexDirection: 'row',
-                                                    alignItems: 'center',
-                                                }}
-                                            >
-                                                <TouchableOpacity
-                                                    onPress={e => this.props.navigation.navigate('Addvehicle')}
-                                                >
-                                                    <Text
-                                                        style={{
-                                                            fontFamily: 'Montserrat-Regular',
-                                                            color: theme.COLOR_PINK,
-                                                            fontSize: theme.FONT_SIZE_SMALL
-                                                        }}
-                                                    >
-                                                        Add Vehicle
-                                                    </Text>
-                                                </TouchableOpacity>
-
-                                                <Text
-                                                        style={{
-                                                            fontFamily: 'Montserrat-Regular',
-                                                            color: theme.COLOR_PINK,
-                                                            fontSize: theme.FONT_SIZE_SMALL,
-                                                            marginHorizontal: 5
-                                                        }}
-                                                >
-                                                    |
-                                                </Text>
-
-                                                <TouchableOpacity>
-                                                    <Text
-                                                        style={{
-                                                            fontFamily: 'Montserrat-Regular',
-                                                            color: theme.COLOR_PINK,
-                                                            fontSize: theme.FONT_SIZE_SMALL
-                                                        }}
-                                                    >
-                                                        Filter
-                                                    </Text>
-                                                </TouchableOpacity>
-                                            </View>
-                                        </View>
-
-                                        <View
-                                            style={{
-                                                marginTop: 30,
-                                            }}
-                                        >
-                                            <View
-                                                style={{
-                                                    marginBottom: 20,
-                                                    flexDirection: 'row',
-                                                    alignItems: 'center'
-                                                }}
-                                            >
-                                                <View
-                                                    style={{
-                                                        flex: 1,
-                                                        paddingRight: 5
-                                                    }}
-                                                >
-                                                    <LabelText
-                                                        small={true}
-                                                    >Model</LabelText>
-                                                </View>
-
-                                                <View
-                                                    style={{
-                                                        flex: 1,
-                                                        paddingLeft: 5,
-                                                        flexDirection: 'row',
-                                                        alignItems: 'center'
-                                                    }}
-                                                >
-                                                    <View
-                                                        style={{
-                                                            flex: 1,
-                                                            paddingRight: 5
-                                                        }}
-                                                    >
-                                                        <LabelText
-                                                            small={true}
-                                                        >Car Year</LabelText>
-                                                    </View>
-
-                                                    <View
-                                                        style={{
-                                                            flex: 1,
-                                                            paddingLeft: 5
-                                                        }}
-                                                    >
-                                                        <LabelText
-                                                            small={true}
-                                                        >Type</LabelText>
-                                                    </View>
-                                                </View>
-                                            </View>
-
-                                            {this.state.carsOwned.map((car, carIndex) =>
-                                                <View
-                                                    key={carIndex}
-                                                    style={{
-                                                        marginBottom: 20,
-                                                        flexDirection: 'row',
-                                                        alignItems: 'center'
-                                                    }}
-                                                >
-                                                    <View
-                                                        style={{
-                                                            flex: 1,
-                                                            paddingRight: 5
-                                                        }}
-                                                    >
-                                                        <CommonText
-                                                            xsmall={true}
-                                                        >{car.model}</CommonText>
-                                                    </View>
-
-                                                    <View
-                                                        style={{
-                                                            flex: 1,
-                                                            paddingLeft: 5,
-                                                            flexDirection: 'row',
-                                                            alignItems: 'center'
-                                                        }}
-                                                    >
-                                                        <View
-                                                            style={{
-                                                                flex: 1,
-                                                                paddingRight: 5
-                                                            }}
-                                                        >
-                                                            <CommonText
-                                                                xsmall={true}
-                                                            >{car.carYear}</CommonText>
-                                                        </View>
-
-                                                        <View
-                                                            style={{
-                                                                flex: 1,
-                                                                paddingLeft: 5
-                                                            }}
-                                                        >
-                                                            <CommonText
-                                                                xsmall={true}
-                                                            >{lang.vehicleType[car.vehicleType]}</CommonText>
-                                                        </View>
-                                                    </View>
-                                                </View>
-                                            )}
-                                        </View>
-                                    </View>
-                                </CardBody>
-                            </Card>
-                        </View>
-
-                        {/* buttons */}
-                        <View
-                            style={{
-                                marginVertical: 12,
-                                flexDirection: 'row',
-                                alignItems: 'center'
-                            }}
-                        >
-                            <View
-                                style={{
-                                    flex: 4,
-                                    paddingRight: 5
-                                }}
-                            >
-                                <TouchableOpacity
-                                    style={{
-                                        backgroundColor: theme.COLOR_LIGHT_BLUE,
-                                        borderRadius: 15,
-                                        paddingHorizontal: 15,
-                                        alignItems: 'center'
-                                    }}
-                                >
-                                    <Text
-                                        style={{
-                                            textAlign: 'center',
-                                            color: theme.COLOR_WHITE,
-                                            fontFamily: 'Montserrat-Medium',
-                                            fontSize: 12,
-                                            paddingVertical: 13,
-                                        }}
-                                    >
-                                        Change Password
-                                    </Text>
-                                </TouchableOpacity>
-                            </View>
-
-                            <View
-                                style={{
-                                    flex: 3,
-                                    paddingLeft: 5
-                                }}
-                            >
-                                <TouchableOpacity
-                                    style={{
-                                        backgroundColor: theme.COLOR_GRAY_HEAVY,
-                                        borderRadius: 15,
-                                        paddingHorizontal: 15,
-                                        alignItems: 'center'
-                                    }}
-                                >
-                                    <Text
-                                        style={{
-                                            textAlign: 'center',
-                                            color: theme.COLOR_WHITE,
-                                            fontFamily: 'Montserrat-Medium',
-                                            fontSize: 12,
-                                            paddingVertical: 13,
-                                        }}
-                                    >
-                                        Delete Account
-                                    </Text>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
+                        <PersonalDetails {...this} />
+                        <DriverLicense {...this} />
+                        <OwnedCars {...this} />
+                        <ActionButton {...this} />
                     </View>
                 </ScrollView>
 
+                <FlashMessage position="top" />
             </Page>
         );
     }
@@ -879,4 +382,8 @@ const mapStateToProps = (state) => ({
 	user: state.userReducer.user
 });
 
-export default connect(mapStateToProps)(ProfileInfoPage)
+const mapDispatchToProps = (dispatch) => ({
+    dispatchUpdateProfile: (user) => dispatch({ type: USER.GET.PROFILE.SUCCESS, user }),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(ProfileInfoPage);

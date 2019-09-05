@@ -6,9 +6,7 @@ import {
     Image,
     ScrollView,
     TouchableOpacity,
-    ImageBackground,
     Dimensions,
-    Animated
 } from 'react-native';
 import Carousel from 'react-native-snap-carousel';
 import { Page } from './Page';
@@ -22,7 +20,6 @@ import {
     CardColumnContent,
     CardColumnContentBody
 } from '../components/Card';
-import ModalMenu from '../components/Modal/Navigation';
 
 import theme from '../styles/theme.style';
 import styles from '../styles/page.Home.style';
@@ -33,10 +30,6 @@ class ProfilePage extends Component {
         this.state = {
             user: [],
             // navigation menu
-            modalFadeBackground: new Animated.Value(0),
-            modalContainerzIndex: 0,
-            modalXValue: new Animated.Value(Dimensions.get('window').width),
-            scrollEnable: true,
             width: Dimensions.get('window').width,
             height: Dimensions.get('window').height,
 
@@ -117,27 +110,6 @@ class ProfilePage extends Component {
 
     componentDidMount() {
         this.setState({ user: this.props.user });
-    }
-
-    menuButtonOnPress = () => {
-        Animated.timing(this.state.modalFadeBackground, {
-            toValue: this.state.scrollEnable ? 0.7 : 0,
-            duration: 600
-        }).start(() => {
-            this.setState({
-                modalContainerzIndex: this.state.scrollEnable ? 0 : 1
-            });
-        });
-
-        Animated.timing(this.state.modalXValue, {
-            toValue: this.state.scrollEnable ? this.state.width - 330 : this.state.width,
-            duration: 500
-        }).start();
-
-        this.setState({
-            scrollEnable: !this.state.scrollEnable,
-            modalContainerzIndex: 1
-        });
     }
 
     getCardSize = (x, y, width, height, index) => {
@@ -457,79 +429,89 @@ class ProfilePage extends Component {
                         </View>
 
                         {/* content */}
-                        {this.props.user.vehicles.map((vehicle, index) =>
-                            <View
-                                key={index}
-                                style={{
-                                    marginVertical: 7
-                                }}
-                            >
-                                <Card
-                                    justifyContent={true}
+                        {this.props.user.vehicles.length !== 0 ?
+                            this.props.user.vehicles.map((vehicle, index) =>
+                                <View
+                                    key={index}
+                                    style={{
+                                        marginVertical: 7
+                                    }}
                                 >
-                                    <CardColumnContent
-                                        firstChild={true}
-                                        backgroundColor={vehicle.photo.length !== 0 ? theme.COLOR_GRAY_HEAVY + '00' : theme.COLOR_GRAY_HEAVY}
-                                        getCardSize={this.getCardSize}
-                                        cardIndex={index}
+                                    <Card
+                                        justifyContent={true}
                                     >
-                                        <View
-                                            style={{
-                                                flexDirection: 'row'
-                                            }}
+                                        <CardColumnContent
+                                            firstChild={true}
+                                            backgroundColor={vehicle.photo.length !== 0 ? theme.COLOR_GRAY_HEAVY + '00' : theme.COLOR_GRAY_HEAVY}
+                                            getCardSize={this.getCardSize}
+                                            cardIndex={index}
                                         >
-                                            {
-                                                this.state.vehicleCardSize[index]
-                                                ? (
-                                                    vehicle.photo.length !== 0
-                                                    ? <View>
-                                                        <Carousel
-                                                            data={vehicle.photo}
-                                                            renderItem={this._renderVehicleImage(index)}
-                                                            layout={'default'}
-                                                            inactiveSlideScale={1}
-                                                            inactiveSlideOpacity={1}
-                                                            sliderWidth={this.state.vehicleCardSize[index].width}
-                                                            itemHeight={this.state.vehicleCardSize[index].height}
-                                                            itemWidth={this.state.vehicleCardSize[index].width}
-                                                            onBeforeSnapToItem={this._currentActiveVehicleImage(index)}
-                                                        />
+                                            <View
+                                                style={{
+                                                    flexDirection: 'row'
+                                                }}
+                                            >
+                                                {
+                                                    this.state.vehicleCardSize[index]
+                                                    ? (
+                                                        vehicle.photo.length !== 0
+                                                        ? <View>
+                                                            <Carousel
+                                                                data={vehicle.photo}
+                                                                renderItem={this._renderVehicleImage(index)}
+                                                                layout={'default'}
+                                                                inactiveSlideScale={1}
+                                                                inactiveSlideOpacity={1}
+                                                                sliderWidth={this.state.vehicleCardSize[index].width}
+                                                                itemHeight={this.state.vehicleCardSize[index].height}
+                                                                itemWidth={this.state.vehicleCardSize[index].width}
+                                                                onBeforeSnapToItem={this._currentActiveVehicleImage(index)}
+                                                            />
 
-                                                        {/* carousel */}
-                                                        <View
-                                                            style={{
-                                                                justifyContent: 'center',
-                                                                alignItems: 'center'
-                                                            }}
-                                                        >
+                                                            {/* carousel */}
                                                             <View
                                                                 style={{
-                                                                    position: 'absolute',
-                                                                    top: -20
+                                                                    justifyContent: 'center',
+                                                                    alignItems: 'center'
                                                                 }}
                                                             >
                                                                 <View
                                                                     style={{
-                                                                        flexDirection: 'row',
+                                                                        position: 'absolute',
+                                                                        top: -20
                                                                     }}
                                                                 >
-                                                                    {vehicle.photo.map((vi, viIdx) =>
-                                                                        <View
-                                                                            key={viIdx}
-                                                                            style={{
-                                                                                backgroundColor: this.state.vehicleCardSize[index].active[viIdx] ? theme.COLOR_BLUE : theme.COLOR_WHITE,
-                                                                                elevation: 5,
-                                                                                height: 10,
-                                                                                width: 10,
-                                                                                borderRadius: 5,
-                                                                                marginHorizontal: 3.5
-                                                                            }}
-                                                                        ></View>
-                                                                    )}
+                                                                    <View
+                                                                        style={{
+                                                                            flexDirection: 'row',
+                                                                        }}
+                                                                    >
+                                                                        {vehicle.photo.map((vi, viIdx) =>
+                                                                            <View
+                                                                                key={viIdx}
+                                                                                style={{
+                                                                                    backgroundColor: this.state.vehicleCardSize[index].active[viIdx] ? theme.COLOR_BLUE : theme.COLOR_WHITE,
+                                                                                    elevation: 5,
+                                                                                    height: 10,
+                                                                                    width: 10,
+                                                                                    borderRadius: 5,
+                                                                                    marginHorizontal: 3.5
+                                                                                }}
+                                                                            ></View>
+                                                                        )}
+                                                                    </View>
                                                                 </View>
                                                             </View>
                                                         </View>
-                                                    </View>
+                                                        : <Image
+                                                            style={{
+                                                                width: this.state.width / 5,
+                                                                height: this.state.width / 5,
+                                                            }}
+                                                            resizeMode='contain'
+                                                            source={require('../assets/image/icons/gallery-icon.png')}
+                                                        />
+                                                    )
                                                     : <Image
                                                         style={{
                                                             width: this.state.width / 5,
@@ -538,107 +520,99 @@ class ProfilePage extends Component {
                                                         resizeMode='contain'
                                                         source={require('../assets/image/icons/gallery-icon.png')}
                                                     />
-                                                )
-                                                : <Image
+                                                }
+
+                                            </View>
+                                        </CardColumnContent>
+
+                                        <CardColumnContent
+                                            lastChild={true}
+                                            carType={vehicle.type}
+                                            carSize={vehicle.vehicle[0].classification}
+                                        >
+                                            <CardColumnContentBody>
+                                                <View
                                                     style={{
-                                                        width: this.state.width / 5,
-                                                        height: this.state.width / 5,
+                                                        flexDirection: 'row',
+                                                        justifyContent: 'flex-start',
+                                                        alignItems: 'flex-start'
                                                     }}
-                                                    resizeMode='contain'
-                                                    source={require('../assets/image/icons/gallery-icon.png')}
-                                                />
-                                            }
+                                                >
+                                                    <View style={{width: 50}}>
+                                                        <Text
+                                                            style={{
+                                                                fontSize: 12,
+                                                                fontFamily: 'Montserrat-Regular',
+                                                                color: theme.COLOR_NORMAL_FONT
+                                                            }}
+                                                        >
+                                                            Model
+                                                        </Text>
+                                                    </View>
 
-                                        </View>
-                                    </CardColumnContent>
-
-                                    <CardColumnContent
-                                        lastChild={true}
-                                        carType={vehicle.type}
-                                        carSize={vehicle.vehicle[0].classification}
-                                    >
-                                        <CardColumnContentBody>
-                                            <View
-                                                style={{
-                                                    flexDirection: 'row',
-                                                    justifyContent: 'flex-start',
-                                                    alignItems: 'center'
-                                                }}
-                                            >
-                                                <View style={{width: 50}}>
-                                                    <Text
-                                                        style={{
-                                                            fontSize: 12,
-                                                            fontFamily: 'Montserrat-Regular',
-                                                            color: theme.COLOR_NORMAL_FONT
-                                                        }}
-                                                    >
-                                                        Model
-                                                    </Text>
+                                                    <View style={{flex: 1}}>
+                                                        <Text
+                                                            style={{
+                                                                fontSize: 12,
+                                                                fontFamily: 'Montserrat-Bold',
+                                                                color: theme.COLOR_NORMAL_FONT,
+                                                            }}
+                                                        >
+                                                            {vehicle.vehicle[0].model}
+                                                        </Text>
+                                                    </View>
                                                 </View>
 
-                                                <View style={{flex: 1}}>
-                                                    <Text
-                                                        style={{
-                                                            fontSize: 12,
-                                                            fontFamily: 'Montserrat-Bold',
-                                                            color: theme.COLOR_NORMAL_FONT,
-                                                        }}
-                                                    >
-                                                        {vehicle.vehicle[0].model}
-                                                    </Text>
-                                                </View>
-                                            </View>
+                                                <View
+                                                    style={{
+                                                        flexDirection: 'row',
+                                                        justifyContent: 'flex-start',
+                                                        alignItems: 'center',
+                                                        marginTop: 5
+                                                    }}
+                                                >
+                                                    <View style={{width: 50}}>
+                                                        <Text
+                                                            style={{
+                                                                fontSize: 12,
+                                                                fontFamily: 'Montserrat-Regular',
+                                                                color: theme.COLOR_NORMAL_FONT
+                                                            }}
+                                                        >
+                                                            Year
+                                                        </Text>
+                                                    </View>
 
-                                            <View
-                                                style={{
-                                                    flexDirection: 'row',
-                                                    justifyContent: 'flex-start',
-                                                    alignItems: 'center',
-                                                    marginTop: 5
-                                                }}
-                                            >
-                                                <View style={{width: 50}}>
-                                                    <Text
-                                                        style={{
-                                                            fontSize: 12,
-                                                            fontFamily: 'Montserrat-Regular',
-                                                            color: theme.COLOR_NORMAL_FONT
-                                                        }}
-                                                    >
-                                                        Year
-                                                    </Text>
+                                                    <View style={{flex: 1}}>
+                                                        <Text
+                                                            style={{
+                                                                fontSize: 12,
+                                                                fontFamily: 'Montserrat-Bold',
+                                                                color: theme.COLOR_NORMAL_FONT,
+                                                            }}
+                                                        >
+                                                            {vehicle.vehicle[0].year}
+                                                        </Text>
+                                                    </View>
                                                 </View>
-
-                                                <View style={{flex: 1}}>
-                                                    <Text
-                                                        style={{
-                                                            fontSize: 12,
-                                                            fontFamily: 'Montserrat-Bold',
-                                                            color: theme.COLOR_NORMAL_FONT,
-                                                        }}
-                                                    >
-                                                        {vehicle.vehicle[0].year}
-                                                    </Text>
-                                                </View>
-                                            </View>
-                                        </CardColumnContentBody>
-                                    </CardColumnContent>
-                                </Card>
+                                            </CardColumnContentBody>
+                                        </CardColumnContent>
+                                    </Card>
+                                </View>
+                            )
+                        : (
+                            <View
+                                style={{
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    paddingTop: 20
+                                }}
+                            >
+                                <CommonText color="white">-- No vehicle listed --</CommonText>
                             </View>
                         )}
                     </View>
                 </ScrollView>
-
-                <ModalMenu
-                    modalContainerzIndex={this.state.modalContainerzIndex}
-                    width={this.state.width}
-                    height={this.state.scrollEnable ? 0 : this.state.height}
-                    modalFadeBackground={this.state.modalFadeBackground}
-                    modalXValue={this.state.modalXValue}
-                    menuButtonOnPress={this.menuButtonOnPress}
-                    navigation={this.props.navigation}
-                />
             </Page>
 		);
     }

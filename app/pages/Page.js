@@ -4,77 +4,144 @@ import {
   Animated,
   Dimensions
 } from 'react-native';
+import Sound from 'react-native-sound';
+
 import { AppBackground } from '../components/AppBackground';
 import { HeaderNav } from '../components/HeaderNav';
 import ModalMenu from '../components/Modal/Navigation';
 import NavigationService from '../services/navigation';
+import { AuthController } from '../controllers';
+
+import { Socket } from '../socketIO/socket';
 
 export class Page extends Component {
+	constructor(props) {
+		super(props);
 
-  constructor() {
-    super();
+		this.state = {
+			modalFadeBackground: new Animated.Value(0),
+			modalContainerzIndex: 0,
+			modalXValue: new Animated.Value(Dimensions.get('window').width),
+			carouselPage: 0,
+			width: Dimensions.get('window').width,
+			height: Dimensions.get('window').height,
+			websocketData: {
+				Socket: {},
+				socket: {},
+				onlineUsers: [],
+				onlineClient: {},
+				newMessage: {},
+				disconnectedUser: {},
+				updatedData: ''
+			}
+		};
 
-    this.state = {
-      modalFadeBackground: new Animated.Value(0),
-      modalContainerzIndex: 0,
-      modalXValue: new Animated.Value(Dimensions.get('window').width),
-      carouselPage: 0,
-      width: Dimensions.get('window').width,
-      height: Dimensions.get('window').height,
-    };
-  }
+        this.woosh = new Sound('chat_sound.mp3', Sound.MAIN_BUNDLE, (error) => {
+            if (error) {
+                console.log('failed to load the sound', error);
+                return;
+            }
+        });
+	}
 
-  menuButtonOnPress = () => {
-      Animated.timing(this.state.modalFadeBackground, {
-          toValue: this.state.scrollEnable ? 0.7 : 0,
-          duration: 600
-      }).start(() => {
-          this.setState({
-              modalContainerzIndex: this.state.scrollEnable ? 0 : 1
-          });
-      });
+	componentDidMount = () => {
+		var socket = Socket.connect(),
+			{websocketData} = this.state;
 
-      Animated.timing(this.state.modalXValue, {
-          toValue: this.state.scrollEnable ? this.state.width - 330 : this.state.width,
-          duration: 500
-      }).start();
+		websocketData.socket = socket;
+		websocketData.Socket = Socket;
+		this.setState({websocketData});
 
-      this.setState({
-          scrollEnable: !this.state.scrollEnable,
-          modalContainerzIndex: 1
-      });
-  }
+		Socket.onConnect(socket, () => console.log('Socket connected'));
+		Socket.getOnlineUsers(socket, data => this.websocketFunction(data, 'onlineUsers', 'online users'));
+		Socket.newOnlineClient(socket, data => this.websocketFunction(data, 'onlineClient', 'online client'));
+		Socket.newMessage(socket, data => {
+			this.woosh.play();
+			this.websocketFunction(data, 'newMessage', 'new message')
+		});
+		Socket.disconnectedUser(socket, data => this.websocketFunction(data, 'disconnectedUser', 'disconnected user'));
+	}
 
-  navigateToPage = (page) => {
-    this.menuButtonOnPress();
-    NavigationService.navigate(page);
-  }
+	websocketFunction = (data, dataName, event) => {
+		var {websocketData} = this.state;
+		websocketData[dataName] = data;
+		websocketData.updatedData = event;
+		this.setState({websocketData});
+		if(this.props.websocket) {
+			this.props.websocket.websocketFunctions(websocketData);
+		}
+	}
 
-  render() {
-    return (
-      <View>
-        <AppBackground />
-        <HeaderNav
-            menuButtonOnPress={this.menuButtonOnPress}
-            navigation={this.props.navigation}
-        />
+	menuButtonOnPress = () => {
+		Animated.timing(this.state.modalFadeBackground, {
+			toValue: this.state.scrollEnable ? 0.7 : 0,
+			duration: 600
+		}).start(() => {
+			this.setState({
+				modalContainerzIndex: this.state.scrollEnable ? 0 : 1
+			});
+		});
 
-        {this.props.children}
+		Animated.timing(this.state.modalXValue, {
+			toValue: this.state.scrollEnable ? this.state.width - 330 : this.state.width,
+			duration: 500
+		}).start();
 
-        <ModalMenu
-            modalContainerzIndex={this.state.modalContainerzIndex}
-            width={this.state.width}
-            height={this.state.scrollEnable ? 0 : this.state.height}
-            modalFadeBackground={this.state.modalFadeBackground}
-            modalXValue={this.state.modalXValue}
-            menuButtonOnPress={this.menuButtonOnPress}
-            navigation={this.props.navigation}
-            navigateToPage={this.navigateToPage}
-        />
+		this.setState({
+			scrollEnable: !this.state.scrollEnable,
+			modalContainerzIndex: 1
+		});
+	}
 
-      </View>
-    );
-  }
+	navigateToPage = (page) => {
+		this.menuButtonOnPress();
+		this.navigate(page);
+	}
 
+	navigate = (page) => {
+		if(page === 'logout') {
+			AuthController.logout()
+			.then(() => {
+			  	NavigationService.navigate('Loading', null, this.state.websocketData);
+			})
+			.catch((e) => {
+				console.log("error");
+				console.log(e);
+			});
+		} else {
+			NavigationService.navigate(page, null, this.state.websocketData);
+		}
+	}
 
+	render() {
+		return (
+			<View
+				style={
+					this.props.message ? {
+						flex: 1,
+						flexDirection: 'column'
+					} : {}
+				}
+			>
+				<AppBackground />
+				<HeaderNav
+					menuButtonOnPress={this.menuButtonOnPress}
+					navigate={this.navigate}
+				/>
+
+				{this.props.children}
+
+				<ModalMenu
+					modalContainerzIndex={this.state.modalContainerzIndex}
+					width={this.state.width}
+					height={this.state.scrollEnable ? 0 : this.state.height}
+					modalFadeBackground={this.state.modalFadeBackground}
+					modalXValue={this.state.modalXValue}
+					menuButtonOnPress={this.menuButtonOnPress}
+					navigation={this.props.navigation}
+					navigateToPage={this.navigateToPage}
+				/>
+			</View>
+		);
+	}
 }

@@ -17,14 +17,7 @@ import styles from '../../styles/component.Navigation.style';
 export default class ModalMenu extends Component {
 
     logout() {
-      AuthController.logout()
-      .then(() => {
-        NavigationService.navigate('Loading');
-      })
-      .catch((e) => {
-        console.log("error");
-        console.log(e);
-      })
+        this.props.navigateToPage('logout');
     }
 
     menuNavOnPress = (index) => (e) => {

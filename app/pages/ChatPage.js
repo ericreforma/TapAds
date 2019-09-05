@@ -16,6 +16,9 @@ import UserInfo from '../components/UserInfo';
 import { UserController } from '../controllers/UserController';
 import { Page } from './Page';
 
+import { WEBSOCKET } from '../config/variables';
+const {EVENTS} = WEBSOCKET;
+
 import theme from '../styles/theme.style';
 
 export default class ChatPage extends Component {
@@ -33,20 +36,79 @@ export default class ChatPage extends Component {
             height: Dimensions.get('window').height,
     
             message: '',
+            messageType: 0,
             keyboardPress: true,
             loadMore: 15,
             loader: true,
             loderLoadMore: false,
             messengerData: {
                 id: '',
-                brand: ''
+                brand: '',
+                online: false,
             },
-            messengerMessages: []
+            messengerMessages: [],
+            websocketData: {}
         };
 
         // alert(this.props.navigation.getParam('id', null));
         this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow);
         this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide);
+    }
+
+    websocketFunctions = (websocketData) => {
+        var {updatedData} = websocketData;
+        this.setState({websocketData});
+        switch(updatedData) {
+            case EVENTS.ONLINE_USERS:
+                var {messengerData} = this.state,
+                    {onlineUsers} = websocketData,
+                    onlineIDs = onlineUsers.map(u => u.id),
+                    cid = this.props.navigation.getParam('id', null);
+
+                messengerData.online = cid ? (onlineIDs.indexOf(cid) !== -1 ? true : false) : false;
+                this.setState({messengerData});
+                break;
+
+            case EVENTS.ONLINE_CLIENT:
+                var {messengerData} = this.state,
+                    {onlineClient} = websocketData;
+                    
+                if(messengerData.id == onlineClient.id) {
+                    messengerData.online = true;
+                }
+
+                this.setState({messengerData});
+                break;
+
+            case EVENTS.NEW_MESSAGE:
+                var { messengerMessages } = this.state,
+                    { newMessage } = websocketData,
+                    { chat } = newMessage,
+                    { client_id,
+                    sender,
+                    message } = chat;
+                
+                if(client_id == this.state.messengerData.id) {
+                    messengerMessages.push({
+                        from: sender == 0 ? 'user' : 'client',
+                        message: message
+                    });
+
+                    this.setState({messengerMessages});
+                }
+                break;
+
+            case EVENTS.DC_USER:
+                var {messengerData} = this.state,
+                    {disconnectedUser} = websocketData;
+
+                if(messengerData.id == disconnectedUser.id) {
+                    messengerData.online = false;
+                }
+
+                this.setState({messengerData});
+                break;
+        }
     }
 
     componentDidMount = () => {
@@ -68,10 +130,8 @@ export default class ChatPage extends Component {
                 loader = false,
                 messengerMessages = [];
             
-            messengerData = {
-                id: client.id,
-                brand: client.business_name
-            }
+            messengerData.id = client.id;
+            messengerData.brand = client.business_name;
 
             messengerMessages = chat.map(c => {
                 return {
@@ -80,32 +140,13 @@ export default class ChatPage extends Component {
                 }
             });
 
+            console.log(messengerMessages[1]);
+
             this.setState({loader, messengerData, messengerMessages});
         })
         .catch(e => {
             console.log(e);
             setTimeout(() => this.getMessages(), 1000);
-        });
-    }
-
-    menuButtonOnPress = () => {
-        Animated.timing(this.state.modalFadeBackground, {
-            toValue: this.state.scrollEnable ? 0.7 : 0,
-            duration: 600
-        }).start(() => {
-            this.setState({
-                modalContainerzIndex: this.state.scrollEnable ? 0 : 1
-            });
-        });
-  
-        Animated.timing(this.state.modalXValue, {
-            toValue: this.state.scrollEnable ? this.state.width - 330 : this.state.width,
-            duration: 500
-        }).start();
-  
-        this.setState({
-            scrollEnable: !this.state.scrollEnable,
-            modalContainerzIndex: 1
         });
     }
     
@@ -120,18 +161,30 @@ export default class ChatPage extends Component {
     }
 
     sendMessageOnPress = () => {
-        var message = this.state.message,
-            messengerMessages = this.state.messengerMessages;
+        var { websocketData,
+            message,
+            messengerMessages,
+            messengerData,
+            messageType } = this.state,
+            { socket } = websocketData,
+            TOKEN = WEBSOCKET.GET_TOKEN();
 
         if(message !== '') {
-            messengerMessages.push({
-                from: 'user',
-                message: message
-            });
-
-            this.setState({
-                message: '',
-                messengerMessages: messengerMessages
+            socket.emit('message', {
+                to_id: messengerData.id,
+                message: message,
+                messageType: messageType,
+                token: TOKEN
+            }, chat => {
+                messengerMessages.push({
+                    from: 'user',
+                    message: message
+                });
+    
+                this.setState({
+                    message: '',
+                    messengerMessages: messengerMessages
+                });
             });
         }
     }
@@ -152,8 +205,10 @@ export default class ChatPage extends Component {
     render() {
         return (
             <Page
-                {...this.props}
                 message
+                websocket={{
+                    websocketFunctions: this.websocketFunctions
+                }}
             >
                 <View
                     style={{
@@ -188,12 +243,25 @@ export default class ChatPage extends Component {
                                     justifyContent: 'center',
                                     alignItems: 'center',
                                     borderTopLeftRadius: theme.PAGE_CARD_RADIUS,
-                                    borderTopRightRadius: theme.PAGE_CARD_RADIUS
+                                    borderTopRightRadius: theme.PAGE_CARD_RADIUS,
+                                    flexDirection: 'row'
                                 }}
                             >
                                 <LabelText>
                                     {this.state.messengerData.brand}
                                 </LabelText>
+                                
+                                {this.state.messengerData.online ? (
+                                    <View
+                                        style={{
+                                            backgroundColor: theme.COLOR_GREEN,
+                                            height: 13,
+                                            width: 13,
+                                            borderRadius: 10,
+                                            marginLeft: 5,
+                                        }}
+                                    ></View>
+                                ) : null}
                             </View>
 
                             <View

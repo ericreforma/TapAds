@@ -10,6 +10,7 @@ export default {
   COLOR_GRAY_LIGHT: '#e7e7e7',
   COLOR_GRAY_CHAT: '#e1e1e5',
   COLOR_GRAY_BUTTON: '#b5b5b5',
+  COLOR_GREEN: '#38c172',
   COLOR_PINK: '#ff007e',
   COLOR_BLACK: '#000',
   COLOR_LABEL: '#353a60',

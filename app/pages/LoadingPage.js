@@ -9,6 +9,7 @@ import { UserController } from '../controllers';
 import { UserSchema } from '../database';
 import theme from '../styles/theme.style';
 import { CampaignAction } from '../redux/actions/campaign.action';
+import NavigationService from '../services/navigation';
 
 class LoadingPage extends Component {
 
@@ -27,11 +28,11 @@ class LoadingPage extends Component {
         this.props.dispatchGetMyList();
         UserSchema.update(authResponse.data,
         () => {
-          this.props.navigation.navigate('Messenger');
+          NavigationService.navigate('ProfileInfo');
         });
       })
       .catch((error) => {
-          this.props.navigation.navigate('Login');
+          NavigationService.navigate('Login');
           console.log(error);
       });
   }

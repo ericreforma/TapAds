@@ -29,6 +29,10 @@ class UserInfo extends Component {
     });
   }
 
+  static getDerivedStateFromProps = (props) => {
+      return {user: props.user};
+  }
+
   rating = () => (
       <View
           style={styles.headerNavUserStarContainer}
@@ -49,7 +53,6 @@ class UserInfo extends Component {
       </View>
     );
 
-
     render() {
         return (
             <View
@@ -65,7 +68,7 @@ class UserInfo extends Component {
                         {this.state.user.profilePicture ? (
                             <Image
                                 style={styles.headerNavProfilePictureImage}
-                                source={{uri: URL.SERVER_MAIN + this.state.user.profilePicture}}
+                                source={{uri: `${URL.SERVER_MEDIA}/${this.state.user.profilePicture}`}}
                             />
                         ) : (
                             <Image
@@ -82,7 +85,7 @@ class UserInfo extends Component {
                     <Text
                         style={styles.headerNavUserName}
                     >
-                        { this.state.user.name }
+                        { this.state.user.username }
                     </Text>
 
                     <View
@@ -108,7 +111,7 @@ class UserInfo extends Component {
     }
 }
 const mapStateToProps = (state) => ({
-  user: state.userReducer.user
+    user: state.userReducer.user
 });
 
 export default connect(mapStateToProps)(UserInfo);

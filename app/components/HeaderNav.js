@@ -6,7 +6,6 @@ import {
     TouchableOpacity,
 } from 'react-native';
 
-import NavigationService from '../services/navigation';
 import styles from '../styles/component.HeaderNav.style';
 
 export class HeaderNav extends Component {
@@ -16,7 +15,7 @@ export class HeaderNav extends Component {
                 style={[styles.headerNavRowDirection, styles.headerNavTopContainer]}
             >
                 <TouchableOpacity
-                    onPress={() => NavigationService.navigate('Home')}
+                    onPress={() => this.props.navigate('Home')}
                 >
                     <Text
                         style={styles.headerNavTopAppName}
@@ -32,7 +31,7 @@ export class HeaderNav extends Component {
                         style={{
                             marginRight: 20
                         }}
-                        onPress={() => NavigationService.navigate('Notification')}
+                        onPress={() => this.props.navigate('Notification')}
                     >
                         <Image
                             style={styles.headerNavTopNotification}

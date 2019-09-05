@@ -24,6 +24,7 @@ User.schema = {
     username: 'string',
     media_id: 'int',
     profilePicture: 'string',
+    licenseImage: 'string',
     birthdate: 'string',
     contact_number: 'string',
     location: 'string',
@@ -147,6 +148,7 @@ export const UserSchema = {
           username: user.username,
           media_id: user.media_id,
           profilePicture: user.profilePicture,
+          licenseImage: user.licenseImage,
           birthdate: user.birthdate,
           contact_number: user.contact_number,
           location: user.location,
@@ -180,6 +182,8 @@ export const UserSchema = {
       name: '',
       username: '',
       media_id: 0,
+      profilePicture: '',
+      licenseImage: '',
       birthdate: '',
       contact_number: '',
       location: '',
@@ -196,6 +200,7 @@ export const UserSchema = {
       u.name = usr.name;
       u.username = usr.username;
       u.media_id = usr.media_id;
+      u.licenseImage = usr.licenseImage;
       u.profilePicture = usr.profilePicture;
       u.birthdate = usr.birthdate;
       u.contact_number = usr.contact_number;

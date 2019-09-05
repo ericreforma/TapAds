@@ -17,6 +17,10 @@ import {
 import UserInfo from '../components/UserInfo';
 import { UserController } from '../controllers/UserController';
 import { URL } from '../config/variables';
+import NavigationService from '../services/navigation';
+
+import { WEBSOCKET } from '../config/variables';
+const {EVENTS} = WEBSOCKET;
 
 import theme from '../styles/theme.style';
 
@@ -30,6 +34,80 @@ export default class MessengerPage extends Component {
         };
         
         this.getChatList();
+    }
+
+    websocketFunctions = (websocketData) => {
+        var {updatedData} = websocketData;
+        this.setState({websocketData});
+        switch(updatedData) {
+            case EVENTS.ONLINE_USERS:
+                var {conversations} = this.state,
+                    {onlineUsers} = websocketData,
+                    onlineIDs = onlineUsers.map(u => u.id);
+
+                conversations = conversations.map(c => {
+                    if(onlineIDs.indexOf(c.id) !== -1) {
+                        c.online = true;
+                    }
+                    return c;
+                });
+
+                this.setState({conversations});
+                break;
+
+            case EVENTS.ONLINE_CLIENT:
+                var {conversations} = this.state,
+                    {onlineClient} = websocketData;
+                    
+                conversations = conversations.map(c => {
+                    if(onlineClient.id === c.id) {
+                        c.online = true;
+                    }
+                    return c;
+                });
+
+                this.setState({conversations});
+                break;
+
+            case EVENTS.NEW_MESSAGE:
+                var { conversations } = this.state,
+                    { newMessage } = websocketData,
+                    { chat } = newMessage,
+                    { client_id,
+                    message,
+                    created_at } = chat,
+                    cIndex = conversations.map(c => c.id).indexOf(client_id);
+
+                if(cIndex !== -1) {
+                    var userMessage = conversations.splice(cIndex, 1),
+                        userMessage = userMessage[0];
+                    userMessage.message = message;
+                    userMessage.sender = 1;
+                    userMessage.created_at = created_at;
+                    userMessage.notif = userMessage.notif ? newMessage.notif + 1 : 1;
+                    conversations.unshift(userMessage);
+                    
+                } else {
+
+                }
+                
+                this.setState({conversations});
+                break;
+
+            case EVENTS.DC_USER:
+                var {conversations} = this.state,
+                    {disconnectedUser} = websocketData;
+
+                conversations = conversations.map(c => {
+                    if(disconnectedUser.id === c.id) {
+                        c.online = false;
+                    }
+                    return c;
+                });
+
+                this.setState({conversations});
+                break;
+        }
     }
 
     getChatList = () => {
@@ -86,7 +164,11 @@ export default class MessengerPage extends Component {
 
     render() {
         return (
-            <Page>
+            <Page
+                websocket={{
+                    websocketFunctions: this.websocketFunctions
+                }}
+            >
                 <ScrollView
                     overScrollMode='never'
                     showsVerticalScrollIndicator={false}
@@ -145,7 +227,7 @@ export default class MessengerPage extends Component {
                                         alignItems: 'center',
                                         elevation: 3
                                     }}
-                                    onPress={e => this.props.navigation.navigate('Chat', {id: c.id})}
+                                    onPress={e => NavigationService.navigate('Chat', {id: c.id}, this.state.websocketData)}
                                 >
                                     {/* client image */}
                                     <View

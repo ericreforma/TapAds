@@ -5,6 +5,11 @@ export const UserController = {
     profile: () => HttpRequest.get('/user'),
     chatList: () => HttpRequest.get('/user/chat/list'),
     messages: (cid) => HttpRequest.get(`/user/chat/${cid}`),
+    update: {
+      details: (args = {}) => HttpRequest.post('/user/update/details', args),
+      photo: (args = {}) => HttpRequest.post('/user/update/photo', args),
+      license: (args = {}) => HttpRequest.post('/user/update/license', args),
+    }
   },
 
   rating: (ratings) => {
@@ -14,15 +19,18 @@ export const UserController = {
       count: 0,
     };
     let rates = 0;
-    rate.count = ratings.length;
 
-    for (let i = 0; i < ratings.length; i++) {
-      rates += ratings[i].rate;
+    if(ratings.length !== 0) {
+      rate.count = ratings.length;
+
+      for (let i = 0; i < ratings.length; i++) {
+        rates += ratings[i].rate;
+      }
+      
+      rate.average = Math.round((rates / rate.count) * 10) / 10;
+      rate.total = rates;
     }
-
-    rate.average = Math.round((rates / rate.count) * 10) / 10;
-    rate.total = rates;
-
+    
     return rate;
   }
 };

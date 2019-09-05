@@ -1,12 +1,13 @@
 import { TokenSchema } from '../database';
 
-const SERVER_MAIN = 'http://10.0.2.2';
-const SERVER_WEBSOCKET = 'http://10.0.2.2';
+const SERVER_MAIN = 'http://192.168.0.100/TapAdsServer/public';
+const SERVER_WEBSOCKET = 'http://192.168.0.100';
 const WEBSOCKET_PORT = '3000';
 const WEBSOCKET_API = `${SERVER_WEBSOCKET}:${WEBSOCKET_PORT}`;
+const WEBSOCKET_PARAM = { jsonp: false, transports: ['websocket'] };
 
 const SERVER_API = `${SERVER_MAIN}/api`;
-const SERVER_MEDIA = `${SERVER_MAIN}/storage/media`;
+const SERVER_MEDIA = `${SERVER_MAIN}/storage`;
 
 export const URL = {
   SERVER_MAIN,
@@ -95,6 +96,7 @@ export const MAP = {
 
 export const WEBSOCKET = {
   WEBSOCKET_API,
+  WEBSOCKET_PARAM,
   CONNECT: {
     MESSAGE: () => {
       var outputToken = TokenSchema.get(),
@@ -103,6 +105,7 @@ export const WEBSOCKET = {
       return returnData;
     } 
   },
+  
   EVENTS: {
     ON_CONNECT: 'connect',
     ONLINE_USERS: 'online users',
@@ -110,5 +113,9 @@ export const WEBSOCKET = {
     NEW_MESSAGE: 'new message',
     DC_USER: 'disconnected user',
     ERROR_CONN: 'connect_error'
+  },
+  GET_TOKEN: () => {
+    var outputToken = TokenSchema.get();
+    return outputToken.token;
   }
 };
