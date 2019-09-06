@@ -9,6 +9,12 @@ export const UserController = {
       details: (args = {}) => HttpRequest.post('/user/update/details', args),
       photo: (args = {}) => HttpRequest.post('/user/update/photo', args),
       license: (args = {}) => HttpRequest.post('/user/update/license', args),
+      password: (args = {}) => HttpRequest.post('/user/update/password', args),
+    },
+    remove: {
+      photo: () => HttpRequest.get('/user/remove/photo'),
+      license: () => HttpRequest.get('/user/remove/license'),
+      account: (args = {}) => HttpRequest.post('/user/remove/account', args)
     }
   },
 

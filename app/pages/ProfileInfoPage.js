@@ -3,11 +3,12 @@ import {
     View,
     ScrollView,
     Dimensions,
-    Animated
+    Animated,
+    Alert
 } from 'react-native';
 import ImagePicker from 'react-native-image-picker';
 import { connect } from 'react-redux';
-import FlashMessage, { showMessage, hideMessage } from "react-native-flash-message";
+import FlashMessage, { showMessage } from "react-native-flash-message";
 
 import { LabelText } from '../components/Text';
 import { Page } from '../pages/Page';
@@ -17,7 +18,7 @@ import { UserController } from '../controllers/UserController';
 
 import theme from '../styles/theme.style';
 import styles from '../styles/page.Home.style';
-import { URL, VEHICLE } from '../config/variables';
+import { URL, VEHICLE, WEBSOCKET } from '../config/variables';
 
 import PersonalDetails from '../components/profile/profileInfo/PersonalDetails';
 import DriverLicense from '../components/profile/profileInfo/DriverLicense';
@@ -84,11 +85,13 @@ class ProfileInfoPage extends Component {
                 personalDetails: false,
                 displayPhoto: false,
                 driverLicense: false
-            }
+            },
+            logout: false,
         };
     }
 
     componentDidMount() {
+        console.log(WEBSOCKET.GET_TOKEN());
         var userData = {
                 name: this.props.user.name,
                 username: this.props.user.username,
@@ -123,30 +126,6 @@ class ProfileInfoPage extends Component {
             editUserData,
             carsOwned
         });
-    }
-
-    static getDerivedStateFromProps = (props, state) => {
-        // var userData = {
-        //         name: props.user.name,
-        //         username: props.user.username,
-        //         email: props.user.email,
-        //         contact_number: props.user.contact_number,
-        //         birthdate: props.user.birthdate,
-        //         location: props.user.location,
-        //         licenseImage: props.user.licenseImage ? { uri: `${URL.SERVER_MEDIA}/${props.user.licenseImage}` } : '',
-        //         image_url: props.user.profilePicture,
-        //     },
-        //     editUserData = {
-        //         name: props.user.name,
-        //         username: props.user.username,
-        //         email: props.user.email,
-        //         contact_number: props.user.contact_number,
-        //         birthdate: props.user.birthdate,
-        //         location: props.user.location,
-        //     };
-
-        var { userData, editUserData } = state;
-        return {userData, editUserData};
     }
 
     updateUploadPhoto = (name) => () => {
@@ -189,7 +168,7 @@ class ProfileInfoPage extends Component {
                         var { imageResponse, media } = res.data;
                         if(imageResponse) {
                             var { userData } = this.state;
-                            userData.licenseImage = { uri: `${URL.SERVER_MEDIA}/${media.url}` }
+                            userData.licenseImage = { uri: `${URL.SERVER_MEDIA}/${media.url}` };
                             this.setState({userData});
                             this.dispatchUserProfile(false, media);
                             this.successFlashMessage('License photo successfully uploaded!');
@@ -209,15 +188,64 @@ class ProfileInfoPage extends Component {
     }
 
     removeImage = (name) => () => {
-        if(name === 'image_url') {
-            this.loadersToggle('displayPhoto');
-        } else if(name === 'licenseImage') {
-            this.loadersToggle('driverLicense');
-        }
+        Alert.alert(
+            'Delete Photo',
+            `Are you sure you want to remove ${name === 'image_url' ? 'Display Photo' : 'License Photo'}?`,
+            [
+                {text: 'Yes', onPress: () => this.proceedRemoveImage(name)},
+                {text: 'Cancel', onPress: () => console.log('Remove photo cancelled')},
+            ],
+            {cancelable: false},
+        );
 
         // var { userData } = this.state;
         // userData[name] = null;
         // this.setState({userData});
+    }
+
+    proceedRemoveImage = (name) => {
+        if(name === 'image_url') {
+            this.loadersToggle('displayPhoto');
+
+            UserController.request.remove.photo()
+            .then(res => {
+                var { imageResponse, media } = res.data;
+                if(imageResponse) {
+                    this.dispatchUserProfile(media);
+                    this.successFlashMessage('Display photo successfully deleted!');
+                } else {
+                    this.failedFlashMessage('Error occured while deleting image.\nCan you try again later? Thanks!');
+                }
+                this.loadersToggle('displayPhoto');
+            })
+            .catch(error => {
+                console.log(error);
+                this.loadersToggle('displayPhoto');
+                this.failedFlashMessage('Error occured while deleting image.\nCan you try again later? Thanks!');
+            });
+        } else if(name === 'licenseImage') {
+            this.loadersToggle('driverLicense');
+
+            UserController.request.remove.license()
+            .then(res => {
+                var { imageResponse, media } = res.data;
+                if(imageResponse) {
+                    var { userData } = this.state;
+                    userData.licenseImage = media.url;
+                    this.setState({userData});
+                    this.dispatchUserProfile(false, media);
+                    this.successFlashMessage('License photo successfully deleted!');
+                } else {
+                    this.failedFlashMessage('Error occured while deleting image.\nCan you try again later? Thanks!');
+                }
+                this.loadersToggle('driverLicense');
+            })
+            .catch(error => {
+                console.log(error);
+                this.loadersToggle('driverLicense');
+                this.failedFlashMessage('Error occured while deleting image.\nCan you try again later? Thanks!');
+            });
+        }
     }
 
     newPersonalDetailsSave = (cancel) => () => {
@@ -321,8 +349,8 @@ class ProfileInfoPage extends Component {
     }
 
     successFlashMessage = (description) => {
-        showMessage({
-            message: 'Wonderful!',
+        this.refs.mainFlashMessage.showMessage({
+            message: 'Great!',
             description,
             duration: 5000,
             type: "success",
@@ -331,7 +359,7 @@ class ProfileInfoPage extends Component {
     }
 
     failedFlashMessage = (description) => {
-        showMessage({
+        this.refs.mainFlashMessage.showMessage({
             message: 'Error!',
             description,
             duration: 5000,
@@ -342,7 +370,7 @@ class ProfileInfoPage extends Component {
 
 	render() {
 		return (
-            <Page>
+            <Page logout={this.state.logout}>
                 <ScrollView
                     style={styles.homePageScrollView}
                     overScrollMode='never'
@@ -373,7 +401,7 @@ class ProfileInfoPage extends Component {
                     </View>
                 </ScrollView>
 
-                <FlashMessage position="top" />
+                <FlashMessage ref="mainFlashMessage" position="top" />
             </Page>
         );
     }

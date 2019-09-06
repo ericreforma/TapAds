@@ -4,17 +4,17 @@ import {
   Animated,
   Dimensions
 } from 'react-native';
-import Sound from 'react-native-sound';
-
 import { AppBackground } from '../components/AppBackground';
 import { HeaderNav } from '../components/HeaderNav';
 import ModalMenu from '../components/Modal/Navigation';
 import NavigationService from '../services/navigation';
 import { AuthController } from '../controllers';
 
+import Sound from 'react-native-sound';
 import { Socket } from '../socketIO/socket';
 
 export class Page extends Component {
+
 	constructor(props) {
 		super(props);
 
@@ -114,6 +114,10 @@ export class Page extends Component {
 	}
 
 	render() {
+		if(this.props.logout) {
+			this.navigate('logout');
+		}
+		
 		return (
 			<View
 				style={
@@ -138,7 +142,6 @@ export class Page extends Component {
 					modalFadeBackground={this.state.modalFadeBackground}
 					modalXValue={this.state.modalXValue}
 					menuButtonOnPress={this.menuButtonOnPress}
-					navigation={this.props.navigation}
 					navigateToPage={this.navigateToPage}
 				/>
 			</View>

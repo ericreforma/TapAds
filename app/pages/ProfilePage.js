@@ -528,7 +528,7 @@ class ProfilePage extends Component {
                                         <CardColumnContent
                                             lastChild={true}
                                             carType={vehicle.type}
-                                            carSize={vehicle.vehicle[0].classification}
+                                            carSize={vehicle.vehicle.classification}
                                         >
                                             <CardColumnContentBody>
                                                 <View

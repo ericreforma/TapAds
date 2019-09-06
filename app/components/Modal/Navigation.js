@@ -5,14 +5,12 @@ import { View,
       TouchableHighlight,
       TouchableOpacity
 } from 'react-native';
+
 import {
   LabelText,
   CommonText
 } from '../Text';
-import { AuthController } from '../../controllers';
-import NavigationService from '../../services/navigation';
 import styles from '../../styles/component.Navigation.style';
-
 
 export default class ModalMenu extends Component {
 

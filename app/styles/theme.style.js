@@ -12,7 +12,7 @@ export default {
   COLOR_GRAY_BUTTON: '#b5b5b5',
   COLOR_GREEN: '#38c172',
   COLOR_PINK: '#ff007e',
-  COLOR_BLACK: '#000',
+  COLOR_BLACK: '#000000',
   COLOR_LABEL: '#353a60',
   COLOR_NORMAL_FONT: '#5f5f5f',
   COLOR_SIGNUP_FONT: '#b5b5b5',
