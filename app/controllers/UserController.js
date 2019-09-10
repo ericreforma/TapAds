@@ -5,11 +5,15 @@ export const UserController = {
     profile: () => HttpRequest.get('/user'),
     chatList: () => HttpRequest.get('/user/chat/list'),
     messages: (cid) => HttpRequest.get(`/user/chat/${cid}`),
+    vehicleDB: () => HttpRequest.get('/user/vehicle/all'),
     update: {
       details: (args = {}) => HttpRequest.post('/user/update/details', args),
       photo: (args = {}) => HttpRequest.post('/user/update/photo', args),
       license: (args = {}) => HttpRequest.post('/user/update/license', args),
       password: (args = {}) => HttpRequest.post('/user/update/password', args),
+    },
+    create: {
+      vehicle: (args = {}) => HttpRequest.post('/user/create/vehicle', args),
     },
     remove: {
       photo: () => HttpRequest.get('/user/remove/photo'),

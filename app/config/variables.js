@@ -119,3 +119,10 @@ export const WEBSOCKET = {
     return outputToken.token;
   }
 };
+
+export const IMAGES = {
+  ICONS: {
+    close_red: require('../assets/image/icons/close_icon.png'),
+    add: require('../assets/image/icons/add_icon.png'),
+  }
+};
