@@ -18,7 +18,7 @@ import { UserController } from '../controllers/UserController';
 
 import theme from '../styles/theme.style';
 import styles from '../styles/page.Home.style';
-import { URL, VEHICLE, WEBSOCKET } from '../config/variables';
+import { URL, VEHICLE } from '../config/variables';
 
 import PersonalDetails from '../components/profile/profileInfo/PersonalDetails';
 import DriverLicense from '../components/profile/profileInfo/DriverLicense';
@@ -91,7 +91,6 @@ class ProfileInfoPage extends Component {
     }
 
     componentDidMount() {
-        console.log(WEBSOCKET.GET_TOKEN());
         var userData = {
                 name: this.props.user.name,
                 username: this.props.user.username,

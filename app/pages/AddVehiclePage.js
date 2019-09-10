@@ -10,9 +10,11 @@ import {
     ActivityIndicator,
     Image
 } from 'react-native';
+import { connect } from 'react-redux';
 import ImagePicker from 'react-native-image-picker';
 import FlashMessage, { showMessage } from "react-native-flash-message";
 
+import { USER } from '../redux/actions/types.action';
 import { Page } from './Page';
 import UserInfo from '../components/UserInfo';
 import {
@@ -27,7 +29,7 @@ import AutoComplete from '../components/AutoComplete';
 import theme from '../styles/theme.style';
 import { Card, CardBody } from '../components/Card';
 
-export default class MessengerPage extends Component {
+class AddVehiclePage extends Component {
     constructor(props) {
         super(props);
 
@@ -119,12 +121,7 @@ export default class MessengerPage extends Component {
                 && v.model.toString() == uploadModel.toString()
                 && v.year.toString() == uploadYear.toString()
             )[0].id;
-            console.log({
-                vehicleToUpload,
-                activeTypeVehicle,
-                vehicleId,
-                uploadColor
-            });
+
             UserController.request.create.vehicle({
                 vehicleToUpload,
                 activeTypeVehicle,
@@ -132,16 +129,22 @@ export default class MessengerPage extends Component {
                 uploadColor
             })
             .then(res => {
-                console.log(res.data);
-                this.refs.flashMessage.showMessage({
-                    message: 'Great!',
-                    description: 'Vehicle added successfully!',
-                    duration: 5000,
-                    type: "success",
-                    icon: "success"
+                UserController.request.profile()
+                .then(res => {
+                    this.props.dispatchGetProfile(res.data);
+                    this.refs.flashMessage.showMessage({
+                        message: 'Great!',
+                        description: 'Vehicle added successfully!',
+                        duration: 5000,
+                        type: "success",
+                        icon: "success"
+                    });
+                    this.resetInputFields();
+                    this.toggleAddCarLoading(false);
+                })
+                .catch(error => {
+                    console.log(error);
                 });
-                this.resetInputFields();
-                this.toggleAddCarLoading(false);
             })
             .catch(error => {
                 console.log(error);
@@ -665,3 +668,9 @@ export default class MessengerPage extends Component {
         );
     }
 }
+
+const mapDispatchToProps = (dispatch) => ({
+    dispatchGetProfile: (user) => dispatch({ type: USER.GET.PROFILE.SUCCESS, user }),
+});
+  
+export default connect(null, mapDispatchToProps)(AddVehiclePage);

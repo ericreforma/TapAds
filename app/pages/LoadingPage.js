@@ -28,7 +28,7 @@ class LoadingPage extends Component {
         this.props.dispatchGetMyList();
         UserSchema.update(authResponse.data,
         () => {
-          NavigationService.navigate('Addvehicle');
+          NavigationService.navigate('Home');
         });
       })
       .catch((error) => {

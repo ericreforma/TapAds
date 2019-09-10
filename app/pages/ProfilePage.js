@@ -8,9 +8,11 @@ import {
     TouchableOpacity,
     Dimensions,
 } from 'react-native';
+import { NavigationEvents } from 'react-navigation';
 import Carousel from 'react-native-snap-carousel';
+
 import { Page } from './Page';
-import { URL } from '../config/variables';
+import { URL, VEHICLE } from '../config/variables';
 import UserInfo from '../components/UserInfo';
 import { LabelText, CommonText } from '../components/Text';
 import ButtonBlue from '../components/ButtonBlue';
@@ -55,61 +57,33 @@ class ProfilePage extends Component {
             ],
 
             // vehicle data
-            vehicleData: [
-                {
-                    carType: 'Private',
-                    carSize: 'small',
-                    model: 'Kia Rio',
-                    year: '2019',
-                    vehicleImages: [
-                        require('../assets/image/test-small-car.png'),
-                        require('../assets/image/test-small-car.png'),
-                        require('../assets/image/test-small-car.png'),
-                        require('../assets/image/test-small-car.png')
-                    ]
-                },{
-                    carType: 'Private',
-                    carSize: 'large',
-                    model: 'Toyota Hiace',
-                    year: '2019',
-                    vehicleImages: [
-                        require('../assets/image/test-large-car.png'),
-                        require('../assets/image/test-large-car.png'),
-                        require('../assets/image/test-large-car.png'),
-                        require('../assets/image/test-large-car.png')
-                    ]
-                },{
-                    carType: 'Private',
-                    carSize: 'mid',
-                    model: 'Ford Ecosport',
-                    year: '2016',
-                    vehicleImages: [
-                        require('../assets/image/test-mid-car.png'),
-                        require('../assets/image/test-mid-car.png'),
-                        require('../assets/image/test-mid-car.png'),
-                        require('../assets/image/test-mid-car.png')
-                    ]
-                },{
-                    carType: 'Private',
-                    carSize: 'small',
-                    model: 'Kia Rio',
-                    year: '2019',
-                    vehicleImages: [
-                        require('../assets/image/test-kia-logo.png'),
-                        require('../assets/image/test-kia-logo.png'),
-                        require('../assets/image/test-kia-logo.png'),
-                        require('../assets/image/test-kia-logo.png')
-                    ]
-                }
-            ],
+            vehicleData: [],
 
             // vehicle card height
             vehicleCardSize: [],
         };
     }
 
-    componentDidMount() {
-        this.setState({ user: this.props.user });
+    // componentDidMount() {
+    //     this.getVehicles();
+    // }
+
+    getVehicles = () => {
+        var { user } = this.props,
+            { vehicles } = user,
+            vehicleData = vehicles.map(v => {
+                return {
+                    carType: v.type,
+                    carSize: v.vehicle.classification,
+                    model: v.vehicle.model,
+                    year: v.vehicle.year,
+                    vehicleImages: v.photo.map(vp => {
+                        return {uri: `${URL.SERVER_MEDIA}/${vp.url}`}
+                    })
+                };
+            });
+            
+        this.setState({ vehicleData, user });
     }
 
     getCardSize = (x, y, width, height, index) => {
@@ -141,14 +115,15 @@ class ProfilePage extends Component {
                 borderTopLeftRadius: 15,
                 backgroundColor: theme.COLOR_GRAY_BUTTON
             }}
-            source={{ uri: `${URL.SERVER_MEDIA}/${item.url}` }}
+            source={item}
         />
     );
 
 	render() {
 		return (
-
             <Page>
+                <NavigationEvents onDidFocus={this.getVehicles} />
+
                 <ScrollView
                     style={styles.homePageScrollView}
                     overScrollMode='never'
@@ -429,8 +404,8 @@ class ProfilePage extends Component {
                         </View>
 
                         {/* content */}
-                        {this.props.user.vehicles.length !== 0 ?
-                            this.props.user.vehicles.map((vehicle, index) =>
+                        {this.state.vehicleData.length !== 0 ?
+                            this.state.vehicleData.map((vehicle, index) =>
                                 <View
                                     key={index}
                                     style={{
@@ -442,7 +417,7 @@ class ProfilePage extends Component {
                                     >
                                         <CardColumnContent
                                             firstChild={true}
-                                            backgroundColor={vehicle.photo.length !== 0 ? theme.COLOR_GRAY_HEAVY + '00' : theme.COLOR_GRAY_HEAVY}
+                                            backgroundColor={vehicle.vehicleImages.length !== 0 ? theme.COLOR_GRAY_HEAVY + '00' : theme.COLOR_GRAY_HEAVY}
                                             getCardSize={this.getCardSize}
                                             cardIndex={index}
                                         >
@@ -454,10 +429,10 @@ class ProfilePage extends Component {
                                                 {
                                                     this.state.vehicleCardSize[index]
                                                     ? (
-                                                        vehicle.photo.length !== 0
+                                                        vehicle.vehicleImages.length !== 0
                                                         ? <View>
                                                             <Carousel
-                                                                data={vehicle.photo}
+                                                                data={vehicle.vehicleImages}
                                                                 renderItem={this._renderVehicleImage(index)}
                                                                 layout={'default'}
                                                                 inactiveSlideScale={1}
@@ -486,7 +461,7 @@ class ProfilePage extends Component {
                                                                             flexDirection: 'row',
                                                                         }}
                                                                     >
-                                                                        {vehicle.photo.map((vi, viIdx) =>
+                                                                        {vehicle.vehicleImages.map((vi, viIdx) =>
                                                                             <View
                                                                                 key={viIdx}
                                                                                 style={{
@@ -527,8 +502,8 @@ class ProfilePage extends Component {
 
                                         <CardColumnContent
                                             lastChild={true}
-                                            carType={vehicle.type}
-                                            carSize={vehicle.vehicle.classification}
+                                            carType={vehicle.carType}
+                                            carSize={vehicle.carSize}
                                         >
                                             <CardColumnContentBody>
                                                 <View
@@ -558,7 +533,7 @@ class ProfilePage extends Component {
                                                                 color: theme.COLOR_NORMAL_FONT,
                                                             }}
                                                         >
-                                                            {vehicle.vehicle[0].model}
+                                                            {vehicle.model}
                                                         </Text>
                                                     </View>
                                                 </View>
@@ -591,7 +566,7 @@ class ProfilePage extends Component {
                                                                 color: theme.COLOR_NORMAL_FONT,
                                                             }}
                                                         >
-                                                            {vehicle.vehicle[0].year}
+                                                            {vehicle.year}
                                                         </Text>
                                                     </View>
                                                 </View>
