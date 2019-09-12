@@ -147,6 +147,7 @@ class ProfileInfoPage extends Component {
                     .then(res => {
                         var { imageResponse, media } = res.data;
                         if(imageResponse) {
+                            this.setImage(name, media.url);
                             this.dispatchUserProfile(media);
                             this.successFlashMessage('Display photo successfully uploaded!');
                         } else {
@@ -166,9 +167,7 @@ class ProfileInfoPage extends Component {
                     .then(res => {
                         var { imageResponse, media } = res.data;
                         if(imageResponse) {
-                            var { userData } = this.state;
-                            userData.licenseImage = { uri: `${URL.SERVER_MEDIA}/${media.url}` };
-                            this.setState({userData});
+                            this.setImage(name, media.url);
                             this.dispatchUserProfile(false, media);
                             this.successFlashMessage('License photo successfully uploaded!');
                         } else {
@@ -184,6 +183,12 @@ class ProfileInfoPage extends Component {
                 }
             }
         });
+    }
+
+    setImage = (name, value = false) => {
+        var { userData } = this.state;
+        userData[name] = value ? { uri: `${URL.SERVER_MEDIA}/${value}` } : value;
+        this.setState({ userData });
     }
 
     removeImage = (name) => () => {
@@ -210,6 +215,7 @@ class ProfileInfoPage extends Component {
             .then(res => {
                 var { imageResponse, media } = res.data;
                 if(imageResponse) {
+                    this.setImage(name);
                     this.dispatchUserProfile(media);
                     this.successFlashMessage('Display photo successfully deleted!');
                 } else {
@@ -229,9 +235,7 @@ class ProfileInfoPage extends Component {
             .then(res => {
                 var { imageResponse, media } = res.data;
                 if(imageResponse) {
-                    var { userData } = this.state;
-                    userData.licenseImage = media.url;
-                    this.setState({userData});
+                    this.setImage(name);
                     this.dispatchUserProfile(false, media);
                     this.successFlashMessage('License photo successfully deleted!');
                 } else {
@@ -319,22 +323,16 @@ class ProfileInfoPage extends Component {
         var { user } = this.props,
             { userData } = this.state,
             created_at = ppUpdate ? ppUpdate.created_at : (lpUpdate ? lpUpdate.created_at : user.updated_at);
-            userDispatch = {
-                id: user.id,
-                name: userData.name,
-                username: userData.username,
-                media_id: user.media_id,
-                profilePicture: ppUpdate ? ppUpdate.url : user.profilePicture,
-                licenseImage: lpUpdate ? lpUpdate.url : user.licenseImage,
-                birthdate: userData.birthdate,
-                contact_number: userData.contact_number,
-                location: userData.location,
-                email: userData.email,
-                created_at: user.created_at,
-                updated_at: created_at ? created_at : user.updated_at,
-                ratings: user.ratings
-            };
-        this.props.dispatchUpdateProfile(userDispatch);
+        user.name = userData.name;
+        user.username = userData.username;
+        user.profilePicture = ppUpdate ? ppUpdate.url : user.profilePicture;
+        user.licenseImage = lpUpdate ? lpUpdate.url : user.licenseImage;
+        user.birthdate = userData.birthdate;
+        user.contact_number = userData.contact_number;
+        user.location = userData.location;
+        user.email = userData.email;
+        user.updated_at = created_at ? created_at : user.updated_at;
+        this.props.dispatchUpdateProfile(user);
     }
 
     mainSetState = (data) => {
@@ -351,7 +349,7 @@ class ProfileInfoPage extends Component {
         this.refs.mainFlashMessage.showMessage({
             message: 'Great!',
             description,
-            duration: 5000,
+            duration: 3000,
             type: "success",
             icon: "success"
         });
@@ -361,7 +359,7 @@ class ProfileInfoPage extends Component {
         this.refs.mainFlashMessage.showMessage({
             message: 'Error!',
             description,
-            duration: 5000,
+            duration: 3000,
             type: "danger",
             icon: "danger"
         });
@@ -381,7 +379,7 @@ class ProfileInfoPage extends Component {
                         style={{
                             justifyContent: 'center',
                             alignItems: 'center',
-                            marginVertical: 15,
+                            marginVertical: 15, 
                         }}
                     >
                         <LabelText color="white">Profile</LabelText>

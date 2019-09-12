@@ -6,6 +6,7 @@ import {
     Image,
     ActivityIndicator
 } from 'react-native';
+import { NavigationEvents } from 'react-navigation';
 
 import { Page } from './Page';
 import {
@@ -32,12 +33,13 @@ export default class MessengerPage extends Component {
             conversations: [],
             websocketData: {}
         };
-        
-        this.getChatList();
+
+        console.log('messenger page');
     }
 
     websocketFunctions = (websocketData) => {
         var {updatedData} = websocketData;
+        console.log(websocketData);
         this.setState({websocketData});
         switch(updatedData) {
             case EVENTS.ONLINE_USERS:
@@ -119,6 +121,7 @@ export default class MessengerPage extends Component {
                 c.online = false;
                 return c;
             });
+            console.log(conversations);
             this.setState({conversations, loader});
         })
         .catch(e => {
@@ -169,6 +172,8 @@ export default class MessengerPage extends Component {
                     websocketFunctions: this.websocketFunctions
                 }}
             >
+                <NavigationEvents onWillFocus={this.getChatList} />
+
                 <ScrollView
                     overScrollMode='never'
                     showsVerticalScrollIndicator={false}
@@ -227,7 +232,7 @@ export default class MessengerPage extends Component {
                                         alignItems: 'center',
                                         elevation: 3
                                     }}
-                                    onPress={e => NavigationService.navigate('Chat', {id: c.id}, this.state.websocketData)}
+                                    onPress={e => NavigationService.navigate('Chat', {id: c.id})}
                                 >
                                     {/* client image */}
                                     <View
@@ -249,7 +254,7 @@ export default class MessengerPage extends Component {
                                                     borderRadius: 30
                                                 }}
                                                 resizeMode="cover"
-                                                source={{uri: URL.SERVER_MAIN + c.url}}
+                                                source={{uri: `${URL.SERVER_MEDIA}/${c.url}`}}
                                             />
                                         ) : (
                                             <Image
@@ -297,21 +302,21 @@ export default class MessengerPage extends Component {
                                         >
                                             <LabelOverflow
                                                 label={c.business_name}
-                                                nonActive={c.sender == 0 ? true : false}
+                                                nonActive={c.sender == 0 ? true : (c.seen == 0 ? true : false)}
                                                 numberOfLines={1}
                                             />
 
                                             <CommonOverflow
                                                 label={c.sender == 0 ? `You: ${c.message}` : c.message}
                                                 numberOfLines={1}
-                                                nonActive={c.sender == 0 ? true : false}
+                                                nonActive={c.sender == 0 ? true : (c.seen == 0 ? true : false)}
                                             />
                                         </View>
 
                                         <View>
                                             <Common
                                                 label={this.convert12HourTime(c.created_at)}
-                                                nonActive={c.sender == 0 ? true : false}
+                                                nonActive={c.sender == 0 ? true : (c.seen == 0 ? true : false)}
                                             />
                                         </View>
                                     </View>

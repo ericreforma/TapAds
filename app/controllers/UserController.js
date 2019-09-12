@@ -6,6 +6,7 @@ export const UserController = {
     chatList: () => HttpRequest.get('/user/chat/list'),
     messages: (cid) => HttpRequest.get(`/user/chat/${cid}`),
     vehicleDB: () => HttpRequest.get('/user/vehicle/all'),
+    notificationContent: () => HttpRequest.get('/user/notif/content'),
     update: {
       details: (args = {}) => HttpRequest.post('/user/update/details', args),
       photo: (args = {}) => HttpRequest.post('/user/update/photo', args),

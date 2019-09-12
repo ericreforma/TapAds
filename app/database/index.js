@@ -29,6 +29,7 @@ User.schema = {
     contact_number: 'string',
     location: 'string',
     email: 'string',
+    notificationCount: 'int',
     created_at: 'date',
     updated_at: 'date',
     ratings: 'Rating[]'
@@ -153,6 +154,7 @@ export const UserSchema = {
           contact_number: user.contact_number,
           location: user.location,
           email: user.email,
+          notificationCount: user.notificationCount,
           created_at: moment(user.created_at).format(DATETIME_FORMAT),
           updated_at: moment(user.updated_at).format(DATETIME_FORMAT),
           ratings: []
@@ -189,6 +191,7 @@ export const UserSchema = {
       location: '',
       email: '',
       email_verified_at: '',
+      notificationCount: '',
       created_at: '',
       updated_at: '',
       ratings: []
@@ -206,6 +209,7 @@ export const UserSchema = {
       u.contact_number = usr.contact_number;
       u.location = usr.location;
       u.email = usr.email;
+      u.notificationCount = usr.notificationCount;
       u.created_at = usr.created_at;
       u.updated_at = usr.updated_at;
       u.ratings = usr.ratings;

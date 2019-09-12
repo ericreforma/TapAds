@@ -20,6 +20,7 @@ export default class MapCard extends Component {
           provider={PROVIDER_GOOGLE}
           initialRegion={this.state.map.data.region}
           scrollEnabled={false}
+          zoomEnabled={false}
         >
         {this.state.map.data.coordinates.map((polygon, key) =>
           polygon.map(coord =>

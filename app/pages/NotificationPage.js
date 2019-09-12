@@ -3,14 +3,18 @@ import {
     View,
     Text,
     ScrollView,
-    Animated,
-    Dimensions
+    ActivityIndicator
 } from 'react-native';
+import { NavigationEvents } from 'react-navigation';
+
+import NavigationService from '../services/navigation';
+import { UserController } from '../controllers/UserController';
+
+import { CommonText } from '../components/Text';
 import styles from '../styles/page.Notification.style';
 import NotificationCard from '../components/NotificationCard';
 import { Page } from './Page';
 import UserInfo from '../components/UserInfo';
-import NavigationService from '../services/navigation';
 
 export default class NotificationPage extends Component {
     constructor(props) {
@@ -23,60 +27,33 @@ export default class NotificationPage extends Component {
                 2 - approve post
                 3 - payment sent
             */
-            notification: [
-                {
-                    client: 'Mcdonalds Philippines',
-                    action: 1
-                },{
-                    client: 'KIA Philippines',
-                    action: 2
-                },{
-                    client: 'Davies Paint',
-                    action: 3
-                },{
-                    client: 'Mcdonalds Philippines',
-                    action: 1
-                },{
-                    client: 'KIA Philippines',
-                    action: 2
-                },{
-                    client: 'Davies Paint',
-                    action: 3
-                }
-            ]
+            loader: true,
+            notification: []
         };
     }
-    
-    menuButtonOnPress = () => {
-        Animated.timing(this.state.modalFadeBackground, {
-            toValue: this.state.scrollEnable ? 0.7 : 0,
-            duration: 600
-        }).start(() => {
+
+    getNotificationContent = () => {
+        UserController.request.notificationContent()
+        .then(res => {
             this.setState({
-                modalContainerzIndex: this.state.scrollEnable ? 0 : 1
+                notification: res.data,
+                loader: false
             });
-        });
-
-        Animated.timing(this.state.modalXValue, {
-            toValue: this.state.scrollEnable ? this.state.width - 330 : this.state.width,
-            duration: 500
-        }).start();
-
-        this.setState({
-            scrollEnable: !this.state.scrollEnable,
-            modalContainerzIndex: 1
-        });
+        })
+        .catch(error => console.log(error));
     }
 
-    notificationOnPress = (action) => () => {
+    notificationOnPress = (action, id) => () => {
         if(action == 1) {
-            NavigationService.navigate('Chat');
+            NavigationService.navigate('Chat', {id});
         }
     }
 
     render() {
         return (
             <Page>
+                <NavigationEvents onWillFocus={this.getNotificationContent} />
+
                 <ScrollView
                     style={styles.notifPageScrollView}
                     overScrollMode='never'
@@ -85,7 +62,6 @@ export default class NotificationPage extends Component {
                 
                     <UserInfo />
 
-                    {/* notification content */}
                     <View
                         style={styles.notifPageContentMargin}
                     >
@@ -107,18 +83,31 @@ export default class NotificationPage extends Component {
                             <View
                                 style={styles.notifPageContentBodyWrapper}
                             >
-                                {this.state.notification.map((notif, index) =>
-                                    <NotificationCard
-                                        key={index}
-                                        client={notif.client}
-                                        action={notif.action}
-                                        onPress={this.notificationOnPress(notif.action)}
-                                    />
+                                {this.state.loader ? (
+                                    <ActivityIndicator color="#000" style={{ height: 75 }} />
+                                ) : (
+                                    this.state.notification.length !== 0
+                                    ? this.state.notification.map((notif, index) =>
+                                        <NotificationCard
+                                            key={index}
+                                            client={notif.client}
+                                            action={notif.action}
+                                            requestStatus={notif.request_status}
+                                            onPress={this.notificationOnPress(notif.action, notif.id)}
+                                        />
+                                    ) : (
+                                        <View
+                                            style={styles.notifPageNoNotif}
+                                        >
+                                            <CommonText xsmall>
+                                                -- No notification --
+                                            </CommonText>
+                                        </View>
+                                    )
                                 )}
                             </View>
                         </View>
                     </View>
-
                 </ScrollView>
             </Page>
         );

@@ -6,11 +6,7 @@ function setTopLevelNavigator(navigatorRef) {
   navigator = navigatorRef;
 }
 
-function navigate(routeName, params = null, websocket = null) {
-  if(websocket) {
-    websocket.Socket.stop(websocket.socket);
-  }
-
+function navigate(routeName, params = null) {
   navigator.dispatch(
     NavigationActions.navigate({
       routeName,

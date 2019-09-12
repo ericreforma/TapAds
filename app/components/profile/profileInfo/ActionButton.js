@@ -34,7 +34,7 @@ export default class ActionButton extends Component {
         this.refs.modalFlash.showMessage({
             message,
             description,
-            duration: 5000,
+            duration: 3000,
             type: "danger",
             icon,
         });

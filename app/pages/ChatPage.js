@@ -10,6 +10,7 @@ import {
     Keyboard,
     ActivityIndicator
 } from 'react-native';
+import FlashMessage, { showMessage } from "react-native-flash-message";
 
 import { LabelText, CommonText } from '../components/Text';
 import UserInfo from '../components/UserInfo';
@@ -50,7 +51,6 @@ export default class ChatPage extends Component {
             websocketData: {}
         };
 
-        // alert(this.props.navigation.getParam('id', null));
         this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow);
         this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide);
     }
@@ -140,8 +140,6 @@ export default class ChatPage extends Component {
                 }
             });
 
-            console.log(messengerMessages[1]);
-
             this.setState({loader, messengerData, messengerMessages});
         })
         .catch(e => {
@@ -170,22 +168,32 @@ export default class ChatPage extends Component {
             TOKEN = WEBSOCKET.GET_TOKEN();
 
         if(message !== '') {
-            socket.emit('message', {
-                to_id: messengerData.id,
-                message: message,
-                messageType: messageType,
-                token: TOKEN
-            }, chat => {
-                messengerMessages.push({
-                    from: 'user',
-                    message: message
+            if(socket) {
+                socket.emit('message', {
+                    to_id: messengerData.id,
+                    message: message,
+                    messageType: messageType,
+                    token: TOKEN
+                }, chat => {
+                    messengerMessages.push({
+                        from: 'user',
+                        message: message
+                    });
+        
+                    this.setState({
+                        message: '',
+                        messengerMessages: messengerMessages
+                    });
                 });
-    
-                this.setState({
-                    message: '',
-                    messengerMessages: messengerMessages
+            } else {
+                this.refs.mainFlashMessage.showMessage({
+                    message: 'Error!',
+                    description: 'Message cannot be sent due to server issue,\nplease try again later. Thanks!',
+                    duration: 5000,
+                    type: "danger",
+                    icon: "danger"
                 });
-            });
+            }
         }
     }
 
@@ -482,6 +490,8 @@ export default class ChatPage extends Component {
                         </TouchableOpacity>
                     </View>
                 </View>
+                
+                <FlashMessage ref="mainFlashMessage" position="top" />
             </Page>
         )
     }

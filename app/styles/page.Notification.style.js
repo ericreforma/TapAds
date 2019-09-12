@@ -32,4 +32,8 @@ export default StyleSheet.create({
         paddingHorizontal: 10,
         paddingVertical: 20,
     },
+    notifPageNoNotif: {
+        alignItems: 'center',
+        justifyContent: 'center',
+    }
 });

@@ -5,7 +5,7 @@ import {
   Dimensions
 } from 'react-native';
 import { AppBackground } from '../components/AppBackground';
-import { HeaderNav } from '../components/HeaderNav';
+import HeaderNav from '../components/HeaderNav';
 import ModalMenu from '../components/Modal/Navigation';
 import NavigationService from '../services/navigation';
 import { AuthController } from '../controllers';
@@ -14,7 +14,6 @@ import Sound from 'react-native-sound';
 import { Socket } from '../socketIO/socket';
 
 export class Page extends Component {
-
 	constructor(props) {
 		super(props);
 
@@ -41,7 +40,9 @@ export class Page extends Component {
                 console.log('failed to load the sound', error);
                 return;
             }
-        });
+		});
+		
+		console.log('page page');
 	}
 
 	componentDidMount = () => {
@@ -57,9 +58,15 @@ export class Page extends Component {
 		Socket.newOnlineClient(socket, data => this.websocketFunction(data, 'onlineClient', 'online client'));
 		Socket.newMessage(socket, data => {
 			this.woosh.play();
+			console.log('new message');
 			this.websocketFunction(data, 'newMessage', 'new message')
 		});
 		Socket.disconnectedUser(socket, data => this.websocketFunction(data, 'disconnectedUser', 'disconnected user'));
+	}
+
+	componentWillUnmount = () => {
+		var { websocketData } = this.state;
+		Socket.stop(websocketData.socket);
 	}
 
 	websocketFunction = (data, dataName, event) => {
@@ -102,14 +109,14 @@ export class Page extends Component {
 		if(page === 'logout') {
 			AuthController.logout()
 			.then(() => {
-			  	NavigationService.navigate('Loading', null, this.state.websocketData);
+			  	NavigationService.navigate('Loading', null);
 			})
 			.catch((e) => {
 				console.log("error");
 				console.log(e);
 			});
 		} else {
-			NavigationService.navigate(page, null, this.state.websocketData);
+			NavigationService.navigate(page, null);
 		}
 	}
 

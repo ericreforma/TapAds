@@ -5,10 +5,12 @@ import {
     Image,
     TouchableOpacity,
 } from 'react-native';
+import { connect } from 'react-redux';
 
 import styles from '../styles/component.HeaderNav.style';
+import themeStyle from '../styles/theme.style';
 
-export class HeaderNav extends Component {
+class HeaderNav extends Component {
     render() {
         return (
             <View
@@ -38,6 +40,29 @@ export class HeaderNav extends Component {
                             resizeMode="contain"
                             source={require('../assets/image/icons/notification_icon.png')}
                         />
+
+                        {this.props.user.notificationCount !== 0 ? (
+                            <View
+                                style={{
+                                    position: 'absolute',
+                                    backgroundColor: themeStyle.COLOR_BLUE,
+                                    height: 20,
+                                    width: 20,
+                                    borderRadius: 20,
+                                    top: 0,
+                                    right: -10,
+                                    alignItems: 'center',
+                                    justifyContent: 'center'
+                                }}
+                            >
+                                <Text
+                                    style={{
+                                        color: themeStyle.COLOR_WHITE,
+                                        fontSize: themeStyle.FONT_SIZE_XSMALL,
+                                    }}
+                                >{this.props.user.notificationCount > 99 ? '99+' : `${this.props.user.notificationCount}`}</Text>
+                            </View>
+                        ) : null}
                     </TouchableOpacity>
 
                     <TouchableOpacity
@@ -54,3 +79,9 @@ export class HeaderNav extends Component {
         );
     }
 }
+
+const mapStateToProps = (state) => ({
+    user: state.userReducer.user,
+});
+
+export default connect(mapStateToProps)(HeaderNav);

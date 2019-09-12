@@ -10,7 +10,6 @@ export default StyleSheet.create({
         margin: 5,
         elevation: 5,
         flexDirection: 'row',
-        justifyContent: 'space-between',
         alignItems: 'center'
     },
     cardBodyClientLabel: {
@@ -19,11 +18,19 @@ export default StyleSheet.create({
         fontSize: 16
     },
     cardBodyMessageText: {
-        color: theme.COLOR_NORMAL_FONT,
         fontFamily: 'Montserrat-Light',
         fontSize: theme.FONT_SIZE_SMALL
     },
     cardBodyIconSize: {
         width: Dimensions.get('window').width / 15
+    },
+    cardBodyMessageTextApprove: {
+        color: theme.COLOR_GREEN
+    },
+    cardBodyMessageTextReject: {
+        color: theme.COLOR_RED,
+    },
+    cardBodyMessageTextDefault: {
+        color: theme.COLOR_NORMAL_FONT,
     }
 });
