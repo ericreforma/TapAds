@@ -1,10 +1,6 @@
 import { TokenSchema } from '../database';
 
 const SERVER_MAIN = 'http://192.168.0.100/TapAdsServer/public';
-const SERVER_WEBSOCKET = 'http://192.168.0.100';
-const WEBSOCKET_PORT = '3000';
-const WEBSOCKET_API = `${SERVER_WEBSOCKET}:${WEBSOCKET_PORT}`;
-const WEBSOCKET_PARAM = { jsonp: false, transports: ['websocket'] };
 
 const SERVER_API = `${SERVER_MAIN}/api`;
 const SERVER_MEDIA = `${SERVER_MAIN}/storage`;
@@ -92,32 +88,6 @@ export const MAP = {
     latitude: 14.1144363,
     longitude: 120.1410504,
   },
-};
-
-export const WEBSOCKET = {
-  WEBSOCKET_API,
-  WEBSOCKET_PARAM,
-  CONNECT: {
-    MESSAGE: () => {
-      var outputToken = TokenSchema.get(),
-        returnData = `chat/authentication?token=${outputToken.token}&userType=0`;
-
-      return returnData;
-    } 
-  },
-  
-  EVENTS: {
-    ON_CONNECT: 'connect',
-    ONLINE_USERS: 'online users',
-    ONLINE_CLIENT: 'online client',
-    NEW_MESSAGE: 'new message',
-    DC_USER: 'disconnected user',
-    ERROR_CONN: 'connect_error'
-  },
-  GET_TOKEN: () => {
-    var outputToken = TokenSchema.get();
-    return outputToken.token;
-  }
 };
 
 export const IMAGES = {

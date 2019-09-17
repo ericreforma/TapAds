@@ -17,9 +17,6 @@ import UserInfo from '../components/UserInfo';
 import { UserController } from '../controllers/UserController';
 import { Page } from './Page';
 
-import { WEBSOCKET } from '../config/variables';
-const {EVENTS} = WEBSOCKET;
-
 import theme from '../styles/theme.style';
 
 export default class ChatPage extends Component {
@@ -47,68 +44,11 @@ export default class ChatPage extends Component {
                 brand: '',
                 online: false,
             },
-            messengerMessages: [],
-            websocketData: {}
+            messengerMessages: []
         };
 
         this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow);
         this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide);
-    }
-
-    websocketFunctions = (websocketData) => {
-        var {updatedData} = websocketData;
-        this.setState({websocketData});
-        switch(updatedData) {
-            case EVENTS.ONLINE_USERS:
-                var {messengerData} = this.state,
-                    {onlineUsers} = websocketData,
-                    onlineIDs = onlineUsers.map(u => u.id),
-                    cid = this.props.navigation.getParam('id', null);
-
-                messengerData.online = cid ? (onlineIDs.indexOf(cid) !== -1 ? true : false) : false;
-                this.setState({messengerData});
-                break;
-
-            case EVENTS.ONLINE_CLIENT:
-                var {messengerData} = this.state,
-                    {onlineClient} = websocketData;
-                    
-                if(messengerData.id == onlineClient.id) {
-                    messengerData.online = true;
-                }
-
-                this.setState({messengerData});
-                break;
-
-            case EVENTS.NEW_MESSAGE:
-                var { messengerMessages } = this.state,
-                    { newMessage } = websocketData,
-                    { chat } = newMessage,
-                    { client_id,
-                    sender,
-                    message } = chat;
-                
-                if(client_id == this.state.messengerData.id) {
-                    messengerMessages.push({
-                        from: sender == 0 ? 'user' : 'client',
-                        message: message
-                    });
-
-                    this.setState({messengerMessages});
-                }
-                break;
-
-            case EVENTS.DC_USER:
-                var {messengerData} = this.state,
-                    {disconnectedUser} = websocketData;
-
-                if(messengerData.id == disconnectedUser.id) {
-                    messengerData.online = false;
-                }
-
-                this.setState({messengerData});
-                break;
-        }
     }
 
     componentDidMount = () => {
@@ -159,42 +99,7 @@ export default class ChatPage extends Component {
     }
 
     sendMessageOnPress = () => {
-        var { websocketData,
-            message,
-            messengerMessages,
-            messengerData,
-            messageType } = this.state,
-            { socket } = websocketData,
-            TOKEN = WEBSOCKET.GET_TOKEN();
-
-        if(message !== '') {
-            if(socket) {
-                socket.emit('message', {
-                    to_id: messengerData.id,
-                    message: message,
-                    messageType: messageType,
-                    token: TOKEN
-                }, chat => {
-                    messengerMessages.push({
-                        from: 'user',
-                        message: message
-                    });
-        
-                    this.setState({
-                        message: '',
-                        messengerMessages: messengerMessages
-                    });
-                });
-            } else {
-                this.refs.mainFlashMessage.showMessage({
-                    message: 'Error!',
-                    description: 'Message cannot be sent due to server issue,\nplease try again later. Thanks!',
-                    duration: 5000,
-                    type: "danger",
-                    icon: "danger"
-                });
-            }
-        }
+        console.log('message send');
     }
 
     seeMoreOnPress = () => {
@@ -214,9 +119,6 @@ export default class ChatPage extends Component {
         return (
             <Page
                 message
-                websocket={{
-                    websocketFunctions: this.websocketFunctions
-                }}
             >
                 <View
                     style={{

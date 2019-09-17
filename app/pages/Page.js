@@ -11,7 +11,6 @@ import NavigationService from '../services/navigation';
 import { AuthController } from '../controllers';
 
 import Sound from 'react-native-sound';
-import { Socket } from '../socketIO/socket';
 
 export class Page extends Component {
 	constructor(props) {
@@ -23,16 +22,7 @@ export class Page extends Component {
 			modalXValue: new Animated.Value(Dimensions.get('window').width),
 			carouselPage: 0,
 			width: Dimensions.get('window').width,
-			height: Dimensions.get('window').height,
-			websocketData: {
-				Socket: {},
-				socket: {},
-				onlineUsers: [],
-				onlineClient: {},
-				newMessage: {},
-				disconnectedUser: {},
-				updatedData: ''
-			}
+			height: Dimensions.get('window').height
 		};
 
         this.woosh = new Sound('chat_sound.mp3', Sound.MAIN_BUNDLE, (error) => {
@@ -42,41 +32,7 @@ export class Page extends Component {
             }
 		});
 		
-		console.log('page page');
-	}
-
-	componentDidMount = () => {
-		var socket = Socket.connect(),
-			{websocketData} = this.state;
-
-		websocketData.socket = socket;
-		websocketData.Socket = Socket;
-		this.setState({websocketData});
-
-		Socket.onConnect(socket, () => console.log('Socket connected'));
-		Socket.getOnlineUsers(socket, data => this.websocketFunction(data, 'onlineUsers', 'online users'));
-		Socket.newOnlineClient(socket, data => this.websocketFunction(data, 'onlineClient', 'online client'));
-		Socket.newMessage(socket, data => {
-			this.woosh.play();
-			console.log('new message');
-			this.websocketFunction(data, 'newMessage', 'new message')
-		});
-		Socket.disconnectedUser(socket, data => this.websocketFunction(data, 'disconnectedUser', 'disconnected user'));
-	}
-
-	componentWillUnmount = () => {
-		var { websocketData } = this.state;
-		Socket.stop(websocketData.socket);
-	}
-
-	websocketFunction = (data, dataName, event) => {
-		var {websocketData} = this.state;
-		websocketData[dataName] = data;
-		websocketData.updatedData = event;
-		this.setState({websocketData});
-		if(this.props.websocket) {
-			this.props.websocket.websocketFunctions(websocketData);
-		}
+		// this.woosh.play();
 	}
 
 	menuButtonOnPress = () => {
