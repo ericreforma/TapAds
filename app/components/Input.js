@@ -8,8 +8,8 @@ export default class Input extends Component {
     icons = (type) => {
         let icons = [
             {
-                type: 'username',
-                placeholder: 'Username',
+                type: 'email',
+                placeholder: 'Email',
                 security: false,
                 url: require('../assets/image/icons/login_username_icon.png')
             }, {

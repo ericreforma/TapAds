@@ -55,7 +55,7 @@ class LogInPage extends Component {
 
 					<View style={styles.loginCredentialsView}>
 						<Input
-							type="username"
+							type="email"
 							onChangeText={(email) => this.setState({ email })}
 						/>
 						<Input
@@ -75,7 +75,7 @@ class LogInPage extends Component {
 							loginButton
 							label="Login"
 							onPress={
-							() => this.props.loginPressed(this.state.email, this.state.password)
+								() => this.props.loginPressed(this.state.email, this.state.password)
 							}
 						/>
 					</View>

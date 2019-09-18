@@ -9,6 +9,7 @@ import {
 import ImagePicker from 'react-native-image-picker';
 import { connect } from 'react-redux';
 import FlashMessage, { showMessage } from "react-native-flash-message";
+import { NavigationEvents } from 'react-navigation';
 
 import { LabelText } from '../components/Text';
 import { Page } from '../pages/Page';
@@ -89,8 +90,8 @@ class ProfileInfoPage extends Component {
             logout: false,
         };
     }
-
-    componentDidMount() {
+    
+    getUserInfo = () => {
         var userData = {
                 name: this.props.user.name,
                 username: this.props.user.username,
@@ -201,10 +202,6 @@ class ProfileInfoPage extends Component {
             ],
             {cancelable: false},
         );
-
-        // var { userData } = this.state;
-        // userData[name] = null;
-        // this.setState({userData});
     }
 
     proceedRemoveImage = (name) => {
@@ -322,17 +319,31 @@ class ProfileInfoPage extends Component {
     dispatchUserProfile = (ppUpdate = false, lpUpdate = false) => {
         var { user } = this.props,
             { userData } = this.state,
-            created_at = ppUpdate ? ppUpdate.created_at : (lpUpdate ? lpUpdate.created_at : user.updated_at);
-        user.name = userData.name;
-        user.username = userData.username;
-        user.profilePicture = ppUpdate ? ppUpdate.url : user.profilePicture;
-        user.licenseImage = lpUpdate ? lpUpdate.url : user.licenseImage;
-        user.birthdate = userData.birthdate;
-        user.contact_number = userData.contact_number;
-        user.location = userData.location;
-        user.email = userData.email;
-        user.updated_at = created_at ? created_at : user.updated_at;
-        this.props.dispatchUpdateProfile(user);
+            created_at = ppUpdate ? ppUpdate.created_at : (lpUpdate ? lpUpdate.created_at : user.updated_at),
+            userKeys = Object.keys(user),
+            toDispatchUser = {};
+
+        for(var x in userKeys) {
+            var key = userKeys[x];
+            if(key === 'name'
+                || key === 'username'
+                || key === 'birthdate'
+                || key === 'contact_number'
+                || key === 'location'
+                || key === 'email') {
+                toDispatchUser[key] = userData[key];
+            } else if(key === 'profilePicture') {
+                toDispatchUser[key] = ppUpdate ? ppUpdate.url : user[key];
+            } else if(key === 'licenseImage') {
+                toDispatchUser[key] = lpUpdate ? lpUpdate.url : user[key];
+            } else if(key === 'updated_at') {
+                toDispatchUser[key] = created_at ? created_at : user[key];
+            } else {
+                toDispatchUser[key] = user[key];
+            }
+        }
+
+        this.props.dispatchUpdateProfile(toDispatchUser);
     }
 
     mainSetState = (data) => {
@@ -368,6 +379,8 @@ class ProfileInfoPage extends Component {
 	render() {
 		return (
             <Page logout={this.state.logout}>
+                <NavigationEvents onWillFocus={this.getUserInfo} />
+
                 <ScrollView
                     style={styles.homePageScrollView}
                     overScrollMode='never'

@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import FlashMessage, { showMessage } from "react-native-flash-message";
 
+import NavigationService from '../services/navigation';
 import { LabelText, CommonText } from '../components/Text';
 import UserInfo from '../components/UserInfo';
 import { UserController } from '../controllers/UserController';
@@ -23,10 +24,10 @@ export default class ChatPage extends Component {
     constructor(props) {
         super(props);
 
-        const cid = this.props.navigation.getParam('id', null);
+        this.cid = this.props.navigation.getParam('id', null);
 
-        if(!cid) {
-            this.props.navigation.navigate('Messenger');
+        if(!this.cid) {
+            NavigationService.navigate('Messenger');
         }
 
         this.state = {
@@ -61,8 +62,7 @@ export default class ChatPage extends Component {
     }
     
     getMessages = () => {
-        var cid = this.props.navigation.getParam('id');
-        UserController.request.messages(cid)
+        UserController.request.messages(this.cid)
         .then(response => {
             var { chat,
                 client } = response.data,
@@ -80,18 +80,24 @@ export default class ChatPage extends Component {
                 }
             });
 
-            this.setState({loader, messengerData, messengerMessages});
+            this.setState({
+                loader,
+                messengerData,
+                messengerMessages
+            });
         })
         .catch(e => {
             console.log(e);
-            setTimeout(() => this.getMessages(), 1000);
+            setTimeout(() => {
+                this.getMessages();
+            }, 1000);
         });
     }
     
     _keyboardDidShow = () => {
         setTimeout(() => this._scrollView.scrollToEnd({animated: true}), 500);
         var keyboardPress = true;
-        this.setState({keyboardPress});
+        this.setState({ keyboardPress });
     }
     
     messageInputOnChangeText = (text) => {
@@ -103,23 +109,16 @@ export default class ChatPage extends Component {
     }
 
     seeMoreOnPress = () => {
-        var { loadMore } = this.state,
-            loaderLoadMore = true,
-            keyboardPress = false;
-        loadMore += 15;
-
         this.setState({
-            loadMore,
-            loaderLoadMore,
-            keyboardPress
+            loadMore: this.state.loader + 15,
+            loaderLoadMore: true,
+            keyboardPress: false
         });
     }
 
     render() {
         return (
-            <Page
-                message
-            >
+            <Page message>
                 <View
                     style={{
                         flex: 1,
@@ -129,12 +128,12 @@ export default class ChatPage extends Component {
                         overScrollMode='never'
                         showsVerticalScrollIndicator={false}
                         ref={ref => this._scrollView = ref}
-                        onContentSizeChange={(contentWidth, contentHeight) => {
+                        onContentSizeChange={() => {
                             var { keyboardPress } = this.state;
                             if(keyboardPress) {
-                                this._scrollView.scrollToEnd({animated: true});
+                                this._scrollView.scrollToEnd({ animated: true });
                             } else {
-                                this.setState({loaderLoadMore: false});
+                                this.setState({ loaderLoadMore: false });
                             }
                         }}
                     >

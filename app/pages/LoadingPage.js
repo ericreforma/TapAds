@@ -28,8 +28,7 @@ class LoadingPage extends Component {
         this.props.dispatchGetMyList();
         UserSchema.update(authResponse.data,
         () => {
-          // NavigationService.navigate('Messenger');
-          this.props.navigation.navigate('Messenger');
+          NavigationService.navigate('Home');
         });
       })
       .catch((error) => {
@@ -41,11 +40,11 @@ class LoadingPage extends Component {
   render() {
     return (
       <View
-      style={{
-        flex: 1,
-        justifyContent: 'center',
-        backgroundColor: theme.COLOR_MEDIUM_BLUE
-      }}
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          backgroundColor: theme.COLOR_MEDIUM_BLUE
+        }}
       >
         <ActivityIndicator color="#fff" />
       </View>

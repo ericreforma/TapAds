@@ -25,6 +25,9 @@ import {
 	AddVehiclePage
 } from '../pages';
 
+import { YellowBox } from 'react-native';
+YellowBox.ignoreWarnings(['Warning: componentWillReceiveProps']);
+
 export default class Route extends Component {
 	render() {
 		return (
