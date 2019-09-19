@@ -5,8 +5,11 @@ import {
 	Text,
 	View,
 	Image,
+	ScrollView,
+	Keyboard,
 	Dimensions
 } from 'react-native';
+
 import { connect } from 'react-redux';
 import Input from '../components/Input';
 import ButtonBlue from '../components/ButtonBlue';
@@ -15,117 +18,171 @@ import NavigationService from '../services/navigation';
 import styles from '../styles/page.Login.style';
 
 class LogInPage extends Component {
-	state = {
-		email: '',
-		password: ''
+	constructor(props) {
+		super(props);
+
+		this.state = {
+			email: '',
+			password: '',
+			firstSubmit: false,
+			yPosition: 0
+		};
+
+		this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow);
+	}
+
+	componentWillUnmount = () => {
+		this.keyboardDidShowListener.remove();
+	}
+  
+	_keyboardDidShow = () => {
+		this._scrollRef.scrollTo({ y: this.state.yPosition - 90 });
+	}
+
+	layoutViewDone = (e) => {
+		this.setState({ yPosition: e.nativeEvent.layout.y });
+	}
+
+	passwordRefFunction = (ref) => {
+		this.passwordRef = ref;
+	}
+
+	loginSubmit = () => {
+		this.setState({firstSubmit: true});
+		this.props.loginPressed(this.state.email, this.state.password);
 	}
 
 	render() {
 		return (
-			<ImageBackground
-				resizeMode="stretch"
-				source={require('../assets/image/login_page_bg.png')}
-				style={styles.containerView}
+			<ScrollView
+				overScrollMode='never'
+				showsVerticalScrollIndicator={false}
+				ref={ref => { this._scrollRef = ref; }}
 			>
-				{/* logo taptab */}
-				<View
-					style={{
-						height: '40%',
-						justifyContent: 'center',
-						alignItems: 'flex-end',
-					}}
+				<ImageBackground
+					resizeMode="stretch"
+					source={require('../assets/image/login_page_bg.png')}
+					style={styles.containerView}
 				>
-					<Image
+					{/* logo taptab */}
+					<View
 						style={{
-							width: Dimensions.get('window').width / 2.5
+							height: '40%',
+							justifyContent: 'center',
+							alignItems: 'flex-end',
 						}}
-						resizeMode="contain"
-						source={require('../assets/image/app_logo.png')}
-					/>
-				</View>
-
-
-				{/* main login input values */}
-				<View
-					style={{
-						flex: 1,
-						paddingTop: 30,
-					}}
-				>
-
-					<View style={styles.loginCredentialsView}>
-						<Input
-							type="email"
-							onChangeText={(email) => this.setState({ email })}
-						/>
-						<Input
-							type="password"
-							onChangeText={(password) => this.setState({ password })}
-						/>
-					</View>
-
-					<TouchableOpacity>
-						<Text style={[styles.textNormalLabel, styles.textNormalLabelMargin]}>
-							Forgot Password?
-						</Text>
-					</TouchableOpacity>
-
-					<View style={styles.loginButton}>
-						<ButtonBlue
-							loginButton
-							label="Login"
-							onPress={
-								() => this.props.loginPressed(this.state.email, this.state.password)
-							}
-						/>
-					</View>
-
-					<Text style={styles.textNormalLabel}>
-						Don't have an account?
-					</Text>
-					<TouchableOpacity
-						onPress={() => { NavigationService.navigate('SignUp') } }
 					>
-						<Text style={styles.textSignUp}>
-							Sign up
-						</Text>
-					</TouchableOpacity>
-				</View>
-				{/* alternative login */}
-				<View
-					style={{
-						justifyContent: 'flex-end',
-						alignItems: 'flex-end'
-					}}
-				>
-					<Text style={styles.loginAlternativeLabel}>
-						or login with
-					</Text>
-
-					<View style={styles.loginAlternativeIconView}>
-						<TouchableOpacity>
-							<Image
-								source={require('../assets/image/icons/google_icon.png')}
-							/>
-						</TouchableOpacity>
-
-						<TouchableOpacity>
-							<Image
-								style={styles.loginAlternativeIconFacebook}
-								source={require('../assets/image/icons/facebook_icon.png')}
-							/>
-
-						</TouchableOpacity>
+						<Image
+							style={{
+								width: Dimensions.get('window').width / 2.5
+							}}
+							resizeMode="contain"
+							source={require('../assets/image/app_logo.png')}
+						/>
 					</View>
-				</View>
-			</ImageBackground>
+
+					{/* main login input values */}
+					<View
+						style={styles.mainLoginBodyContainer}
+						onLayout={this.layoutViewDone}
+					>
+						<View
+							style={styles.loginCredentialsView}
+						>
+							<Input
+								type="email"
+								onSubmitEditing={() => {
+									this.passwordRef.focus();
+								}}
+								returnKeyType="next"
+								onChangeText={(email) => this.setState({ email })}
+							/>
+							<Input
+								type="password"
+								passwordRefFunction={this.passwordRefFunction}
+								onSubmitEditing={this.loginSubmit}
+								returnKeyType="send"
+								onChangeText={(password) => this.setState({ password })}
+							/>
+						</View>
+
+						<View 
+							style={{
+								alignItems: 'flex-start'
+							}}
+						>
+							<TouchableOpacity>
+								<Text style={[styles.textNormalLabel, styles.textNormalLabelMargin]}>
+									Forgot Password?
+								</Text>
+							</TouchableOpacity>
+						</View>
+
+						<View style={styles.loginButton}>
+							<ButtonBlue
+								loginButton
+								label="Login"
+								isLoggingIn={this.state.firstSubmit ? this.props.isLoggingIn : false}
+								onPress={this.loginSubmit}
+							/>
+						</View>
+
+						<Text style={styles.textNormalLabel}>
+							Don't have an account?
+						</Text>
+
+						<View 
+							style={{
+								alignItems: 'flex-start'
+							}}
+						>
+							<TouchableOpacity
+								onPress={() => { NavigationService.navigate('SignUp') } }
+							>
+								<Text style={styles.textSignUp}>
+									Sign up
+								</Text>
+							</TouchableOpacity>
+						</View>
+					</View>
+
+					{/* alternative login */}
+					<View
+						style={{
+							justifyContent: 'flex-end',
+							alignItems: 'flex-end'
+						}}
+					>
+						<Text style={styles.loginAlternativeLabel}>
+							or login with
+						</Text>
+
+						<View style={styles.loginAlternativeIconView}>
+							<TouchableOpacity>
+								<Image
+									source={require('../assets/image/icons/google_icon.png')}
+								/>
+							</TouchableOpacity>
+
+							<TouchableOpacity>
+								<Image
+									style={styles.loginAlternativeIconFacebook}
+									source={require('../assets/image/icons/facebook_icon.png')}
+								/>
+
+							</TouchableOpacity>
+						</View>
+					</View>
+				</ImageBackground>
+			</ScrollView>
 		);
   }
 }
 
 const mapStateToProps = (state) => ({
 	email: state.email,
-	password: state.password
+	password: state.password,
+	isLoggingIn: state.loginReducer.isLoggingIn
 });
 
 const mapDispatchToProps = (dispatch) => ({

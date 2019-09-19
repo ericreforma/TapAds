@@ -1,5 +1,10 @@
 import React, { Component } from 'react';
-import { TouchableOpacity, Text, View, Image } from 'react-native';
+import {
+    TouchableOpacity,
+    Text,
+    Image,
+    ActivityIndicator
+} from 'react-native';
 import styles from '../styles/component.ButtonBlue.style';
 
 export default class ButtonBlue extends Component {
@@ -28,12 +33,15 @@ export default class ButtonBlue extends Component {
                 ]}
                 onPress={this.props.onPress}
             >
-                <Text
-                    style={styles.buttonLabel}
-                >
-                    {this.props.label}
-                </Text>
-
+                {this.props.isLoggingIn ? (
+                    <ActivityIndicator color="#fff" />
+                ) : (
+                    <Text
+                        style={styles.buttonLabel}
+                    >
+                        {this.props.label}
+                    </Text>
+                )}
                 {this.checkIfLogin(this.props.loginButton)}
             </TouchableOpacity>
 		);

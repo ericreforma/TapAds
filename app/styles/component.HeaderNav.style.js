@@ -3,7 +3,8 @@ import theme from './theme.style';
 
 export default StyleSheet.create({
     headerNavContainer: {
-        flexDirection: 'column'
+        flexDirection: 'column',
+        flex: 1,
     },
     headerNavRowDirection: {
         flexDirection: 'row',
@@ -38,20 +39,21 @@ export default StyleSheet.create({
     headerNavProfilePicture: {
         backgroundColor: '#fff',
         height: (Dimensions.get('window').width / 3.5) / 2,
+        width: Dimensions.get('window').width,
         borderBottomLeftRadius: 15,
-        borderBottomRightRadius: 15
+        borderBottomRightRadius: 15,
+        position: 'absolute'
     },
     headerNavProfilePictureImage: {
         width: Dimensions.get('window').width / 3.5,
         height: Dimensions.get('window').width / 3.5,
         borderRadius: (Dimensions.get('window').width / 3.5) / 2,
-        marginTop: (Dimensions.get('window').width / 3.5) / 2,
         borderWidth: 3,
         borderColor: theme.COLOR_MEDIUM_BLUE,
         backgroundColor: theme.COLOR_WHITE
     },
     headerNavUserContainer: {
-        marginTop: ((Dimensions.get('window').width / 3.5) / 2) + 5,
+        marginTop: 10,
         justifyContent: 'center',
         alignItems: 'center',
     },

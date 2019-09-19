@@ -96,3 +96,14 @@ export const IMAGES = {
     add: require('../assets/image/icons/add_icon.png'),
   }
 };
+
+export const screenSizes = {
+  width: {
+    small: 360,
+    medium: 380,
+  },
+  height: {
+    small: 620,
+    medium: 750,
+  }
+};

@@ -1,5 +1,6 @@
 import { StyleSheet, Dimensions } from 'react-native';
 import theme from './theme.style';
+import { loginStyles } from '../config/responsive';
 
 export default StyleSheet.create({
     containerView: {
@@ -16,6 +17,10 @@ export default StyleSheet.create({
         fontSize: theme.FONT_SIZE_SMALL,
         fontFamily: 'Montserrat-Regular'
     },
+    mainLoginBodyContainer: {
+        flex: 1,
+        paddingTop: loginStyles().padding
+    },
     textNormalLabelMargin: {
         marginTop: 5
     },
@@ -24,7 +29,7 @@ export default StyleSheet.create({
         fontFamily: 'Montserrat-Bold',
     },
     loginButton: {
-        marginTop: 40,
+        marginTop: loginStyles().marginTop,
         marginBottom: 7
     },
     loginAlternativeLabel: {

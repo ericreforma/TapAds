@@ -59,7 +59,11 @@ class UserInfo extends Component {
                 style={styles.HeaderNavContainer}
             >
                 <View
-                    style={[styles.headerNavCenter, styles.headerNavProfilePicture]}
+                    style={[styles.headerNavProfilePicture]}
+                ></View>
+
+                <View
+                    style={styles.headerNavCenter}
                 >
                     <TouchableOpacity
                         activeOpacity={0.8}

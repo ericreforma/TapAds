@@ -91,6 +91,7 @@ export class Page extends Component {
 				}
 			>
 				<AppBackground />
+				
 				<HeaderNav
 					menuButtonOnPress={this.menuButtonOnPress}
 					navigate={this.navigate}

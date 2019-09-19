@@ -23,6 +23,7 @@ import {
     CardColumnContent,
     CardColumnContentBody
 } from '../components/Card';
+import NavigationService from '../services/navigation';
 
 import theme from '../styles/theme.style';
 import styles from '../styles/page.Home.style';
@@ -139,7 +140,7 @@ class ProfilePage extends Component {
                         }}
                     >
                         <TouchableOpacity
-                            onPress={e => this.props.navigation.navigate('ProfileInfo')}
+                            onPress={e => NavigationService.navigate('ProfileInfo')}
                         >
                             <Text
                                 style={styles.homePageViewAll}
@@ -371,7 +372,7 @@ class ProfilePage extends Component {
                                 }}
                             >
                                 <TouchableOpacity
-                                    onPress={e => this.props.navigation.navigate('Addvehicle')}
+                                    onPress={e => NavigationService.navigate('Addvehicle')}
                                 >
                                     <Text
                                         style={[

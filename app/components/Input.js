@@ -4,6 +4,11 @@ import styles from '../styles/component.Input.style';
 import theme from '../styles/theme.style';
 
 export default class Input extends Component {
+    componentDidMount = () => {
+        if(this.props.type === 'password') {
+            this.props.passwordRefFunction(this.textInputRef);
+        }
+    }
 
     icons = (type) => {
         let icons = [
@@ -36,6 +41,7 @@ export default class Input extends Component {
 
                 <View style={{flex: 1}}>
                     <TextInput
+                        ref={ref => this.textInputRef = ref}
                         name={this.props.name}
                         value={this.props.value}
                         style={[styles.inputText, styles.inputFont]}
@@ -43,6 +49,8 @@ export default class Input extends Component {
                         placeholder={iconData.placeholder}
                         placeholderTextColor={theme.COLOR_WHITE}
                         onChangeText={this.props.onChangeText}
+                        onSubmitEditing={this.props.onSubmitEditing}
+                        returnKeyType={this.props.returnKeyType}
                     />
                 </View>
             </View>

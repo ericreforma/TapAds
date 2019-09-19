@@ -41,7 +41,6 @@ class MyCampaignPage extends Component {
         this.setState({ myCampaignClick: active })
     }
 
-
     viewCampaignDashboard = (id) => () => {
         alert('View dashboard campaign id: ' + id);
     }
@@ -57,95 +56,109 @@ class MyCampaignPage extends Component {
     activeCampaignView = () => {
         return (
             this.props.myList.map((data, index) => {
-              if (!data.completed) {
-                return (
-                  <View
-                    key={index}
-                    style={{
-                        paddingVertical: 10
-                    }}
-                >
-                    <Card shadow={true}>
-                        <CardHeader active={true}>
-                            <LabelText>{data.campaignDetails.name}</LabelText>
-                            <View
-                                style={{
-                                    flexDirection: 'row',
-                                    justifyContent: 'space-between',
-                                    alignItems: 'center'
-                                }}
-                            >
-                                <CommonText>{data.client.business_name}</CommonText>
-
-                                <TouchableOpacity
-                                    onPress={() => { this.props.campaignSelected(data.id); } }
-                                >
-                                    <Text
-                                        style={styles.homePageViewAll}
-                                    >
-                                        Full details
-                                    </Text>
-                                </TouchableOpacity>
-                            </View>
-                        </CardHeader>
-
-                        <CardBody>
-                            <View
-                                style={styles.homePageRecommendedCampaignBody}
-                            >
-                                <View
-                                    style={styles.homePageRecommendedCampaignFirstCol}
-                                >
-                                    <LabelText>{data.campaignDetails.location}</LabelText>
-                                    <CommonText>Location</CommonText>
-                                </View>
-
-                                <View
-                                    style={styles.homePageAlignCenter}
-                                >
-                                    <VehicleType
-                                        vehicleType={data.campaignDetails.vehicle_classification}
-                                        vehicleColor="black"
-                                    />
-
-                                    <CommonText>{ this.state.vehicleType[data.campaignDetails.vehicle_type].name }</CommonText>
-                                </View>
-
-                                <View
-                                    style={styles.homePageAlignRight}
-                                >
-                                    <LabelText>P{data.campaignDetails.pay_basic}</LabelText>
-                                    <CommonText>Basic Pay</CommonText>
-                                </View>
-                            </View>
-                        </CardBody>
-
-                        <CardFooter
-                            active={true}
+                if (!data.completed) {
+                    return (
+                        <View
+                            key={index}
+                            style={{
+                                paddingVertical: 10
+                            }}
                         >
-                            <View
-                                style={{
-                                    flexDirection: 'row',
-                                    justifyContent: 'space-between'
-                                }}
-                            >
-                                <LabelText color="blue" large={true}>{data.campaign_traveled}km</LabelText>
-                                <LabelText color="blue" large={true}>P{0}</LabelText>
-                            </View>
+                            <Card shadow={true}>
+                                <CardHeader active={true}>
+                                    <LabelText>{data.campaignDetails.name}</LabelText>
+                                    <View
+                                        style={{
+                                            flexDirection: 'row',
+                                            justifyContent: 'space-between',
+                                            alignItems: 'center'
+                                        }}
+                                    >
+                                        <View
+                                            style={{
+                                                flexGrow: 1,
+                                                flex: 1
+                                            }}
+                                        >
+                                            <CommonText numberOfLines={1}>{data.client.business_name}</CommonText>
+                                        </View>
+                                        
+                                        <View
+                                            style={{
+                                                paddingLeft: 10
+                                            }}
+                                        >
+                                            <TouchableOpacity
+                                                onPress={() => { this.props.campaignSelected(data.id); } }
+                                            >
+                                                <Text
+                                                    style={styles.homePageViewAll}
+                                                >
+                                                    Full details
+                                                </Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                    </View>
+                                </CardHeader>
 
-                            <View
-                                style={{
-                                    flexDirection: 'row',
-                                    justifyContent: 'space-between'
-                                }}
-                            >
-                                <CommonText color="white">Traveled Counter</CommonText>
-                                <CommonText color="white">Earnings</CommonText>
-                            </View>
-                        </CardFooter>
-                    </Card>
-                </View>);
-              }
+                                <CardBody>
+                                    <View
+                                        style={styles.homePageRecommendedCampaignBody}
+                                    >
+                                        <View
+                                            style={styles.homePageRecommendedCampaignFirstCol}
+                                        >
+                                            <LabelText>{data.campaignDetails.location}</LabelText>
+                                            <CommonText>Location</CommonText>
+                                        </View>
+
+                                        <View
+                                            style={styles.homePageAlignCenter}
+                                        >
+                                            <VehicleType
+                                                vehicleType={data.campaignDetails.vehicle_classification}
+                                                vehicleColor="black"
+                                            />
+
+                                            <CommonText>{ this.state.vehicleType[data.campaignDetails.vehicle_type].name }</CommonText>
+                                        </View>
+
+                                        <View
+                                            style={styles.homePageAlignRight}
+                                        >
+                                            <LabelText>P {data.campaignDetails.pay_basic}</LabelText>
+                                            <CommonText>Basic Pay</CommonText>
+                                        </View>
+                                    </View>
+                                </CardBody>
+
+                                <CardFooter
+                                    active={true}
+                                >
+                                    <View
+                                        style={{
+                                            flexDirection: 'row',
+                                            justifyContent: 'space-between'
+                                        }}
+                                    >
+                                        <LabelText color="blue" large={true}>{data.campaign_traveled}km</LabelText>
+                                        <LabelText color="blue" large={true}>P {0}</LabelText>
+                                    </View>
+
+                                    <View
+                                        style={{
+                                            flexDirection: 'row',
+                                            justifyContent: 'space-between'
+                                        }}
+                                    >
+                                        <CommonText color="white">Traveled Counter</CommonText>
+                                        <CommonText color="white">Earnings</CommonText>
+                                    </View>
+                                </CardFooter>
+                            </Card>
+                        </View>
+                    );
+                }
             })
         );
     }
@@ -490,9 +503,12 @@ class MyCampaignPage extends Component {
     }
 }
 
-const mapStateToProps = (state) => ({
-  myList: state.campaignReducer.mylist
-});
+const mapStateToProps = (state) => {
+    console.log(state.campaignReducer.mylist);
+    return {
+        myList: state.campaignReducer.mylist
+    };
+};
 
 const mapDispatchToProps = (dispatch) => ({
   campaignSelected: (id) => dispatch(CampaignAction.mylistSelected(id))

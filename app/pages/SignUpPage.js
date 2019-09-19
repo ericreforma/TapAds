@@ -1,19 +1,18 @@
 import React, { Component } from 'react';
 import {
-	Text,
-	View,
-  Image,
-  TextInput,
-  ScrollView,
-	TouchableOpacity,
-  ImageBackground,
-  Dimensions,
-  Picker,
-	Alert
+    Text,
+    View,
+    Image,
+    TextInput,
+    ScrollView,
+    TouchableOpacity,
+    Dimensions,
+    Alert
 } from 'react-native';
 import { connect } from 'react-redux';
+
+import NavigationService from '../services/navigation';
 import theme from '../styles/theme.style';
-import ButtonBlue from '../components/ButtonBlue';
 import DatePicker from 'react-native-datepicker';
 import { AuthController } from '../controllers';
 import { AuthAction } from '../redux/actions/auth.action';
@@ -69,26 +68,26 @@ class SignUpPage extends Component {
     }
 
     signUpButtonOnSubmit = () => {
-				const userData = {};
+        const userData = {};
 
         this.state.inputData.map(i => {
-						userData[i.dataName] = this.state[i.dataName];
+            userData[i.dataName] = this.state[i.dataName];
         });
 
-				AuthController.register(JSON.stringify(userData))
-					.then((e) => {
-						this.props.login(userData.email, userData.password);
-					})
-					.catch((error) => {
-						const errArr = error.response.data;
-						let msg = '';
+        AuthController.register(JSON.stringify(userData))
+        .then((e) => {
+            this.props.login(userData.email, userData.password);
+        })
+        .catch((error) => {
+            const errArr = error.response.data;
+            let msg = '';
 
-						errArr.map((item, i) => {
-							msg += errArr[i] + '\n';
-						});
+            errArr.map((item, i) => {
+                msg += errArr[i] + '\n';
+            });
 
-						Alert.alert('Error',`Please check the following fields:\n${msg}`);
-					})
+            Alert.alert('Error',`Please check the following fields:\n${msg}`);
+        });
     }
 
 	render() {
@@ -317,7 +316,7 @@ class SignUpPage extends Component {
                                     borderBottomColor: theme.COLOR_NORMAL_FONT + '70',
                                     borderBottomWidth: 1,
                                 }}
-                                onPress={() => this.props.navigation.replace('Login')}
+                                onPress={() => NavigationService.navigate('Login')}
                             >
                                 <Text
                                     style={{

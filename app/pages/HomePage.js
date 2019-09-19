@@ -26,12 +26,6 @@ class HomePage extends Component {
 
       this.state = {
           width: Dimensions.get('window').width,
-          campaign: {
-            current_page: 1,
-            next_page: 2,
-            total_page: 0
-          },
-          loading: true,
           categoryData: Object.values(VEHICLE.CLASS),
           vehicleCategoryIndex: 0
       };
@@ -52,7 +46,6 @@ class HomePage extends Component {
         this.props.CampaignChangeCategory(slideIndex);
         this.props.CampaignListRequest();
     };
-
 
     render() {
         return (
@@ -141,20 +134,22 @@ class HomePage extends Component {
                             {/* content */}
                             <CampaignListContainer />
 
-                            {(!this.props.isRequesting) ?
-                              <View style={styles.homePageAlignCenter} >
-                                  <TouchableOpacity
-                                      onPress={() => { this.props.CampaignListRequest(); }}
-                                      style={{
-                                          marginTop: 20
-                                      }}
-                                  >
-                                      <LabelText color="white">Load more</LabelText>
-                                  </TouchableOpacity>
-                              </View>
-                            :
-                              <ActivityIndicator color="#fff" style={{ height: 75 }} />
-                            }
+                            {!this.props.isRequesting ?
+                                this.props.current_page < this.props.total_page ?
+                                    <View style={styles.homePageAlignCenter} >
+                                        <TouchableOpacity
+                                            onPress={() => { this.props.CampaignListRequest(); }}
+                                            style={{
+                                                marginTop: 20
+                                            }}
+                                        >
+                                            <LabelText color="white">Load more</LabelText>
+                                        </TouchableOpacity>
+                                    </View>
+                                : false
+                            : (
+                                <ActivityIndicator color="#fff" style={{ height: 75 }} />
+                            )}
                         </View>
                     </View>
                 </ScrollView>

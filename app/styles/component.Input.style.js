@@ -1,19 +1,20 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
 import theme from './theme.style';
+import { loginStyles } from '../config/responsive';
 
 export default StyleSheet.create({
     inputTextArea: {
         backgroundColor: '#ffffff00',
         borderBottomColor: theme.COLOR_WHITE,
         borderBottomWidth: 2,
-        paddingVertical: 7,
-        marginVertical: 5,
+        paddingVertical: loginStyles().paddingVertical,
+        marginVertical: loginStyles().marginVertical,
         flexDirection: 'row',
         alignItems: 'center'
     },
     inputFont: {
         color: theme.COLOR_NORMAL_FONT,
-        fontSize: theme.FONT_SIZE_MEDIUM,
+        fontSize: loginStyles().fontSize,
         fontFamily: 'Montserrat-Light',
         paddingHorizontal: 20
     },
