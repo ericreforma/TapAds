@@ -33,6 +33,7 @@ class HeaderNav extends Component {
                         style={{
                             marginRight: 20
                         }}
+                        activeOpacity={0.8}
                         onPress={() => this.props.navigate('Notification')}
                     >
                         <Image

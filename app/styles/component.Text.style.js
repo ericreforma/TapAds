@@ -31,6 +31,9 @@ export default StyleSheet.create({
     textBlue: {
         color: theme.COLOR_LIGHT_BLUE,
     },
+    textPink: {
+        color: theme.COLOR_PINK,
+    },
     textCommonColor: {
         color: theme.COLOR_NORMAL_FONT
     },

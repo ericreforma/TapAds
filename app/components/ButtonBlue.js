@@ -32,8 +32,9 @@ export default class ButtonBlue extends Component {
                     )
                 ]}
                 onPress={this.props.onPress}
+                disabled={this.props.disabled}
             >
-                {this.props.isLoggingIn ? (
+                {this.props.disabled ? (
                     <ActivityIndicator color="#fff" />
                 ) : (
                     <Text

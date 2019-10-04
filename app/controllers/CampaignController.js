@@ -30,4 +30,8 @@ export const CampaignController = {
     HttpRequest.post(`${URL.PAGE.TRIP.END}`, {
       trip,
     }),
+  
+  favorite: cid => HttpRequest.get(`${URL.PAGE.CAMPAIGN.FAVORITE(cid)}`),
+
+  recommendedPage: (filters = '') => HttpRequest.get(`${URL.PAGE.CAMPAIGN.RECOMMENDED}${filters}`),
 };

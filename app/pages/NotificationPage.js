@@ -6,17 +6,19 @@ import {
     ActivityIndicator
 } from 'react-native';
 import { NavigationEvents } from 'react-navigation';
+import { connect } from 'react-redux';
 
 import NavigationService from '../services/navigation';
 import { UserController } from '../controllers/UserController';
+import { USER } from '../redux/actions/types.action';
 
 import { CommonText } from '../components/Text';
 import styles from '../styles/page.Notification.style';
 import NotificationCard from '../components/NotificationCard';
-import { Page } from './Page';
+import Page from './Page';
 import UserInfo from '../components/UserInfo';
 
-export default class NotificationPage extends Component {
+class NotificationPage extends Component {
     constructor(props) {
         super(props);
 
@@ -46,6 +48,8 @@ export default class NotificationPage extends Component {
     notificationOnPress = (action, id) => () => {
         if(action == 1) {
             NavigationService.navigate('Chat', {id});
+        } else if(action == 2) {
+            NavigationService.navigate('MyCampaign');
         }
     }
 
@@ -113,3 +117,14 @@ export default class NotificationPage extends Component {
         );
     }
 }
+
+const mapStateToProps = (state) => ({
+	user: state.userReducer.user
+});
+
+const mapDispatchToProps = (dispatch) => ({
+	dispatchUpdateProfile: (user) => dispatch({ type: USER.GET.PROFILE.SUCCESS, user }),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(NotificationPage);
+  

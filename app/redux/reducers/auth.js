@@ -28,6 +28,7 @@ export function loginReducer(state = initialState, action) {
         isLoggedIn: false,
         isLoggingIn: false
       });
+
     default:
       return state;
   }

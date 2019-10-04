@@ -6,7 +6,7 @@ import {
     Modal,
     ActivityIndicator
 } from 'react-native';
-import FlashMessage, { showMessage } from "react-native-flash-message";
+import DropdownAlert from 'react-native-dropdownalert';
 
 import { UserController } from '../../../controllers/UserController';
 import { LabelText, CommonText } from '../../../components/Text';
@@ -30,14 +30,12 @@ export default class ActionButton extends Component {
         this.setState({ modalVisible, visibleModal });
     }
 
-    failedFlashMessage = (message, description, icon) => {
-        this.refs.modalFlash.showMessage({
+    failedFlashMessage = (message, description) => {
+        this.dropDownABAlertRef.alertWithType(
+            'error',
             message,
-            description,
-            duration: 3000,
-            type: "danger",
-            icon,
-        });
+            description
+        );
     }
     
     render() {
@@ -50,7 +48,7 @@ export default class ActionButton extends Component {
                 }}
             >
                 <Modal
-                    animationType="slide"
+                    animationType="fade"
                     transparent={true}
                     visible={this.state.modalVisible}
                     style={{
@@ -82,7 +80,7 @@ export default class ActionButton extends Component {
                         </View>
                     </View>
 
-                    <FlashMessage ref="modalFlash" position="top" />
+                    <DropdownAlert ref={ref => this.dropDownABAlertRef = ref} />
                 </Modal>
 
                 <View
@@ -183,7 +181,6 @@ class ChangePassword extends Component {
                         this.failedFlashMessage(
                             'Wrong password',
                             'Your fill in a wrong password.\nPlease insert a correct one. Thank you!',
-                            'danger'
                         );
                     }
                 })
@@ -192,8 +189,7 @@ class ChangePassword extends Component {
                     this.loadersToggle(false);
                     this.failedFlashMessage(
                         'Server error!',
-                        'Error occured while saving your new password,\ncould you please try again later? Thanks!',
-                        'danger'
+                        'An error occurred while saving your new password. Please try again later.',
                     );
                 });
             } else {
@@ -201,7 +197,6 @@ class ChangePassword extends Component {
                 this.failedFlashMessage(
                     'Fill in new password',
                     'Hi! I think you forgot\nto fill in your new password.',
-                    'warning'
                 );
             }
         } else {
@@ -209,7 +204,6 @@ class ChangePassword extends Component {
             this.failedFlashMessage(
                 'Fill in current password',
                 'Please input your current password to proceed. Thanks!',
-                'warning'
             );
         }
     }
@@ -228,7 +222,7 @@ class ChangePassword extends Component {
                         paddingBottom: 30
                     }}
                 >
-                    <LabelText color="white">Input current password:</LabelText>
+                    <LabelText color="white">Current Password:</LabelText>
                     <Input
                         type="password"
                         onChangeText={(curPass) => this.setState({ curPass })}
@@ -236,7 +230,7 @@ class ChangePassword extends Component {
                 </View>
                 
                 <View>
-                    <LabelText color="white">Input new password:</LabelText>
+                    <LabelText color="white">New Password:</LabelText>
                     <Input
                         type="password"
                         onChangeText={(newPass) => this.setState({ newPass })}
@@ -314,7 +308,6 @@ class DeleteAccount extends Component {
                     this.failedFlashMessage(
                         'Wrong password',
                         'Your fill in a wrong password.\nPlease insert a correct one. Thank you!',
-                        'danger'
                     );
                 }
             })
@@ -323,8 +316,7 @@ class DeleteAccount extends Component {
                 this.loadersToggle(false);
                 this.failedFlashMessage(
                     'Server error!',
-                    'Error occured while saving removing your account.\nCould you please try again later? Thank you!',
-                    'danger'
+                    'An error occurred while removing your account. Please try again later.',
                 );
             });
         } else {
@@ -332,7 +324,6 @@ class DeleteAccount extends Component {
             this.failedFlashMessage(
                 'Fill in password',
                 'Please input your password to proceed. Thanks!',
-                'warning'
             );
         }
     }

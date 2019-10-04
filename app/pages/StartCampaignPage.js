@@ -413,6 +413,7 @@ class StartCampaignPage extends Component {
         ref={ref => this.marker = ref}
         coordinate={this.state.myPosition.coords}
         rotation={this.state.myPosition.heading}
+        anchor={{x: 0.5, y: 0.5}}
       />
 
       </MapView>

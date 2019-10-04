@@ -1,12 +1,12 @@
 import { StyleSheet, Dimensions } from 'react-native';
 import theme from './theme.style';
+import { notifStyles } from '../config/responsive';
 
 export default StyleSheet.create({
     cardContainer: {
-        marginVertical: 10,
         borderRadius: 15,
         backgroundColor: theme.COLOR_WHITE,
-        padding: 20,
+        padding: notifStyles().padding,
         margin: 5,
         elevation: 5,
         flexDirection: 'row',

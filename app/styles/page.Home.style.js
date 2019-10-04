@@ -145,5 +145,9 @@ export default StyleSheet.create({
     },
     homePageCategoryDescriptionWrapper: {
         height: 35
+    },
+    homePageCategoriesNoCampaigns: {
+        marginTop: 10,
+        alignSelf: 'center'
     }
 });

@@ -16,7 +16,11 @@ class CommonText extends Component {
                     (
                         this.props.xsmall
                         ? styles.xsmallFontSize
-                        : styles.commonFontSize
+                        : (
+                            this.props.large
+                            ? styles.textDefault
+                            : styles.commonFontSize
+                        )
                     ),
                     (
                         this.props.color == 'white'
@@ -27,7 +31,15 @@ class CommonText extends Component {
                             : (
                                 this.props.color == 'gray'
                                 ? styles.textGray
-                                : styles.textBlack
+                                : (
+                                    this.props.color == 'pink'
+                                    ? styles.textPink
+                                    : (
+                                        this.props.color
+                                        ? {color: this.props.color}
+                                        : styles.textBlack
+                                    )
+                                )
                             )
                         )
                     )
@@ -52,7 +64,11 @@ class LabelText extends Component {
                         : (
                             this.props.color == 'blue'
                             ? styles.textBlue
-                            : styles.textBlack
+                            : (
+                                this.props.color
+                                ? {color: this.props.color}
+                                : styles.textBlack
+                            )
                         )
                     ),
                     (
@@ -65,6 +81,7 @@ class LabelText extends Component {
                         )
                     )
                 ]}
+                numberOfLines={this.props.numberOfLines ? this.props.numberOfLines : 0}
             >
                 {this.props.children}
             </Text>

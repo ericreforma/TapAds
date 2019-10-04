@@ -9,7 +9,7 @@ import {
 import { NavigationEvents } from 'react-navigation';
 import { connect } from 'react-redux';
 
-import { Page } from './Page';
+import Page from './Page';
 import {
     LabelText,
     Common,
@@ -36,7 +36,6 @@ class MessengerPage extends Component {
     getChatList = () => {
         UserController.request.chatList()
         .then(conversations => {
-            console.log(conversations.data);
             this.setState({
                 conversations: conversations.data,
                 loader: false

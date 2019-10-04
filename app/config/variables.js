@@ -15,6 +15,8 @@ export const URL = {
       BROWSE: '/user/campaign/browse',
       LIST: '/user/campaign/list',
       ADD: '/user/campaign/add',
+      FAVORITE: (id) => { return `/user/campaign/favorite/${id}`; },
+      RECOMMENDED: '/user/campaign/recommended'
     },
     TRIP: {
       ADD: '/user/campaign/trip/add',
@@ -39,7 +41,7 @@ export const VEHICLE = {
     mid: {
       id: 1,
       name: 'mid',
-      description: 'Compact SUV to Regular SUV',
+      description: ['Compact SUV to', 'Regular SUV'],
       icon: {
         large: require('../assets/image/category_car_mid.png'),
         black: require('../assets/image/icons/car_mid_black_icon.png'),
@@ -71,14 +73,17 @@ export const VEHICLE = {
     public: {
       id: 0,
       name: 'public',
+      nameOnCaps: 'Public',
     },
     private: {
       id: 1,
       name: 'private',
+      nameOnCaps: 'Private',
     },
     oncall: {
       id: 2,
       name: 'on-call',
+      nameOnCaps: 'On-call',
     },
   },
 };
@@ -94,6 +99,13 @@ export const IMAGES = {
   ICONS: {
     close_red: require('../assets/image/icons/close_icon.png'),
     add: require('../assets/image/icons/add_icon.png'),
+    car_icon: require('../assets/image/car_blue_marker.png'),
+    end_trip_icon: require('../assets/image/icons/car_end_trip.png'),
+    peso_sign_icon: require('../assets/image/icons/peso_sign.png'),
+    payment_icon: require('../assets/image/icons/payment_icon.png'),
+    payment_white_icon: require('../assets/image/icons/payment_white_icon.png'),
+    bag_of_cash_icon: require('../assets/image/icons/bag_cash_icon.png'),
+    back_icon: require('../assets/image/icons/back_arrow_left_icon.png')
   }
 };
 
@@ -105,5 +117,19 @@ export const screenSizes = {
   height: {
     small: 620,
     medium: 750,
+  }
+};
+
+export const earnings = {
+  STATUS: {
+    pending: {
+      name: 'Pending'
+    },
+    accepted: {
+      name: 'Sent'
+    },
+    rejected: {
+      name: 'Denied'
+    }
   }
 };

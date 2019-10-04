@@ -90,6 +90,29 @@ export function campaignReducer(state = initialState, action) {
         trip: action.trip
       });
 
+    case CAMPAIGN.FAVORITE.SUCCESS:
+      return Object.assign({}, state, {
+        mylist: action.mylist
+      });
+
+    case CAMPAIGN.FAVORITE.FAILED:
+      return state;
+      
+    case CAMPAIGN.RESET:
+      return Object.assign({}, state, {
+        list: [],
+        selected: {},
+        vehicle_classification: 0,
+        current_page: 0,
+        total_page: 0,
+        isRequesting: false,
+        isRequestDone: false,
+        recommended: [],
+        mylist: [],
+        mylist_selected: {},
+        trip: {}
+      });
+
     default:
       return state;
   }

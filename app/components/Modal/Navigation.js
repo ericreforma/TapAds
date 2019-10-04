@@ -13,7 +13,6 @@ import {
 import styles from '../../styles/component.Navigation.style';
 
 export default class ModalMenu extends Component {
-
     logout() {
         this.props.navigateToPage('logout');
     }

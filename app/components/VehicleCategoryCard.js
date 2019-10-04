@@ -44,11 +44,24 @@ export class VehicleCategoryCard extends Component {
                         <View
                             style={styles.homePageCategoryDescriptionWrapper}
                         >
-                            <CommonText 
-                                color="white"
-                            >
-                                {this.props.vehicle.description}
-                            </CommonText>
+                            {this.props.vehicle.name === 'mid' ? (
+                                this.props.vehicle.description.map((d, dIdx) =>
+                                    <View
+                                        key={dIdx}
+                                        style={{
+                                            alignSelf: 'center'
+                                        }}
+                                    >
+                                        <CommonText color="white">{d}</CommonText>
+                                    </View>
+                                )
+                            ) : (
+                                <CommonText 
+                                    color="white"
+                                >
+                                    {this.props.vehicle.description}
+                                </CommonText>
+                            )}
                         </View>
                     </View>
                 </CardFooter>

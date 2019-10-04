@@ -17,84 +17,93 @@ import { VEHICLE } from '../config/variables';
 import { toMoney } from '../utils';
 
 
-export const CampaignCardList = ({ campaigns, viewDetails }) =>
-  campaigns.map((campaign, index) =>
-    <View
-        key={index}
-        style={styles.homePageCampaignCardContainer}
-    >
-        <Card justifyContent>
-            <CardColumnContent
-                firstChild
-                backgroundColor={theme.COLOR_WHITE}
-                carType={campaign.vehicle_type}
-                carSize={campaign.vehicle_classification}
-            >
-                <CardColumnContentBody divider >
-                    <LabelText>{campaign.name}</LabelText>
-                    <CommonText
-                        numberOfLines={1}
-                    >
-                        {campaign.client[0].business_name}
-                    </CommonText>
-                </CardColumnContentBody>
+export const CampaignCardList = ({ campaigns, isRequesting, viewDetails }) =>
+		campaigns.length !== 0 ? (
+			campaigns.map((campaign, index) =>
+				<View
+						key={index}
+						style={styles.homePageCampaignCardContainer}
+				>
+						<Card justifyContent>
+								<CardColumnContent
+										firstChild
+										backgroundColor={theme.COLOR_WHITE}
+										carType={campaign.vehicle_type}
+										carSize={campaign.vehicle_classification}
+								>
+										<CardColumnContentBody divider >
+												<LabelText>{campaign.name}</LabelText>
+												<CommonText
+														numberOfLines={1}
+												>
+														{campaign.client.business_name}
+												</CommonText>
+										</CardColumnContentBody>
 
-                <View style={{ height: 2 }} />
+										<View style={{ height: 2 }} />
 
-                <CardColumnContentBody>
-                  <View style={styles.homePageCampaignCardInfoWrapper}>
-                      <Text style={styles.homePageCampaignCardInfoLabel}>
-                          Location
-                      </Text>
+										<CardColumnContentBody>
+											<View style={styles.homePageCampaignCardInfoWrapper}>
+													<Text style={styles.homePageCampaignCardInfoLabel}>
+															Location
+													</Text>
 
-                      <Text style={styles.homePageCampaignCardInfoValue}>
-                          {campaign.location}
-                      </Text>
-                  </View>
+													<Text style={styles.homePageCampaignCardInfoValue}>
+															{campaign.location}
+													</Text>
+											</View>
 
-                  <View style={styles.homePageCampaignCardInfoWrapper}>
-                      <Text style={styles.homePageCampaignCardInfoLabel}>
-                          Basic Pay
-                      </Text>
+											<View style={styles.homePageCampaignCardInfoWrapper}>
+													<Text style={styles.homePageCampaignCardInfoLabel}>
+															Basic Pay
+													</Text>
 
-                      <Text style={styles.homePageCampaignCardInfoValue}>
-                          P {toMoney(campaign.pay_basic)}
-                      </Text>
-                  </View>
+													<Text style={styles.homePageCampaignCardInfoValue}>
+															P {toMoney(campaign.pay_basic)}
+													</Text>
+											</View>
 
-                  <View style={styles.homePageCampaignCardInfoWrapper}>
-                      <Text style={styles.homePageCampaignCardInfoLabel}>
-                          Slots Available
-                      </Text>
+											<View style={styles.homePageCampaignCardInfoWrapper}>
+													<Text style={styles.homePageCampaignCardInfoLabel}>
+															Slots Available
+													</Text>
 
-                      <Text style={styles.homePageCampaignCardInfoValue}>
-                          {campaign.slots_used} of {campaign.slots}
-                      </Text>
-                  </View>
-                </CardColumnContentBody>
-            </CardColumnContent>
+													<Text style={styles.homePageCampaignCardInfoValue}>
+															{campaign.slots - campaign.slots_used} of {campaign.slots}
+													</Text>
+											</View>
+										</CardColumnContentBody>
+								</CardColumnContent>
 
-            <CardColumnContent
-                lastChild
-                backgroundColor={theme.COLOR_GRAY_HEAVY}
-                buttonViewInfo
-                buttonViewOnPress={() => { viewDetails(campaign.id); }}
-            >
-                <CardColumnContentBody>
-                    <Text
-                        style={[
-                            styles.homePageCommonText,
-                            styles.homePageTextWhite
-                        ]}
-                        numberOfLines={10}
-                    >
-                        {campaign.description}
-                    </Text>
-                </CardColumnContentBody>
-            </CardColumnContent>
-        </Card>
-    </View>
-  );
+								<CardColumnContent
+										lastChild
+										backgroundColor={theme.COLOR_GRAY_HEAVY}
+										buttonViewInfo
+										buttonViewOnPress={() => { viewDetails(campaign.id); }}
+								>
+										<CardColumnContentBody>
+												<Text
+														style={[
+																styles.homePageCommonText,
+																styles.homePageTextWhite
+														]}
+														numberOfLines={10}
+												>
+														{campaign.description}
+												</Text>
+										</CardColumnContentBody>
+								</CardColumnContent>
+						</Card>
+				</View>
+			)
+		) : (
+			!isRequesting ? (
+				<View style={styles.homePageCategoriesNoCampaigns}>
+					<CommonText color="white">-- no campaigns available --</CommonText>
+				</View>
+			) : null
+		);
+
 
 export const CampaignCardRec = ({ campaigns, viewDetails }) => {
   const windowWidth = Dimensions.get('window').width;
@@ -105,7 +114,7 @@ export const CampaignCardRec = ({ campaigns, viewDetails }) => {
         <Card>
             <CardHeader active>
                 <LabelText>{data.item.name}</LabelText>
-                <CommonText>{data.item.client[0].business_name}</CommonText>
+                <CommonText>{data.item.client.business_name}</CommonText>
             </CardHeader>
 
             <View key={data.id}>
@@ -141,7 +150,7 @@ export const CampaignCardRec = ({ campaigns, viewDetails }) => {
 
                       <View style={styles.homePageAlignRight} >
                           <View style={{ flexDirection: 'row' }}>
-                              <LabelText>{data.item.slots_used}</LabelText>
+                              <LabelText>{data.item.slots - data.item.slots_used}</LabelText>
 
                               <Text style={styles.homePageOfTextBlack} >
                                   of
@@ -163,7 +172,7 @@ export const CampaignCardRec = ({ campaigns, viewDetails }) => {
               buttonViewOnPress={() => { viewDetails(data.item.id); }}
             >
                 <LabelText color="white">P {toMoney(data.item.pay_basic)}</LabelText>
-                <CommonText color="white">BasicPay</CommonText>
+                <CommonText color="white">Basic Pay</CommonText>
             </CardFooter>
         </Card>
     </View>

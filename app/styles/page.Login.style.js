@@ -7,7 +7,7 @@ export default StyleSheet.create({
         flex: 1,
         height: Dimensions.get('window').height,
         width: Dimensions.get('window').width,
-        paddingHorizontal: 40
+        paddingHorizontal: loginStyles().paddingHorizontal
     },
     loginCredentialsView: {
         marginRight: 20

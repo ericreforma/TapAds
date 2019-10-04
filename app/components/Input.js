@@ -5,7 +5,7 @@ import theme from '../styles/theme.style';
 
 export default class Input extends Component {
     componentDidMount = () => {
-        if(this.props.type === 'password') {
+        if(this.props.type === 'password' && this.props.loginPage) {
             this.props.passwordRefFunction(this.textInputRef);
         }
     }

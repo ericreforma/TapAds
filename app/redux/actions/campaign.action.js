@@ -14,6 +14,7 @@ export const CampaignAction = {
       })
       .catch(error => {
         console.log(error);
+        console.log(error.response);
         dispatch({ type: CAMPAIGN.LIST.FAILED });
       });
   },
@@ -66,7 +67,7 @@ export const CampaignAction = {
   },
 
   interested: () => (dispatch, getState) => {
-    NavigationService.navigate('MyCampaign');
+    // NavigationService.navigate('MyCampaign');
 
     const state = getState();
     const selectedCampaign = state.campaignReducer.selected;
@@ -80,15 +81,21 @@ export const CampaignAction = {
 
       CampaignController.interested(0, selectedCampaign.id)
         .then(() => {
-          CampaignController.mylist()
-            .then(response => {
-              dispatch({ type: CAMPAIGN.MYLIST.GET, mylist: response.data });
-              NavigationService.navigate('MyCampaign');
-            })
-            .catch(e => {
-              console.log('error');
-              console.log(e);
-            });
+          // CampaignController.mylist()
+          //   .then(response => {
+          //     dispatch({ type: CAMPAIGN.MYLIST.GET, mylist: response.data });
+          //     NavigationService.navigate('MyCampaign');
+          //   })
+          //   .catch(e => {
+          //     console.log('error');
+          //     console.log(e);
+          //   });
+          var alert = {
+            message: 'Campaign request sent!',
+            description: 'You will be notified once the request status has been updated.\nThank you!',
+            type: 'success'
+          };
+          NavigationService.navigate('Home', {alert});
         })
         .catch(e => {
           console.log('error');
@@ -128,5 +135,16 @@ export const CampaignAction = {
         console.log(e);
         alert('Network Error');
       });
-  }
+  },
+
+  favorite: cid => dispatch => {
+    CampaignController.favorite(cid)
+    .then(response => {
+      dispatch({ type: CAMPAIGN.FAVORITE.SUCCESS, mylist: response.data });
+    })
+    .catch(error => {
+        console.log(error);
+        dispatch({ type: CAMPAIGN.FAVORITE.FAILED });
+    });
+  },
 };

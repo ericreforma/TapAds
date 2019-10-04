@@ -5,18 +5,17 @@ import {
     Dimensions,
     TouchableOpacity,
     TextInput,
-    Animated,
     Image,
     Keyboard,
     ActivityIndicator
 } from 'react-native';
-import FlashMessage, { showMessage } from "react-native-flash-message";
+import DropdownAlert from 'react-native-dropdownalert';
 
 import NavigationService from '../services/navigation';
 import { LabelText, CommonText } from '../components/Text';
 import UserInfo from '../components/UserInfo';
 import { UserController } from '../controllers/UserController';
-import { Page } from './Page';
+import Page from './Page';
 
 import theme from '../styles/theme.style';
 
@@ -392,7 +391,7 @@ export default class ChatPage extends Component {
                     </View>
                 </View>
                 
-                <FlashMessage ref="mainFlashMessage" position="top" />
+				<DropdownAlert ref={ref => this.dropDownChatAlertRef = ref} />
             </Page>
         )
     }

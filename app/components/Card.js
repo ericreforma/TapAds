@@ -150,8 +150,8 @@ class CardColumnContent extends Component {
         ];
 
         const types = [
+					VEHICLE.TYPE.private.name,
           VEHICLE.TYPE.public.name,
-          VEHICLE.TYPE.private.name,
           VEHICLE.TYPE.oncall.name
         ];
 

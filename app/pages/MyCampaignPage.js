@@ -5,8 +5,8 @@ import {
     Text,
     Image,
     ScrollView,
-    TouchableHighlight,
     TouchableOpacity,
+    ActivityIndicator,
     Dimensions
 } from 'react-native';
 
@@ -16,7 +16,7 @@ import {
     CardBody,
     CardFooter
 } from '../components/Card';
-import { Page } from '../pages/Page';
+import Page from '../pages/Page';
 import { VehicleType } from '../components/VehicleType';
 import UserInfo from '../components/UserInfo';
 import { LabelText, CommonText } from '../components/Text';
@@ -25,16 +25,55 @@ import { VEHICLE } from '../config/variables';
 import { CampaignAction } from '../redux/actions/campaign.action';
 import theme from '../styles/theme.style';
 import styles from '../styles/page.Home.style';
+import NavigationService from '../services/navigation';
+import { numberWithCommas } from '../config/functions';
 
 class MyCampaignPage extends Component {
     constructor(props) {
-      super(props);
+        super(props);
 
-      this.state = {
-          width: Dimensions.get('window').width,
-          myCampaignClick: 'active',
-          vehicleType: Object.values(VEHICLE.TYPE),
-      };
+        this.state = {
+            width: Dimensions.get('window').width,
+            myCampaignClick: 'active',
+            vehicleType: Object.values(VEHICLE.TYPE),
+            loader: true,
+            myList: []
+        };
+    }
+
+    timeFormat = (timestamp) => {
+        var date = timestamp.split(' ')[0],
+            year = parseInt(date.split('-')[0]),
+            month = parseInt(date.split('-')[1]),
+            day = parseInt(date.split('-')[2]),
+            months = [
+                'Jan', 'Feb', 'Mar',
+                'Apr', 'May', 'Jun',
+                'Jul', 'Aug', 'Sep',
+                'Oct', 'Nov', 'Dec'
+            ];
+
+        return `${months[month - 1].toUpperCase()}. ${day}, ${year}`;
+    }
+    
+    componentDidMount = () => {
+        this.setState({loader: false});
+    }
+
+    static getDerivedStateFromProps(nextProps) {
+        const campaignID = nextProps.navigation.getParam('cid', false);
+        var myList = nextProps.myList;
+        if(campaignID) {
+            var index = myList.findIndex((e) => {
+                return e.id === campaignID;
+            });
+    
+            if(index !== -1) {
+                var campaign = myList.splice(index, 1);
+                myList.unshift(campaign);
+            }
+        }
+        return { myList };
     }
 
     clickCampaign = (active) => () => {
@@ -45,18 +84,27 @@ class MyCampaignPage extends Component {
         alert('View dashboard campaign id: ' + id);
     }
 
-    mailOnPress = (id) => () => {
-        alert('Mail pressed campaign id: ' + id);
-    }
-
     favoriteOnPress = (id) => () => {
         alert('Favorite pressed campaign id: ' + id);
     }
 
+    totalEarnings = (campaign) => {
+        var campaignTraveled = parseFloat(campaign.campaign_traveled),
+            payBasic = parseFloat(campaign.campaignDetails.pay_basic),
+            payBasicKm = parseFloat(campaign.campaignDetails.pay_basic_km),
+            payAdditional = parseFloat(campaign.campaignDetails.pay_additional),
+            payAdditionalKm = parseFloat(campaign.campaignDetails.pay_additional_km),
+            d = campaignTraveled - payBasicKm,
+            d = (d >= 1 ? d : 0),
+            totalEarnings = (Math.floor(d / payAdditionalKm) * payAdditional) + (payBasic * (d >= 1 ? 1 : 0));
+            return numberWithCommas(totalEarnings.toFixed(2));
+    }
+
     activeCampaignView = () => {
         return (
-            this.props.myList.map((data, index) => {
-                if (!data.completed) {
+            this.state.myList.filter(d => !d.end).length !== 0
+            ? this.state.myList.map((data, index) => {
+                if (!data.end) {
                     return (
                         <View
                             key={index}
@@ -66,7 +114,63 @@ class MyCampaignPage extends Component {
                         >
                             <Card shadow={true}>
                                 <CardHeader active={true}>
-                                    <LabelText>{data.campaignDetails.name}</LabelText>
+                                    <View
+                                        style={{
+                                            flexDirection: 'row',
+                                            justifyContent: 'space-between',
+                                            alignItems: 'center'
+                                        }}
+                                    >
+                                        <View
+                                            style={{
+                                                flexGrow: 1,
+                                                flex: 1
+                                            }}
+                                        >
+                                            <LabelText numberOfLines={1}>{data.campaignDetails.name}</LabelText>
+                                        </View>
+
+                                        <TouchableOpacity
+                                            style={{
+                                                paddingLeft: 15
+                                            }}
+                                            onPress={() => NavigationService.navigate('Chat', {id: data.campaignDetails.client_id})}
+                                        >
+                                            <Image
+                                                style={{
+                                                    height: 17,
+                                                    resizeMode: 'contain'
+                                                }}
+                                                source={require('../assets/image/icons/mail_icon.png')}
+                                            />
+
+                                            {data.messages.length !== 0 ? (
+                                                <View
+                                                    style={{
+                                                        backgroundColor: theme.COLOR_BLUE,
+                                                        width: 14,
+                                                        height: 14,
+                                                        borderRadius: 7,
+                                                        position: 'absolute',
+                                                        justifyContent: 'center',
+                                                        alignItems: 'center',
+                                                        top: -5,
+                                                        right: 3
+                                                    }}
+                                                >
+                                                    <Text
+                                                        style={{
+                                                            fontSize: 8,
+                                                            color: theme.COLOR_WHITE,
+                                                            fontFamily: 'Montserrat-Bold'
+                                                        }}
+                                                    >
+                                                        {data.messages.length}
+                                                    </Text>
+                                                </View>
+                                            ) : null}
+                                        </TouchableOpacity>
+                                    </View>
                                     <View
                                         style={{
                                             flexDirection: 'row',
@@ -126,7 +230,7 @@ class MyCampaignPage extends Component {
                                         <View
                                             style={styles.homePageAlignRight}
                                         >
-                                            <LabelText>P {data.campaignDetails.pay_basic}</LabelText>
+                                            <LabelText>P {numberWithCommas(data.campaignDetails.pay_basic)}</LabelText>
                                             <CommonText>Basic Pay</CommonText>
                                         </View>
                                     </View>
@@ -142,7 +246,7 @@ class MyCampaignPage extends Component {
                                         }}
                                     >
                                         <LabelText color="blue" large={true}>{data.campaign_traveled}km</LabelText>
-                                        <LabelText color="blue" large={true}>P {0}</LabelText>
+                                        <LabelText color="blue" large={true}>P {this.totalEarnings(data)}</LabelText>
                                     </View>
 
                                     <View
@@ -160,179 +264,143 @@ class MyCampaignPage extends Component {
                     );
                 }
             })
+            : (
+                <View
+                    style={{
+                        marginTop: 5,
+                        alignItems: 'center'
+                    }}
+                >
+                    <CommonText>-- no active campaign --</CommonText>
+                </View>
+            )
         );
     }
 
     completeCampaignView = () => {
         return (
-            this.props.myList.map((data, index) => {
-            if (data.completed) {
-              return (
-                <View
-                    key={index}
-                    style={{
-                        paddingVertical: 10
-                    }}
-                >
-                    <Card shadow={true}>
+            this.state.myList.filter(d => d.end).length !== 0
+            ? this.state.myList.map((data, index) => {
+                if (data.end) {
+                    return (
                         <View
+                            key={index}
                             style={{
-                                backgroundColor: theme.COLOR_WHITE,
-                                borderTopLeftRadius: theme.PAGE_CARD_RADIUS,
-                                borderTopRightRadius: theme.PAGE_CARD_RADIUS
+                                paddingVertical: 10
                             }}
                         >
-                            <View
-                                style={{
-                                    flexDirection: 'row',
-                                }}
-                            >
+                            <Card shadow={true}>
                                 <View
                                     style={{
-                                        flex: 7,
-                                        borderBottomWidth: 1,
-                                        borderBottomColor: theme.COLOR_GRAY_LIGHT,
-                                        paddingHorizontal: 20,
-                                        paddingVertical: 15,
-                                    }}
-                                >
-                                    <LabelText>{data.campaignDetails.name}</LabelText>
-                                    <CommonText>TODAY</CommonText>
-                                </View>
-
-                                <View
-                                    style={{
-                                        flex: 2,
-                                        borderBottomColor: theme.COLOR_WHITE,
-                                        borderBottomWidth: 1,
+                                        backgroundColor: theme.COLOR_WHITE,
+                                        borderTopLeftRadius: theme.PAGE_CARD_RADIUS,
                                         borderTopRightRadius: theme.PAGE_CARD_RADIUS,
-                                        backgroundColor: theme.COLOR_GRAY_LIGHT,
+                                        overflow: 'hidden'
                                     }}
                                 >
-                                    <TouchableOpacity
+                                    <View
                                         style={{
-                                            flex: 1,
-                                            justifyContent: 'center',
-                                            alignItems: 'center',
+                                            flexDirection: 'row',
                                         }}
-                                        onPress={this.mailOnPress(data.id)}
                                     >
-                                        <Image
+                                        <View
                                             style={{
-                                                width: '40%',
-                                                resizeMode: 'contain'
+                                                flex: 7,
+                                                paddingHorizontal: 20,
+                                                paddingVertical: 15,
                                             }}
-                                            source={require('../assets/image/icons/mail_icon.png')}
-                                        />
+                                        >
+                                            <LabelText>{data.campaignDetails.name}</LabelText>
+                                            <CommonText>{this.timeFormat(data.end_timestamp)}</CommonText>
+                                        </View>
 
                                         <View
                                             style={{
-                                                backgroundColor: theme.COLOR_BLUE,
-                                                width: 14,
-                                                height: 14,
-                                                borderRadius: 7,
-                                                position: 'absolute',
-                                                justifyContent: 'center',
-                                                alignItems: 'center',
-                                                top: '30%',
-                                                left: '55%'
+                                                flex: 2,
+                                                backgroundColor: theme.COLOR_GRAY_LIGHT,
                                             }}
                                         >
-                                            <Text
+                                            <TouchableOpacity
                                                 style={{
-                                                    fontSize: 8,
-                                                    color: theme.COLOR_WHITE,
-                                                    fontFamily: 'Montserrat-Bold'
+                                                    flex: 1,
+                                                    justifyContent: 'center',
+                                                    alignItems: 'center',
                                                 }}
+                                                onPress={
+                                                    () => { this.props.favoriteCampaign(data.id); }
+                                                }
                                             >
-                                                {0}
-                                            </Text>
+                                                {data.favorite ? (
+                                                    <Image
+                                                        style={{
+                                                            width: '45%',
+                                                            resizeMode: 'contain'
+                                                        }}
+                                                        source={require('../assets/image/icons/completed_favorite_icon.png')}
+                                                    />
+                                                ) : (
+                                                    <Image
+                                                        style={{
+                                                            width: '45%',
+                                                            resizeMode: 'contain'
+                                                        }}
+                                                        source={require('../assets/image/icons/completed_unfavorite_icon.png')}
+                                                    />
+                                                )}
+                                            </TouchableOpacity>
                                         </View>
-                                    </TouchableOpacity>
-                                </View>
-                            </View>
-
-                            <View
-                                style={{
-                                    flexDirection: 'row',
-                                }}
-                            >
-                                <View
-                                    style={{
-                                        flex: 7,
-                                        paddingHorizontal: 20,
-                                        paddingVertical: 15,
-                                    }}
-                                >
-                                    <LabelText>TODAY</LabelText>
-                                    <CommonText>STATUS</CommonText>
+                                    </View>
                                 </View>
 
-                                <View
-                                    style={{
-                                        flex: 2,
-                                        backgroundColor: theme.COLOR_GRAY_LIGHT,
-                                    }}
+                                <CardFooter
+                                    active={true}
                                 >
-                                    <TouchableOpacity
+                                    <View
                                         style={{
-                                            flex: 1,
-                                            justifyContent: 'center',
-                                            alignItems: 'center',
+                                            flexDirection: 'row',
+                                            alignItems: 'center'
                                         }}
-                                        onPress={this.favoriteOnPress(data.id)}
                                     >
-                                        <Image
+                                        <View
                                             style={{
-                                                width: '45%',
-                                                resizeMode: 'contain'
+                                                flex: 1,
+                                                justifyContent: 'flex-start',
+                                                alignItems: 'flex-start'
                                             }}
-                                            source={require('../assets/image/icons/completed_favorite_icon.png')}
-                                        />
-                                    </TouchableOpacity>
-                                </View>
-                            </View>
+                                        >
+                                            <ButtonBlue
+                                                label="Dashboard"
+                                                onPress={() => { this.props.campaignSelected(data.id); }}
+                                            />
+                                        </View>
+
+                                        <View
+                                            style={{
+                                                flex: 1,
+                                                justifyContent: 'flex-end',
+                                                alignItems: 'flex-end'
+                                            }}
+                                        >
+                                            <LabelText color="blue" large={true}>P {this.totalEarnings(data.id)}</LabelText>
+                                            <CommonText color="white">Total Earnings</CommonText>
+                                        </View>
+                                    </View>
+                                </CardFooter>
+                            </Card>
                         </View>
-
-                        <CardFooter
-                            active={true}
-                        >
-                            <View
-                                style={{
-                                    flexDirection: 'row',
-                                    alignItems: 'center'
-                                }}
-                            >
-                                <View
-                                    style={{
-                                        flex: 1,
-                                        justifyContent: 'flex-start',
-                                        alignItems: 'flex-start'
-                                    }}
-                                >
-                                    <ButtonBlue
-                                        label="Dashboard"
-                                        onPress={() => { this.props.campaignSelected(data.id); }}
-                                    />
-                                </View>
-
-                                <View
-                                    style={{
-                                        flex: 1,
-                                        justifyContent: 'flex-end',
-                                        alignItems: 'flex-end'
-                                    }}
-                                >
-                                    <LabelText color="blue" large={true}>P100</LabelText>
-                                    <CommonText color="white">Total Earnings</CommonText>
-                                </View>
-                            </View>
-                        </CardFooter>
-                    </Card>
-                </View>
-              );
-              }
+                    );
+                }
             })
+            : (
+                <View
+                    style={{
+                        marginTop: 5,
+                        alignItems: 'center'
+                    }}
+                >
+                    <CommonText>-- no completed campaign --</CommonText>
+                </View>
+            )
         );
     }
 
@@ -362,156 +430,161 @@ class MyCampaignPage extends Component {
                         >
                             <LabelText color="white">My Campaigns</LabelText>
                         </View>
-
-                        <View>
-                            <View
-                                style={{
-                                    flexDirection: 'row'
-                                }}
-                            >
-                                <TouchableHighlight
+                        
+                        {this.state.loader ? (
+                            <ActivityIndicator color="#fff" />
+                        ) : (
+                            <View>
+                                <View
                                     style={{
-                                        flex: 1
+                                        flexDirection: 'row'
                                     }}
-                                    onPress={this.clickCampaign('active')}
                                 >
-                                    <View
-                                        style={[
-                                            {
-                                                borderTopLeftRadius: theme.PAGE_CARD_RADIUS,
-                                                justifyContent: 'center',
-                                                alignItems: 'center',
-                                                paddingVertical: 15
-                                            },
-                                            (
-                                                this.state.myCampaignClick == 'active'
-                                                ? {
-                                                    backgroundColor: theme.COLOR_GRAY_HEAVY,
-                                                    borderBottomWidth: 3,
-                                                    borderBottomColor: theme.COLOR_LIGHT_BLUE
-                                                }
-                                                : {
-                                                    backgroundColor: theme.COLOR_GRAY_LIGHT,
-                                                    borderBottomWidth: 3,
-                                                    borderBottomColor: theme.COLOR_WHITE,
-                                                }
-                                            )
-                                        ]}
+                                    <TouchableOpacity
+                                        style={{
+                                            flex: 1
+                                        }}
+                                        activeOpacity={0.85}
+                                        onPress={this.clickCampaign('active')}
+                                        disabled={this.state.myCampaignClick == 'active' ? true : false}
                                     >
-                                        <Text
+                                        <View
                                             style={[
                                                 {
-                                                    fontSize: theme.FONT_SIZE_MEDIUM,
-                                                    fontFamily: 'Montserrat-Bold',
+                                                    borderTopLeftRadius: theme.PAGE_CARD_RADIUS,
+                                                    justifyContent: 'center',
+                                                    alignItems: 'center',
+                                                    paddingVertical: 15
                                                 },
                                                 (
                                                     this.state.myCampaignClick == 'active'
                                                     ? {
-                                                        color: theme.COLOR_WHITE
+                                                        backgroundColor: theme.COLOR_GRAY_HEAVY,
+                                                        borderBottomWidth: 3,
+                                                        borderBottomColor: theme.COLOR_LIGHT_BLUE
                                                     }
                                                     : {
-                                                        color: theme.COLOR_NORMAL_FONT + '70'
+                                                        backgroundColor: theme.COLOR_GRAY_LIGHT,
+                                                        borderBottomWidth: 3,
+                                                        borderBottomColor: theme.COLOR_WHITE,
                                                     }
                                                 )
                                             ]}
                                         >
-                                            Active
-                                        </Text>
-                                    </View>
-                                </TouchableHighlight>
+                                            <Text
+                                                style={[
+                                                    {
+                                                        fontSize: theme.FONT_SIZE_MEDIUM,
+                                                        fontFamily: 'Montserrat-Bold',
+                                                    },
+                                                    (
+                                                        this.state.myCampaignClick == 'active'
+                                                        ? {
+                                                            color: theme.COLOR_WHITE
+                                                        }
+                                                        : {
+                                                            color: theme.COLOR_NORMAL_FONT + '70'
+                                                        }
+                                                    )
+                                                ]}
+                                            >
+                                                Active
+                                            </Text>
+                                        </View>
+                                    </TouchableOpacity>
 
-                                <TouchableHighlight
-                                    style={{
-                                        flex: 1,
-                                    }}
-                                    onPress={this.clickCampaign('complete')}
-                                >
-                                    <View
-                                        style={[
-                                            {
-                                                borderTopRightRadius: theme.PAGE_CARD_RADIUS,
-                                                justifyContent: 'center',
-                                                alignItems: 'center',
-                                                paddingVertical: 15
-                                            },
-                                            (
-                                                this.state.myCampaignClick == 'complete'
-                                                ? {
-                                                    backgroundColor: theme.COLOR_GRAY_HEAVY,
-                                                    borderBottomWidth: 3,
-                                                    borderBottomColor: theme.COLOR_LIGHT_BLUE
-                                                }
-                                                : {
-                                                    backgroundColor: theme.COLOR_GRAY_LIGHT,
-                                                    borderBottomWidth: 3,
-                                                    borderBottomColor: theme.COLOR_WHITE,
-                                                }
-                                            )
-                                        ]}
+                                    <TouchableOpacity
+                                        style={{
+                                            flex: 1
+                                        }}
+                                        activeOpacity={0.85}
+                                        onPress={this.clickCampaign('complete')}
+                                        disabled={this.state.myCampaignClick == 'complete' ? true : false}
                                     >
-                                        <Text
+                                        <View
                                             style={[
                                                 {
-                                                    fontSize: theme.FONT_SIZE_MEDIUM,
-                                                    fontFamily: 'Montserrat-Bold',
+                                                    borderTopRightRadius: theme.PAGE_CARD_RADIUS,
+                                                    justifyContent: 'center',
+                                                    alignItems: 'center',
+                                                    paddingVertical: 15
                                                 },
                                                 (
                                                     this.state.myCampaignClick == 'complete'
                                                     ? {
-                                                        color: theme.COLOR_WHITE
+                                                        backgroundColor: theme.COLOR_GRAY_HEAVY,
+                                                        borderBottomWidth: 3,
+                                                        borderBottomColor: theme.COLOR_LIGHT_BLUE
                                                     }
                                                     : {
-                                                        color: theme.COLOR_NORMAL_FONT + '70'
+                                                        backgroundColor: theme.COLOR_GRAY_LIGHT,
+                                                        borderBottomWidth: 3,
+                                                        borderBottomColor: theme.COLOR_WHITE,
                                                     }
                                                 )
                                             ]}
                                         >
-                                            Completed
-                                        </Text>
-                                    </View>
-                                </TouchableHighlight>
-                            </View>
+                                            <Text
+                                                style={[
+                                                    {
+                                                        fontSize: theme.FONT_SIZE_MEDIUM,
+                                                        fontFamily: 'Montserrat-Bold',
+                                                    },
+                                                    (
+                                                        this.state.myCampaignClick == 'complete'
+                                                        ? {
+                                                            color: theme.COLOR_WHITE
+                                                        }
+                                                        : {
+                                                            color: theme.COLOR_NORMAL_FONT + '70'
+                                                        }
+                                                    )
+                                                ]}
+                                            >
+                                                Completed
+                                            </Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                </View>
 
-                            <View
-                                style={{
-                                    backgroundColor: theme.COLOR_WHITE,
-                                    paddingVertical: 5,
-                                    borderBottomLeftRadius: 15,
-                                    borderBottomRightRadius: 15
-                                }}
-                            >
                                 <View
                                     style={{
-                                        marginTop: 10,
-                                        marginBottom: 20,
-                                        marginHorizontal: 10
+                                        backgroundColor: theme.COLOR_WHITE,
+                                        paddingVertical: 5,
+                                        borderBottomLeftRadius: 15,
+                                        borderBottomRightRadius: 15
                                     }}
                                 >
-                                    {
-                                        this.state.myCampaignClick == 'active'
-                                        ? this.activeCampaignView()
-                                        : this.completeCampaignView()
-                                    }
+                                    <View
+                                        style={{
+                                            marginTop: 10,
+                                            marginBottom: 20,
+                                            marginHorizontal: 10
+                                        }}
+                                    >
+                                        {
+                                            this.state.myCampaignClick == 'active'
+                                            ? this.activeCampaignView()
+                                            : this.completeCampaignView()
+                                        }
+                                    </View>
                                 </View>
                             </View>
-                        </View>
+                        )}
                     </View>
                 </ScrollView>
-
             </Page>
         );
     }
 }
 
-const mapStateToProps = (state) => {
-    console.log(state.campaignReducer.mylist);
-    return {
-        myList: state.campaignReducer.mylist
-    };
-};
+const mapStateToProps = (state) => ({
+    myList: state.campaignReducer.mylist
+});
 
 const mapDispatchToProps = (dispatch) => ({
-  campaignSelected: (id) => dispatch(CampaignAction.mylistSelected(id))
+    campaignSelected: (id) => dispatch(CampaignAction.mylistSelected(id)),
+    favoriteCampaign: (id) => dispatch(CampaignAction.favorite(id))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(MyCampaignPage);

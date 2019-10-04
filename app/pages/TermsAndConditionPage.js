@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 
 import UserInfo from '../components/UserInfo';
-import { Page } from './Page';
+import Page from './Page';
 import {
     LabelText,
     Label,

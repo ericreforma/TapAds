@@ -7,11 +7,14 @@ export const UserController = {
     messages: (cid) => HttpRequest.get(`/user/chat/${cid}`),
     vehicleDB: () => HttpRequest.get('/user/vehicle/all'),
     notificationContent: () => HttpRequest.get('/user/notif/content'),
+    tripInfo: (tripID, campaignID) => HttpRequest.get(`/user/campaign/trip/info/${tripID}/${campaignID}`),
+    submitPayment: (args = {}) => HttpRequest.post('/user/payment/withdraw', args),
     update: {
       details: (args = {}) => HttpRequest.post('/user/update/details', args),
       photo: (args = {}) => HttpRequest.post('/user/update/photo', args),
       license: (args = {}) => HttpRequest.post('/user/update/license', args),
       password: (args = {}) => HttpRequest.post('/user/update/password', args),
+      bankDetails: (args = {}) => HttpRequest.post('/user/update/bank', args)
     },
     create: {
       vehicle: (args = {}) => HttpRequest.post('/user/create/vehicle', args),

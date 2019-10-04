@@ -22,7 +22,10 @@ import {
 	MessengerPage,
 	ChatPage,
 	TermsAndConditionPage,
-	AddVehiclePage
+	AddVehiclePage,
+	DashboardPage,
+	RecommendedPage,
+	ForgotPasswordPage
 } from '../pages';
 
 import { YellowBox } from 'react-native';
@@ -42,9 +45,9 @@ export default class Route extends Component {
 
 const AuthStack = createStackNavigator({
 	Login: LogInPage,
-	SignUp: SignUpPage
+	SignUp: SignUpPage,
+	ForgotPassword: ForgotPasswordPage
 	}, {
-		initialRouteName: 'Login',
 		headerMode: 'none',
 		navigationOptions: {
 			headerVisible: false,
@@ -63,9 +66,10 @@ const AppStack = createStackNavigator({
 		Chat: ChatPage,
 		TermsAndCondition: TermsAndConditionPage,
 		Addvehicle: AddVehiclePage,
-		StartCampaign: StartCampaignPage
+		StartCampaign: StartCampaignPage,
+		Dashboard: DashboardPage,
+		Recommended: RecommendedPage,
 	}, {
-        initialRouteName: 'Home',
 		headerMode: 'none',
 		navigationOptions: {
 			headerVisible: false,

@@ -195,7 +195,7 @@ export default class OwnedCars extends Component {
                                                 >
                                                     <CommonText
                                                         xsmall={true}
-                                                    >{car.vehicleType}</CommonText>
+                                                    >{car.vehicleType.nameOnCaps}</CommonText>
                                                 </View>
                                             </View>
                                         </View>

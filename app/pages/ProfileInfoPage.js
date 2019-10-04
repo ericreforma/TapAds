@@ -8,11 +8,11 @@ import {
 } from 'react-native';
 import ImagePicker from 'react-native-image-picker';
 import { connect } from 'react-redux';
-import FlashMessage, { showMessage } from "react-native-flash-message";
+import DropdownAlert from 'react-native-dropdownalert';
 import { NavigationEvents } from 'react-navigation';
 
 import { LabelText } from '../components/Text';
-import { Page } from '../pages/Page';
+import Page from '../pages/Page';
 import UserInfo from '../components/UserInfo';
 import { USER } from '../redux/actions/types.action';
 import { UserController } from '../controllers/UserController';
@@ -113,11 +113,12 @@ class ProfileInfoPage extends Component {
             { vehicles } = this.props.user,
             carsOwned = vehicles.map(v => {
                 var {vehicle} = v,
-                    vehicleType = Object.keys(VEHICLE.TYPE)[v.type];
+                    vehicleType = Object.values(VEHICLE.TYPE)[v.type];
+                console.log(vehicleType);
                 return {
                     model: vehicle.model,
                     carYear: vehicle.year,
-                    vehicleType: vehicleType.charAt(0).toUpperCase() + vehicleType.slice(1)
+                    vehicleType
                 };
             });
             
@@ -357,23 +358,19 @@ class ProfileInfoPage extends Component {
     }
 
     successFlashMessage = (description) => {
-        this.refs.mainFlashMessage.showMessage({
-            message: 'Great!',
-            description,
-            duration: 3000,
-            type: "success",
-            icon: "success"
-        });
+        this.dropDownMainAlertRef.alertWithType(
+            'success',
+            'Great!',
+            description
+        );
     }
 
     failedFlashMessage = (description) => {
-        this.refs.mainFlashMessage.showMessage({
-            message: 'Error!',
-            description,
-            duration: 3000,
-            type: "danger",
-            icon: "danger"
-        });
+        this.dropDownMainAlertRef.alertWithType(
+            'error',
+            'Error!',
+            description
+        );
     }
 
 	render() {
@@ -411,7 +408,7 @@ class ProfileInfoPage extends Component {
                     </View>
                 </ScrollView>
 
-                <FlashMessage ref="mainFlashMessage" position="top" />
+				<DropdownAlert ref={ref => this.dropDownMainAlertRef = ref} />
             </Page>
         );
     }

@@ -36,7 +36,7 @@ class LogInPage extends Component {
 	}
   
 	_keyboardDidShow = () => {
-		this._scrollRef.scrollTo({ y: this.state.yPosition - 90 });
+		this._scrollRef.scrollTo({ y: this.state.yPosition - 10 });
 	}
 
 	layoutViewDone = (e) => {
@@ -98,6 +98,7 @@ class LogInPage extends Component {
 								onChangeText={(email) => this.setState({ email })}
 							/>
 							<Input
+								loginPage
 								type="password"
 								passwordRefFunction={this.passwordRefFunction}
 								onSubmitEditing={this.loginSubmit}
@@ -111,7 +112,9 @@ class LogInPage extends Component {
 								alignItems: 'flex-start'
 							}}
 						>
-							<TouchableOpacity>
+							<TouchableOpacity
+								onPress={() => NavigationService.navigate('ForgotPassword')}
+							>
 								<Text style={[styles.textNormalLabel, styles.textNormalLabelMargin]}>
 									Forgot Password?
 								</Text>
@@ -122,7 +125,9 @@ class LogInPage extends Component {
 							<ButtonBlue
 								loginButton
 								label="Login"
-								isLoggingIn={this.state.firstSubmit ? this.props.isLoggingIn : false}
+								disabled={this.state.firstSubmit ? (
+									this.props.isLoggedIn ? true : this.props.isLoggingIn
+								) : false}
 								onPress={this.loginSubmit}
 							/>
 						</View>
@@ -182,7 +187,8 @@ class LogInPage extends Component {
 const mapStateToProps = (state) => ({
 	email: state.email,
 	password: state.password,
-	isLoggingIn: state.loginReducer.isLoggingIn
+	isLoggingIn: state.loginReducer.isLoggingIn,
+	isLoggedIn: state.loginReducer.isLoggedIn
 });
 
 const mapDispatchToProps = (dispatch) => ({

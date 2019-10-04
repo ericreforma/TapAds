@@ -13,6 +13,9 @@ import MessengerPage from './MessengerPage';
 import ChatPage from './ChatPage';
 import TermsAndConditionPage from './TermsAndConditionPage';
 import AddVehiclePage from './AddVehiclePage';
+import DashboardPage from './DashboardPage';
+import RecommendedPage from './RecommendedPage';
+import ForgotPasswordPage from './ForgotPasswordPage';
 
 export {
 	LogInPage,
@@ -29,5 +32,8 @@ export {
 	MessengerPage,
 	ChatPage,
 	TermsAndConditionPage,
-	AddVehiclePage
+	AddVehiclePage,
+	DashboardPage,
+	RecommendedPage,
+	ForgotPasswordPage
 };

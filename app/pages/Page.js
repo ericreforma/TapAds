@@ -4,6 +4,10 @@ import {
   Animated,
   Dimensions
 } from 'react-native';
+import { connect } from 'react-redux';
+
+import { CAMPAIGN } from '../redux/actions/types.action';
+
 import { AppBackground } from '../components/AppBackground';
 import HeaderNav from '../components/HeaderNav';
 import ModalMenu from '../components/Modal/Navigation';
@@ -12,7 +16,7 @@ import { AuthController } from '../controllers';
 
 import Sound from 'react-native-sound';
 
-export class Page extends Component {
+class Page extends Component {
 	constructor(props) {
 		super(props);
 
@@ -22,14 +26,15 @@ export class Page extends Component {
 			modalXValue: new Animated.Value(Dimensions.get('window').width),
 			carouselPage: 0,
 			width: Dimensions.get('window').width,
-			height: Dimensions.get('window').height
+			height: Dimensions.get('window').height,
+			scrollEnable: true
 		};
 
-        this.woosh = new Sound('chat_sound.mp3', Sound.MAIN_BUNDLE, (error) => {
-            if (error) {
-                console.log('failed to load the sound', error);
-                return;
-            }
+			this.woosh = new Sound('chat_sound.mp3', Sound.MAIN_BUNDLE, (error) => {
+			if (error) {
+				console.log('failed to load the sound', error);
+				return;
+			}
 		});
 		
 		// this.woosh.play();
@@ -38,7 +43,7 @@ export class Page extends Component {
 	menuButtonOnPress = () => {
 		Animated.timing(this.state.modalFadeBackground, {
 			toValue: this.state.scrollEnable ? 0.7 : 0,
-			duration: 600
+			duration: 500
 		}).start(() => {
 			this.setState({
 				modalContainerzIndex: this.state.scrollEnable ? 0 : 1
@@ -65,14 +70,15 @@ export class Page extends Component {
 		if(page === 'logout') {
 			AuthController.logout()
 			.then(() => {
-			  	NavigationService.navigate('Loading', null);
+				this.props.resetPropsValues();
+			  NavigationService.navigate('Loading');
 			})
 			.catch((e) => {
 				console.log("error");
 				console.log(e);
 			});
 		} else {
-			NavigationService.navigate(page, null);
+			NavigationService.navigate(page);
 		}
 	}
 
@@ -112,3 +118,9 @@ export class Page extends Component {
 		);
 	}
 }
+
+const mapDispatchToProps = (dispatch) => ({
+	resetPropsValues: () => dispatch({ type: CAMPAIGN.RESET })
+});
+
+export default connect(null, mapDispatchToProps)(Page);

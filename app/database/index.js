@@ -29,6 +29,7 @@ User.schema = {
     contact_number: 'string',
     location: 'string',
     email: 'string',
+    account_number: 'string',
     notificationCount: 'int',
     created_at: 'date',
     updated_at: 'date',
@@ -154,6 +155,7 @@ export const UserSchema = {
           contact_number: user.contact_number,
           location: user.location,
           email: user.email,
+          account_number: user.account_number,
           notificationCount: user.notificationCount,
           created_at: moment(user.created_at).format(DATETIME_FORMAT),
           updated_at: moment(user.updated_at).format(DATETIME_FORMAT),
@@ -166,7 +168,7 @@ export const UserSchema = {
             user_id: r.user_id,
             client_id: r.client_id,
             rate: r.rate,
-            comment: r.comment,
+            comment: r.comment ? r.comment : '',
             created_at: moment(r.created_at).format(DATETIME_FORMAT),
             updated_at: moment(r.updated_at).format(DATETIME_FORMAT)
           });
@@ -190,6 +192,7 @@ export const UserSchema = {
       contact_number: '',
       location: '',
       email: '',
+      account_number: '',
       email_verified_at: '',
       notificationCount: '',
       created_at: '',
@@ -209,6 +212,7 @@ export const UserSchema = {
       u.contact_number = usr.contact_number;
       u.location = usr.location;
       u.email = usr.email;
+      u.account_number = usr.account_number;
       u.notificationCount = usr.notificationCount;
       u.created_at = usr.created_at;
       u.updated_at = usr.updated_at;
@@ -369,4 +373,3 @@ export const CampaignTripMapSchema = {
   },
   get: () => realm.objects('CampaignTripMap')
 };
-``

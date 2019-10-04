@@ -12,10 +12,10 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 import ImagePicker from 'react-native-image-picker';
-import FlashMessage, { showMessage } from "react-native-flash-message";
+import DropdownAlert from 'react-native-dropdownalert';
 
 import { USER } from '../redux/actions/types.action';
-import { Page } from './Page';
+import Page from './Page';
 import UserInfo from '../components/UserInfo';
 import {
     LabelText,
@@ -74,7 +74,10 @@ class AddVehiclePage extends Component {
                     { data, type } = response;
                 
                 if(!type) {
-                    alert('Picture is corrupted');
+                    this.failedFlashMessage(
+                        'Error',
+                        'Picture is corrupted',
+                    );
                 } else {
                     vehicles.splice(1, 0, { url: source });
                     vehicleToUpload.push({ data, type });
@@ -132,13 +135,10 @@ class AddVehiclePage extends Component {
                 UserController.request.profile()
                 .then(res => {
                     this.props.dispatchGetProfile(res.data);
-                    this.refs.flashMessage.showMessage({
-                        message: 'Great!',
-                        description: 'Vehicle added successfully!',
-                        duration: 5000,
-                        type: "success",
-                        icon: "success"
-                    });
+                    this.successFlashMessage(
+                        'Great!',
+                        'Vehicle added successfully!'
+                    );
                     this.resetInputFields();
                     this.toggleAddCarLoading(false);
                 })
@@ -148,23 +148,17 @@ class AddVehiclePage extends Component {
             })
             .catch(error => {
                 console.log(error);
-                this.refs.flashMessage.showMessage({
-                    message: 'Error',
-                    description: 'Error connecting to the server, could you please try again later? Thanks!',
-                    duration: 5000,
-                    type: "danger",
-                    icon: "danger"
-                });
+                this.failedFlashMessage(
+                    'Error',
+                    'Error connecting to the server, could you please try again later? Thanks!',
+                );
                 this.toggleAddCarLoading(false);
             });
         } else {
-            this.refs.flashMessage.showMessage({
-                message: 'Please fill in fields.',
-                description: alertMessage,
-                duration: 5000,
-                type: "danger",
-                icon: "warning"
-            });
+            this.failedFlashMessage(
+                'Please fill in fields.',
+                alertMessage
+            );
             this.toggleAddCarLoading(false);
         }
     }
@@ -240,6 +234,22 @@ class AddVehiclePage extends Component {
                     </View>
                 )}
             </View>
+        );
+    }
+
+    successFlashMessage = (message, description) => {
+        this.dropDownAVPAlertRef.alertWithType(
+            'success',
+            message,
+            description
+        );
+    }
+
+    failedFlashMessage = (message, description) => {
+        this.dropDownAVPAlertRef.alertWithType(
+            'error',
+            message,
+            description
         );
     }
 
@@ -663,7 +673,8 @@ class AddVehiclePage extends Component {
                         </View>
                     </View>
                 </ScrollView>
-                <FlashMessage ref="flashMessage" position="top" />
+
+				<DropdownAlert ref={ref => this.dropDownAVPAlertRef = ref} />
             </Page>
         );
     }
