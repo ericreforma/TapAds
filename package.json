@@ -30,6 +30,7 @@
     "react-native-snap-carousel": "^3.7.5",
     "react-native-sound": "^0.11.0",
     "react-native-update-gradle": "^1.2.0",
+    "react-native-webview": "^7.4.1",
     "react-navigation": "^3.7.1",
     "react-redux": "^7.0.1",
     "realm": "^2.27.0",

@@ -24,6 +24,10 @@ export const URL = {
       END: '/user/campaign/trip/end',
     },
   },
+  TERMS_AND_COND: {
+    PRIVACY_POLICY: '/termsAndCondition/privacyPolicy',
+    TERMS_OF_USE: '/termsAndCondition/termsOfUse'
+  }
 };
 
 export const VEHICLE = {

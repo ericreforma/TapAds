@@ -58,6 +58,10 @@ class LogInPage extends Component {
 				overScrollMode='never'
 				showsVerticalScrollIndicator={false}
 				ref={ref => { this._scrollRef = ref; }}
+				scrollEnabled={false}
+				onContentSizeChange={() => {        
+						this._scrollRef.scrollToEnd({animated: true});
+				}}
 			>
 				<ImageBackground
 					resizeMode="stretch"

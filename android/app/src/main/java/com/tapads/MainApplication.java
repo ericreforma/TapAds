@@ -3,6 +3,7 @@ package com.tapads;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.reactnativecommunity.webview.RNCWebViewPackage;
 import com.zmxv.RNSound.RNSoundPackage;
 import com.devfd.RNGeocoder.RNGeocoderPackage;
 import com.imagepicker.ImagePickerPackage;
@@ -30,6 +31,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNCWebViewPackage(),
             new RNSoundPackage(),
             new RNGeocoderPackage(),
             new ImagePickerPackage(),

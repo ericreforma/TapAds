@@ -10,12 +10,22 @@ import {
     Alert
 } from 'react-native';
 import { connect } from 'react-redux';
+import { WebView } from 'react-native-webview';
 
 import NavigationService from '../services/navigation';
 import theme from '../styles/theme.style';
 import DatePicker from 'react-native-datepicker';
 import { AuthController } from '../controllers';
 import { AuthAction } from '../redux/actions/auth.action';
+import { URL } from '../config/variables';
+
+// modals for terms and condition
+import TermsAndCondition from '../components/Modal/signup/TermsAndCondition';
+
+const url = {
+    privacyPolicy: `${URL.SERVER_MAIN}${URL.TERMS_AND_COND.PRIVACY_POLICY}`,
+    termsOfUse: `${URL.SERVER_MAIN}${URL.TERMS_AND_COND.TERMS_OF_USE}`
+};
 
 class SignUpPage extends Component {
     constructor() {
@@ -50,7 +60,7 @@ class SignUpPage extends Component {
             ],
 
             // signup input values
-						name: '',
+            name: '',
             username: '',
             birthdate: '',
             contact_number: '',
@@ -58,6 +68,11 @@ class SignUpPage extends Component {
             email: '',
             password: '',
             confirmPassword: '',
+
+            // modal
+            termsAndConditionModal: false,
+            modalTitle: '',
+            modalUri: '',
         };
     }
 
@@ -90,6 +105,19 @@ class SignUpPage extends Component {
         });
     }
 
+    termsAndConditionButtonOnPress = (type, modalUri) => () => {
+        const types = ['Terms of Use', 'Privacy Policy'];
+        this.setState({
+            modalTitle: types[type],
+            modalUri
+        });
+        this.termsAndConditionModalToggle();
+    }
+
+    termsAndConditionModalToggle = () => {
+        this.setState({termsAndConditionModal: !this.state.termsAndConditionModal});
+    }
+
 	render() {
 		return (
             <View
@@ -97,6 +125,13 @@ class SignUpPage extends Component {
                     backgroundColor: theme.COLOR_WHITE
                 }}
             >
+                <TermsAndCondition
+                    modalVisible={this.state.termsAndConditionModal}
+                    modalToggle={this.termsAndConditionModalToggle}
+                    title={this.state.modalTitle}
+                    uri={this.state.modalUri}
+                />
+
                 <ScrollView
                     overScrollMode='never'
                     showsVerticalScrollIndicator={false}
@@ -230,7 +265,7 @@ class SignUpPage extends Component {
                                             borderBottomColor: theme.COLOR_NORMAL_FONT + '70',
                                             borderBottomWidth: 1,
                                         }}
-                                        onPress={() => alert('terms of use')}
+                                        onPress={this.termsAndConditionButtonOnPress(0, url.termsOfUse)}
                                     >
                                         <Text
                                             style={{
@@ -256,7 +291,7 @@ class SignUpPage extends Component {
                                             borderBottomColor: theme.COLOR_NORMAL_FONT + '70',
                                             borderBottomWidth: 1,
                                         }}
-                                        onPress={() => alert('Privacy Policy')}
+                                        onPress={this.termsAndConditionButtonOnPress(1, url.privacyPolicy)}
                                     >
                                         <Text
                                             style={{
