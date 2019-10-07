@@ -72,7 +72,7 @@ class HomePage extends Component {
 			<Page>
 				{/* <NavigationEvents
 					onWillFocus={this.init}
-					onDidFocus={() => NavigationService.navigate('Recommended')}
+					onDidFocus={() => NavigationService.navigate('Addvehicle')}
 				/> */}
 				<NavigationEvents onWillFocus={this.init} />
 

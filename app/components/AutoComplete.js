@@ -36,7 +36,7 @@ export default class AutoComplete extends Component {
             >
                 {this.props.data.map(m =>
                     this.filteredData(m)
-                    && this.props.text !== m[this.props.name].toString() ? (
+                    && this.props.text.toLowerCase() !== m[this.props.name].toString().toLowerCase() ? (
                         <TouchableOpacity
                             key={m.id}
                             onPress={e => this.props.carDetailsOnChangeText(m[this.props.name].toString())}
