@@ -42,28 +42,30 @@ class HeaderNav extends Component {
                             source={require('../assets/image/icons/notification_icon.png')}
                         />
 
-                        {this.props.user.notificationCount !== 0 ? (
-                            <View
-                                style={{
-                                    position: 'absolute',
-                                    backgroundColor: themeStyle.COLOR_BLUE,
-                                    height: 20,
-                                    width: 20,
-                                    borderRadius: 20,
-                                    top: 0,
-                                    right: -10,
-                                    alignItems: 'center',
-                                    justifyContent: 'center'
-                                }}
-                            >
-                                <Text
+                        {this.props.user ?
+                            this.props.user.notificationCount !== 0 ? (
+                                <View
                                     style={{
-                                        color: themeStyle.COLOR_WHITE,
-                                        fontSize: themeStyle.FONT_SIZE_XSMALL,
+                                        position: 'absolute',
+                                        backgroundColor: themeStyle.COLOR_BLUE,
+                                        height: 20,
+                                        width: 20,
+                                        borderRadius: 20,
+                                        top: 0,
+                                        right: -10,
+                                        alignItems: 'center',
+                                        justifyContent: 'center'
                                     }}
-                                >{this.props.user.notificationCount > 99 ? '99+' : `${this.props.user.notificationCount}`}</Text>
-                            </View>
-                        ) : null}
+                                >
+                                    <Text
+                                        style={{
+                                            color: themeStyle.COLOR_WHITE,
+                                            fontSize: themeStyle.FONT_SIZE_XSMALL,
+                                        }}
+                                    >{this.props.user.notificationCount > 99 ? '99+' : `${this.props.user.notificationCount}`}</Text>
+                                </View>
+                            ) : null
+                        : null}
                     </TouchableOpacity>
 
                     <TouchableOpacity

@@ -82,7 +82,7 @@ class ProfilePage extends Component {
 			earnings = myList.map(m => {
 				return parseFloat(getTotalEarnings(m));
 			}),
-			totalEarnings = earnings.reduce((a, b) => a + b),
+			totalEarnings = earnings.length === 0 ? 0 : earnings.reduce((a, b) => a + b),
 			historyData = this.getHistoryData();
 
 		this.setState({
@@ -173,11 +173,10 @@ class ProfilePage extends Component {
 	getUserProfile = () => {
 		UserController.request.profile()
 		.then(res => {
-			console.log('Update user profile: ', res.data);
 			this.props.dispatchUpdateProfile(res.data);
 			UserSchema.update(res.data,
 				() => {
-					this.bankDetailsModalToggle();
+					this.modalToggle.bankDetails();
 					this.dropDownMainAlertRef.alertWithType(
 						'success',
 						'Saving success!',
@@ -192,7 +191,7 @@ class ProfilePage extends Component {
 		.catch(error => {
 			this.props.errorUpdateProfile();
 			console.log(error);
-			this.bankDetailsModalToggle();
+			this.modalToggle.bankDetails();
 			this.dropDownMainAlertRef.alertWithType(
 				'error',
 				'Error saving account number!',
