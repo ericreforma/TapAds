@@ -84,7 +84,7 @@ class CampaignCardActive extends Component {
 									alignItems: 'center'
 								}}
 							>
-								<MapCard location_id={this.props.campaign.campaignDetails.location_id[0]} />
+								<MapCard location_id={this.props.campaign.campaignDetails.location_id} />
 							</View>
 
 							{/* header information */}

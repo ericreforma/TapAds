@@ -34,8 +34,47 @@ export const MapController = {
       latitudeDelta,
       longitudeDelta
     };
-
+    
     return { region, coordinates };
+  },
+
+  getPoints: (locations) => {
+    const dataMap = locations.map(l => JSON.parse(l.json_coordinates));
+    const lats = [];
+    const lons = [];
+    let latitudeDelta = 0;
+    let longitudeDelta = 0;
+
+    const coordinates = dataMap.map(c => {
+      const returnCoord = c.map(geo => geo.map(coord => {
+        lats.push(coord.lat);
+        lons.push(coord.lng);
+        const coor = {
+          latitude: coord.lat,
+          longitude: coord.lng,
+        };
+        return coor;
+      }));
+      return returnCoord;
+    });
+
+    const minX = Math.min.apply(null, lats) - 0.01;
+    const maxX = Math.max.apply(null, lats) + 0.01;
+    const minY = Math.min.apply(null, lons) - 0.01;
+    const maxY = Math.max.apply(null, lons) + 0.01;
+
+    latitudeDelta = maxX - minX;
+    longitudeDelta = maxY - minY;
+    const region = {
+      latitude: (minX + maxX) / 2,
+      longitude: (minY + maxY) / 2,
+      latitudeDelta,
+      longitudeDelta
+    };
+
+    const name = locations.map(l => l.name).join(', ');
+  
+    return { region, coordinates, name };
   },
 
   isInsidePolygon: (polygons, point) => {

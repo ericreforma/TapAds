@@ -1,5 +1,5 @@
 import { CAMPAIGN } from './types.action';
-import { CampaignController } from '../../controllers';
+import { CampaignController, CampaignLocationController } from '../../controllers';
 import NavigationService from '../../services/navigation';
 import { CampaignSchema } from '../../database';
 
@@ -147,4 +147,13 @@ export const CampaignAction = {
         dispatch({ type: CAMPAIGN.FAVORITE.FAILED });
     });
   },
+
+  checkCampaignLocation: id => dispatch => {
+    CampaignLocationController.getLocation(id, locations => {
+      dispatch({ type: CAMPAIGN.LOCATION.SUCCESS, campaign_location: locations });
+    }, error => {
+      console.log(error);
+      dispatch({ type: CAMPAIGN.LOCATION.FAILED });
+    });
+  }
 };

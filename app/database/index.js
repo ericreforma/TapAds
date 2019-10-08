@@ -127,6 +127,18 @@ CampaignTripMap.schema = {
   },
 };
 
+class CampaignLocation extends Realm.Object {}
+CampaignLocation.schema = {
+  name: 'CampaignLocation',
+  primaryKey: 'id',
+  properties: {
+    id: 'int',
+    table_id: 'int',
+    name: 'string',
+    json_coordinates: 'string'
+  }
+};
+
 const realm = new Realm({
   schema: [
     Token,
@@ -136,6 +148,7 @@ const realm = new Realm({
     Campaign,
     CampaignTrip,
     CampaignTripMap,
+    CampaignLocation
   ],
 });
 
@@ -372,4 +385,58 @@ export const CampaignTripMapSchema = {
     }
   },
   get: () => realm.objects('CampaignTripMap')
+};
+
+export const CampaignLocationSchema = {
+  insert: (loc, callbackSuccess, callbackFailed) => {
+    try {
+      for(const l of loc) {
+        realm.write(() => {
+          realm.create('CampaignLocation', {
+            id: getPrimaryKeyId('CampaignLocation'),
+            table_id: l.id,
+            name: l.name,
+            json_coordinates: l.json_coordinates
+          });
+        });
+      }
+      callbackSuccess(loc);
+    } catch(e) {
+      callbackFailed(e);
+    }
+  },
+
+  get: (id = false) => {
+    let locations = realm.objects('CampaignLocation');
+
+    if(id) {
+      const arrayIDs = id.map(i => `table_id == ${i}`);
+      const query = arrayIDs.join(' || ');
+      locations = locations.filtered(query); 
+    }
+
+    return locations;
+  },
+
+  getAll: () => {
+    let locations = realm.objects('CampaignLocation');
+    let loc = [];
+    for(const l of locations) {
+      const res = {
+        id: l.table_id,
+        name: l.name,
+        json_coordinates: l.json_coordinates
+      };
+      loc.push(res);
+    }
+    return loc;
+  }
+};
+
+
+const getPrimaryKeyId = (model) => {
+  if (realm.objects(model).max("id")) {
+    return realm.objects(model).max("id") + 1;
+  }
+  return 1;
 };

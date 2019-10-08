@@ -16,4 +16,9 @@ export default StyleSheet.create({
   map: {
     ...StyleSheet.absoluteFillObject
   },
+  loader: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'center',
+    alignItems: 'center',
+  }
 });

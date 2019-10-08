@@ -70,11 +70,10 @@ class HomePage extends Component {
 	render() {
 		return (
 			<Page>
-				{/* <NavigationEvents
+				<NavigationEvents
 					onWillFocus={this.init}
-					onDidFocus={() => NavigationService.navigate('Addvehicle')}
-				/> */}
-				<NavigationEvents onWillFocus={this.init} />
+					// onDidFocus={() => NavigationService.navigate('MyCampaign')}
+				/>
 
 				<ScrollView
 					style={styles.homePageScrollView}

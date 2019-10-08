@@ -37,10 +37,26 @@ class NotificationPage extends Component {
     getNotificationContent = () => {
         UserController.request.notificationContent()
         .then(res => {
+            const { updatedCount,
+                notif } = res.data;
             this.setState({
-                notification: res.data,
+                notification: notif,
                 loader: false
             });
+
+            if(parseInt(updatedCount) > 0) {
+                const { user } = this.props;
+                const userKeys = Object.keys(user);
+                const newUserData = {};
+                for(const u of userKeys) {
+                    if(u === 'notificationCount') {
+                        newUserData[u] = parseInt(updatedCount);
+                    } else {
+                        newUserData[u] = user[u];
+                    }
+                }
+                this.props.updateUserNotification(newUserData);
+            }
         })
         .catch(error => console.log(error));
     }
@@ -98,6 +114,7 @@ class NotificationPage extends Component {
                                             action={notif.action}
                                             requestStatus={notif.request_status}
                                             onPress={this.notificationOnPress(notif.action, notif.id)}
+                                            seen={notif.seen}
                                         />
                                     ) : (
                                         <View
@@ -123,7 +140,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-	dispatchUpdateProfile: (user) => dispatch({ type: USER.GET.PROFILE.SUCCESS, user }),
+	updateUserNotification: (user) => dispatch({ type: USER.GET.PROFILE.SUCCESS, user }),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(NotificationPage);

@@ -7,7 +7,8 @@ import {
     ScrollView,
     TouchableOpacity,
     Dimensions,
-    Alert
+    Alert,
+    ActivityIndicator
 } from 'react-native';
 import { connect } from 'react-redux';
 import { WebView } from 'react-native-webview';
@@ -55,7 +56,7 @@ class SignUpPage extends Component {
                     dataName: 'password'
                 },{
                     placeholder: 'Confirm Password',
-                    dataName: 'confirmPassword'
+                    dataName: 'password_confirmation'
                 }
             ],
 
@@ -73,6 +74,8 @@ class SignUpPage extends Component {
             termsAndConditionModal: false,
             modalTitle: '',
             modalUri: '',
+
+            loader: false,
         };
     }
 
@@ -83,6 +86,7 @@ class SignUpPage extends Component {
     }
 
     signUpButtonOnSubmit = () => {
+        this.setState({loader: true});
         const userData = {};
 
         this.state.inputData.map(i => {
@@ -94,6 +98,7 @@ class SignUpPage extends Component {
             this.props.login(userData.email, userData.password);
         })
         .catch((error) => {
+            this.setState({loader: false});
             const errArr = error.response.data;
             let msg = '';
 
@@ -222,7 +227,7 @@ class SignUpPage extends Component {
                                             }
                                         ]}
                                         keyboardType={input.dataName == 'contact_number' ? 'number-pad' : 'default'}
-                                        secureTextEntry={input.dataName == 'password' || input.dataName == 'confirmPassword' ? true : false}
+                                        secureTextEntry={input.dataName == 'password' || input.dataName == 'password_confirmation' ? true : false}
                                         placeholder={input.placeholder}
                                         placeholderTextColor={theme.COLOR_NORMAL_FONT + '70'}
                                         onChangeText={this.inputValueOnChangeText(input.dataName)}
@@ -311,23 +316,29 @@ class SignUpPage extends Component {
                                     backgroundColor: theme.COLOR_BLUE,
                                     borderRadius: 15,
                                     paddingHorizontal: 15,
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
                                     width: Dimensions.get('window').width / 2,
                                     maxWidth: 300,
                                     height: 45,
                                 }}
                                 onPress={this.signUpButtonOnSubmit}
+                                disabled={this.state.loader}
                             >
-                                <Text
-                                    style={{
-                                        color: theme.COLOR_WHITE,
-                                        fontFamily: 'Montserrat-Medium',
-                                        fontSize: 16,
-                                        paddingVertical: 11,
-                                        textAlign: 'center'
-                                    }}
-                                >
-                                    Sign Up
-                                </Text>
+                                {this.state.loader ? (
+                                    <ActivityIndicator color="#fff" />
+                                ) : (
+                                    <Text
+                                        style={{
+                                            color: theme.COLOR_WHITE,
+                                            fontFamily: 'Montserrat-Medium',
+                                            fontSize: 16,
+                                            paddingVertical: 11
+                                        }}
+                                    >
+                                        Sign Up
+                                    </Text>
+                                )}
                             </TouchableOpacity>
                         </View>
 

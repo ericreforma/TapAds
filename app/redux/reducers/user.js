@@ -19,6 +19,10 @@ export function userReducer(state = initialState, action) {
       return Object.assign({}, state, {
         user: initialState.user
       });
+    case USER.UPDATE.NOTIFICATION:
+      return Object.assign({}, state, {
+        user: action.user
+      });
     default:
       return state;
   }

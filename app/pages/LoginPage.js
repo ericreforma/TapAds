@@ -156,7 +156,7 @@ class LogInPage extends Component {
 					</View>
 
 					{/* alternative login */}
-					<View
+					{/* <View
 						style={{
 							justifyContent: 'flex-end',
 							alignItems: 'flex-end'
@@ -181,7 +181,7 @@ class LogInPage extends Component {
 
 							</TouchableOpacity>
 						</View>
-					</View>
+					</View> */}
 				</ImageBackground>
 			</ScrollView>
 		);

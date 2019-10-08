@@ -98,6 +98,7 @@ class DashboardPage extends Component {
                     modalVisible={this.state.modalVisible}
                     modalData={this.state.modalData}
                     toggleModal={this.toggleModal}
+                    campaignLocations={this.props.campaign_location}
                 />
                 
                 <ScrollView
@@ -332,7 +333,8 @@ class DashboardPage extends Component {
 }
 
 const mapStateToProps = (state) => ({
-    myList: state.campaignReducer.mylist
+    myList: state.campaignReducer.mylist,
+    campaign_location: state.campaignReducer.campaign_location
 });
 
 export default connect(mapStateToProps)(DashboardPage);

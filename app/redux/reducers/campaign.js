@@ -11,7 +11,9 @@ const initialState = {
   recommended: [],
   mylist: [],
   mylist_selected: {},
-  trip: {}
+  trip: {},
+  campaign_location: [],
+  campaign_loc_isRequesting: false
 };
 
 export function campaignReducer(state = initialState, action) {
@@ -111,6 +113,22 @@ export function campaignReducer(state = initialState, action) {
         mylist: [],
         mylist_selected: {},
         trip: {}
+      });
+
+    case CAMPAIGN.LOCATION.SUCCESS:
+      return Object.assign({}, state, {
+        campaign_location: action.campaign_location,
+        campaign_loc_isRequesting: false
+      });
+
+    case CAMPAIGN.LOCATION.REQUEST:
+      return Object.assign({}, state, {
+        campaign_loc_isRequesting: true
+      });
+
+    case CAMPAIGN.LOCATION.FAILED:
+      return Object.assign({}, state, {
+        campaign_loc_isRequesting: false
       });
 
     default:

@@ -22,15 +22,14 @@ import style from '../styles/page.StartCampaign.style';
 import mapStyle from '../styles/map.style';
 import buttonStyle from '../styles/component.ButtonBlue.style';
 import theme from '../styles/theme.style';
-import { MAP } from '../map';
 
 class StartCampaignPage extends Component {
-
   constructor(props) {
     super(props);
     this.state = {
       campaign: this.props.campaign,
-      map: Object.values(MAP)[this.props.campaign.campaignDetails.location_id],
+      // map: Object.values(MAP)[this.props.campaign.campaignDetails.location_id],
+      map: MapController.getPoints(this.props.campaign_location),
       mapView: null,
       myPosition: {
         coords: {
@@ -38,7 +37,7 @@ class StartCampaignPage extends Component {
           longitude: 121.0436033
         },
         distance: 0,
-        timestamp: null,
+      timestamp: null,
         heading: 0,
         speed: 0
       },
@@ -94,7 +93,7 @@ class StartCampaignPage extends Component {
 
     let polys = [];
 
-    this.state.map.data.coordinates.map((polygon) =>
+    this.state.map.coordinates.map((polygon) =>
       polygon.map(coord =>
         polys.push(coord)
       )
@@ -386,11 +385,11 @@ class StartCampaignPage extends Component {
       <MapView
         style={mapStyle.map}
         provider={PROVIDER_GOOGLE}
-        initialRegion={this.state.map.data.region}
+        initialRegion={this.state.map.region}
         ref={ref => this.mapView = ref}
         onMapReady={() => this.onMapReady()}
       >
-      {this.state.map.data.coordinates.map((polygon, key) =>
+      {this.state.map.coordinates.map((polygon, key) =>
         polygon.map(coord =>
           <Polygon
             key={key}
@@ -565,7 +564,7 @@ class StartCampaignPage extends Component {
                 {((this.state.totalCampaignTraveled)).toFixed(2)}km
               </Text>
               <Text style={style.textCarTraveled}>
-                {((this.state.totalCarTraveled)).toFixed(2)}km
+                {((this.state.totalCarTraveled)).toFixed(2)}km 
               </Text>
             </View>
 
@@ -602,12 +601,13 @@ class StartCampaignPage extends Component {
 
 const mapStateToProps = (state) => ({
   campaign: state.campaignReducer.mylist_selected,
-  trip: state.campaignReducer.trip
+  trip: state.campaignReducer.trip,
+  campaign_location: state.campaignReducer.campaign_location
 });
 
 const mapDispatchToProps = dispatch => ({
   dispatchMyList: (successCallback) => dispatch(CampaignAction.mylist(successCallback)),
-  dispatchUpdateSelected: () => dispatch(CampaignAction.updateSelected())
+  dispatchUpdateSelected: () => dispatch(CampaignAction.updateSelected()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(StartCampaignPage);
