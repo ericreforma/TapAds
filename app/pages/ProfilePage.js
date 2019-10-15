@@ -75,6 +75,11 @@ class ProfilePage extends Component {
 	}
 
 	init = () => {
+		const alert = this.props.navigation.getParam('alert', null);
+		if(alert) {
+			this.successFlashMessage(alert.message, alert.description);
+		}
+
 		var { user,
 			myList } = this.props,
 			loader = false,
@@ -177,8 +182,7 @@ class ProfilePage extends Component {
 			UserSchema.update(res.data,
 				() => {
 					this.modalToggle.bankDetails();
-					this.dropDownMainAlertRef.alertWithType(
-						'success',
+					this.successFlashMessage(
 						'Saving success!',
 						'Bank details successfully saved'
 					);
@@ -192,8 +196,7 @@ class ProfilePage extends Component {
 			this.props.errorUpdateProfile();
 			console.log(error);
 			this.modalToggle.bankDetails();
-			this.dropDownMainAlertRef.alertWithType(
-				'error',
+			this.failedFlashMessage(
 				'Error saving account number!',
 				'We apologize for the inconvenience,\nplease try again later'
 			);
@@ -325,6 +328,22 @@ class ProfilePage extends Component {
 			this.setState({ vehicleData });
 			callback();
 		}
+	}
+
+	successFlashMessage = (message, description) => {
+		this.dropDownMainAlertRef.alertWithType(
+			'success',
+			message,
+			description
+		);
+	}
+
+	failedFlashMessage = (message, description) => {
+		this.dropDownMainAlertRef.alertWithType(
+			'error',
+			message,
+			description
+		);
 	}
 
 	render() {

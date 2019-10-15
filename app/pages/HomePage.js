@@ -40,15 +40,6 @@ class HomePage extends Component {
 	}
 
 	init = () => {
-		const alert = this.props.navigation.getParam('alert', null);
-		if(alert) {
-			this.dropDownHomeAlertRef.alertWithType(
-				alert.type,
-				alert.message,
-				alert.description
-			);
-		}
-
 		this.props.CampaignRecRequest();
 		this.props.CampaignListRequest();
 		this.props.dispatchMyList();
@@ -59,7 +50,6 @@ class HomePage extends Component {
 	);
 
 	_currentCategory = (slideIndex) => {
-		console.log(slideIndex);
 		this.setState({ vehicleCategoryIndex: slideIndex });
 		this.props.CampaignChangeCategory(slideIndex);
 		this.setState({ categoryStartDrag: false });
@@ -75,7 +65,7 @@ class HomePage extends Component {
 			<Page>
 				<NavigationEvents
 					onWillFocus={this.init}
-					// onDidFocus={() => NavigationService.navigate('MyCampaign')}
+					// onDidFocus={() => NavigationService.navigate('Addvehicle')}
 				/>
 
 				<ScrollView

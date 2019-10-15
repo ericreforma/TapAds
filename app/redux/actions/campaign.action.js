@@ -90,12 +90,6 @@ export const CampaignAction = {
           //     console.log('error');
           //     console.log(e);
           //   });
-          var alert = {
-            message: 'Campaign request sent!',
-            description: 'You will be notified once the request status has been updated.\nThank you!',
-            type: 'success'
-          };
-          NavigationService.navigate('Home', {alert});
         })
         .catch(e => {
           console.log('error');

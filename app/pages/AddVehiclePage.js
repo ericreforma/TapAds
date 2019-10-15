@@ -19,16 +19,18 @@ import Page from './Page';
 import UserInfo from '../components/UserInfo';
 import {
 		LabelText,
-		CommonText,
     Common,
     Label,
 } from '../components/Text';
 import { IMAGES, VEHICLE } from '../config/variables';
 import { UserController } from '../controllers/UserController';
 import AutoComplete from '../components/AutoComplete';
+import NavigationService from '../services/navigation';
 
 import theme from '../styles/theme.style';
 import { Card, CardBody } from '../components/Card';
+
+import PopupMessage from '../components/Modal/popup';
 
 class AddVehiclePage extends Component {
 	constructor(props) {
@@ -39,6 +41,7 @@ class AddVehiclePage extends Component {
 			height: Dimensions.get('window').height,
 			activeTypeVehicle: 0,
 			vehicleClassification: 0,
+			plateNumber: '',
 			vehicles: [{ url: IMAGES.ICONS.add }],
 			vehicleToUpload: [],
 			uploadManufacturer: '',
@@ -51,6 +54,12 @@ class AddVehiclePage extends Component {
 			uploadColorOnFocus: false,
 			addCarLoading: false,
 			vehicleDatabase: [],
+
+			popupModal: {
+				visible: false,
+				message: '',
+				description: ''
+			}
 		};
 	}
 
@@ -61,8 +70,14 @@ class AddVehiclePage extends Component {
 	}
 
 	addVehicleButtonOnPress = () => {
-			ImagePicker.launchImageLibrary({
-					// options
+			ImagePicker.showImagePicker({
+				title: 'Select Vehicle Photo',
+				chooseFromLibraryButtonTitle: 'Open gallery',
+				takePhotoButtonTitle: 'Take a photo',
+				storageOptions: {
+					skipBackup: true,
+					path: 'images',
+				},
 			}, response => {
 					if (response.didCancel) {
 							console.log('User cancelled image picker');
@@ -105,6 +120,7 @@ class AddVehiclePage extends Component {
 			uploadModel,
 			uploadYear,
 			uploadColor,
+			plateNumber,
 			vehicleDatabase } = this.state,
 			alertMessage = '',
 			newVehicle = null,
@@ -120,12 +136,15 @@ class AddVehiclePage extends Component {
 			alertMessage += 'Pick car year\n';
 
 		if(vehicleToUpload.length === 0)
-			alertMessage += 'Upload Vehicle Photo';
+			alertMessage += 'Upload Vehicle Photo\n';
+
+		if(plateNumber === '')
+			alertMessage += 'Input plate number';
 
 		if(alertMessage === '') {
 			vehicleId = vehicleDatabase.find(v =>
-				v.manufacturer.toString() == uploadManufacturer.toString()
-				&& v.model.toString() == uploadModel.toString()
+				v.manufacturer.toString().toLowerCase() == uploadManufacturer.toString().toLowerCase()
+				&& v.model.toString().toLowerCase() == uploadModel.toString().toLowerCase()
 				&& v.year.toString() == uploadYear.toString()
 			);
 
@@ -145,18 +164,20 @@ class AddVehiclePage extends Component {
 				activeTypeVehicle,
 				vehicleId,
 				newVehicle,
-				uploadColor
+				uploadColor,
+				plateNumber
 			})
 			.then(res => {
 				UserController.request.profile()
 				.then(res => {
 					this.props.dispatchGetProfile(res.data);
-					this.successFlashMessage(
-						'Great!',
-						'Vehicle added successfully!'
-					);
 					this.resetInputFields();
-					this.toggleAddCarLoading(false);
+
+					const { popupModal } = this.state;
+					popupModal.visible = true;
+					popupModal.message = 'Great!';
+					popupModal.description = 'Vehicle added successfully!';
+					this.setState({popupModal});
 				})
 				.catch(error => {
 					console.log(error);
@@ -364,9 +385,23 @@ class AddVehiclePage extends Component {
 		}
 	}
 
+	closePopupModal = () => {
+		const { popupModal } = this.state;
+		popupModal.visible = false;
+		this.setState({popupModal});
+		NavigationService.navigate('Profile');
+	}
+
 	render() {
 		return (
 			<Page>
+				<PopupMessage
+					isVisible={this.state.popupModal.visible}
+					message={this.state.popupModal.message}
+					description={this.state.popupModal.description}
+					closeModal={this.closePopupModal}
+				/>
+
 				<ScrollView
 					overScrollMode='never'
 					showsVerticalScrollIndicator={false}
@@ -677,6 +712,59 @@ class AddVehiclePage extends Component {
 								</Card>
 							</View>
 							
+							{/* car plate number */}
+							<View
+								style={{
+									marginVertical: 7
+								}}
+							>
+								<View
+									style={{
+										backgroundColor: theme.COLOR_WHITE,
+										borderRadius: 15,
+										paddingVertical: 15,
+										paddingHorizontal: 30
+									}}
+								>
+									<LabelText>
+										Plate Number
+									</LabelText>
+
+									<View
+										style={{
+											marginTop: 10
+										}}
+									>
+										<Common
+												nonActive={true}
+												label='Plate number lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.'
+										/>
+									</View>
+
+									<View
+										style={{
+											marginVertical: 10,
+										}}
+									>
+										<TextInput
+											placeholder="Plate Number.."
+											placeholderTextColor={theme.NEW_COLOR.COLOR_GRAY}
+											style={{
+												fontFamily: 'Montserrat-Medium',
+												fontSize: theme.FONT_SIZE_SMALL,
+												color: theme.NEW_COLOR.COLOR_BLACK,
+												paddingHorizontal: 0,
+												borderBottomColor: theme.COLOR_LIGHT_BLUE,
+												borderBottomWidth: 2,
+												paddingVertical: 5
+											}}
+											value={this.state.plateNumber}
+											onChangeText={plateNumber => this.setState({ plateNumber })}
+										/>
+									</View>
+								</View>
+							</View>
+
 							{/* car photos */}
 							<View
 									style={{

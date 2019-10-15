@@ -25,6 +25,9 @@ import theme from '../styles/theme.style';
 import styles from '../styles/page.Home.style';
 import { CampaignAction } from '../redux/actions/campaign.action';
 import { numberWithCommas, getDate } from '../config/functions';
+import NavigationService from '../services/navigation';
+
+import PopupMessage from '../components/Modal/popup';
 
 class CampaignPage extends Component {
 	constructor(props) {
@@ -33,7 +36,13 @@ class CampaignPage extends Component {
 			height: Dimensions.get('window').height,
 			width: Dimensions.get('window').width,
 			vehicleType: Object.values(VEHICLE.TYPE),
-			loader: false
+			loader: false,
+
+			popupModal: {
+				visible: false,
+				message: '',
+				description: ''
+			}
 		};
 	}
 
@@ -50,6 +59,12 @@ class CampaignPage extends Component {
 			
 		if(!noVehicles && !noLicense) {
 			this.props.interestedCampaign();
+
+			const { popupModal } = this.state;
+			popupModal.visible = true;
+			popupModal.message = 'Campaign request sent!';
+			popupModal.description = 'You will be notified once the request status has been updated.\nThank you!';
+			this.setState({popupModal});
 		} else {
 			this.setState({loader: false});
 			const description = `Please register your${noVehicles ? ' vehicle' : ''}${noVehicles && noLicense ? ' and ' : ' '}${noLicense ? 'license ' : ''}in Profile page in order to proceed. Thank you!`;
@@ -61,9 +76,23 @@ class CampaignPage extends Component {
 		}
 	}
 
+	closePopupModal = () => {
+		const { popupModal } = this.state;
+		popupModal.visible = false;
+		this.setState({popupModal});
+		NavigationService.navigate('Home');
+	}
+
 	render() {
 		return (
 			<Page>
+				<PopupMessage
+					isVisible={this.state.popupModal.visible}
+					message={this.state.popupModal.message}
+					description={this.state.popupModal.description}
+					closeModal={this.closePopupModal}
+				/>
+
 				<ScrollView
 					style={styles.homePageScrollView}
 					overScrollMode='never'

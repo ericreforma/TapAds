@@ -11,7 +11,7 @@ function navigate(routeName, params = null) {
     NavigationActions.navigate({
       routeName,
       params
-    }),
+    })
   );
 }
 
