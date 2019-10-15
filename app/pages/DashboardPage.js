@@ -230,97 +230,105 @@ class DashboardPage extends Component {
                                             marginBottom: 10
                                         }}
                                     >
-                                        {campaign.trips.map((trip, tIdx) =>
-                                            tIdx < this.state.tripLength ? (
-                                                <TouchableOpacity
-                                                    key={trip.id}
-                                                    onPress={this.tripOnPress(trip.id, trip.campaign_id)}
-                                                >
+                                        {campaign.trips.length !== 0 ? (
+                                            <View>
+                                                {campaign.trips.map((trip, tIdx) =>
+                                                    tIdx < this.state.tripLength ? (
+                                                        <TouchableOpacity
+                                                            key={trip.id}
+                                                            onPress={this.tripOnPress(trip.id, trip.campaign_id)}
+                                                        >
+                                                            <View
+                                                                style={{
+                                                                    marginVertical: 5,
+                                                                    paddingVertical: 10,
+                                                                    paddingHorizontal: 15,
+                                                                    backgroundColor: theme.COLOR_WHITE,
+                                                                    borderRadius: theme.PAGE_CARD_RADIUS,
+                                                                    elevation: 3,
+                                                                    flexDirection: 'row',
+                                                                    justifyContent: 'space-between'
+                                                                }}
+                                                            >
+                                                                <View
+                                                                    style={{
+                                                                        flex: 1,
+                                                                        alignItems: 'flex-start'
+                                                                    }}
+                                                                >
+                                                                    <View
+                                                                        style={{
+                                                                            flex: 1,
+                                                                            alignItems: 'flex-start',
+                                                                            borderBottomWidth: 2,
+                                                                            borderBottomColor: '#e7e7e7',
+                                                                            paddingBottom: 5
+                                                                        }}
+                                                                    >
+                                                                        <CommonText>{timeStamp(trip.started).date.toUpperCase()}</CommonText>
+                                                                        <CommonText>{timeStamp(trip.started).time}</CommonText>
+                                                                    </View> 
+                                                                    
+                                                                    <LabelText
+                                                                        color="blue"
+                                                                        numberOfLines={1}
+                                                                    >{this.tripLocation(trip.location_start_address)}</LabelText>
+                                                                </View>
+
+                                                                <View
+                                                                    style={{
+                                                                        flex: 1,
+                                                                        alignItems: 'flex-end'
+                                                                    }}
+                                                                >
+                                                                    <View
+                                                                        style={{
+                                                                            flex: 1,
+                                                                            alignItems: 'flex-end',
+                                                                            borderBottomWidth: 2,
+                                                                            borderBottomColor: '#e7e7e7',
+                                                                            paddingBottom: 5
+                                                                        }}
+                                                                    >
+                                                                        <CommonText>{timeStamp(trip.ended).date.toUpperCase()}</CommonText>
+                                                                        <CommonText>{timeStamp(trip.ended).time}</CommonText>
+                                                                    </View>
+                                                                    
+                                                                    <LabelText
+                                                                        color="blue"
+                                                                        numberOfLines={1}
+                                                                    >{this.tripLocation(trip.location_end_address)}</LabelText>
+                                                                </View>
+                                                            </View>
+                                                        </TouchableOpacity>
+                                                    ) : null
+                                                )}
+
+                                                {this.state.tripLength < campaign.trips.length ? (
                                                     <View
                                                         style={{
-                                                            marginVertical: 5,
-                                                            paddingVertical: 10,
-                                                            paddingHorizontal: 15,
-                                                            backgroundColor: theme.COLOR_WHITE,
-                                                            borderRadius: theme.PAGE_CARD_RADIUS,
-                                                            elevation: 3,
-                                                            flexDirection: 'row',
-                                                            justifyContent: 'space-between'
+                                                            marginTop: 10,
+                                                            justifyContent: 'center',
+                                                            alignItems: 'center'
                                                         }}
                                                     >
-                                                        <View
-                                                            style={{
-                                                                flex: 1,
-                                                                alignItems: 'flex-start'
-                                                            }}
-                                                        >
-                                                            <View
-                                                                style={{
-                                                                    flex: 1,
-                                                                    alignItems: 'flex-start',
-                                                                    borderBottomWidth: 2,
-                                                                    borderBottomColor: '#e7e7e7',
-                                                                    paddingBottom: 5
-                                                                }}
+                                                        {this.state.loader ? (
+                                                            <ActivityIndicator />
+                                                        ) : (
+                                                            <TouchableOpacity
+                                                                onPress={this.viewMoreTrips(campaign.trips.length)}
                                                             >
-                                                                <CommonText>{timeStamp(trip.started).date.toUpperCase()}</CommonText>
-                                                                <CommonText>{timeStamp(trip.started).time}</CommonText>
-                                                            </View> 
-                                                            
-                                                            <LabelText
-                                                                color="blue"
-                                                                numberOfLines={1}
-                                                            >{this.tripLocation(trip.location_start_address)}</LabelText>
-                                                        </View>
-
-                                                        <View
-                                                            style={{
-                                                                flex: 1,
-                                                                alignItems: 'flex-end'
-                                                            }}
-                                                        >
-                                                            <View
-                                                                style={{
-                                                                    flex: 1,
-                                                                    alignItems: 'flex-end',
-                                                                    borderBottomWidth: 2,
-                                                                    borderBottomColor: '#e7e7e7',
-                                                                    paddingBottom: 5
-                                                                }}
-                                                            >
-                                                                <CommonText>{timeStamp(trip.ended).date.toUpperCase()}</CommonText>
-                                                                <CommonText>{timeStamp(trip.ended).time}</CommonText>
-                                                            </View>
-                                                            
-                                                            <LabelText
-                                                                color="blue"
-                                                                numberOfLines={1}
-                                                            >{this.tripLocation(trip.location_end_address)}</LabelText>
-                                                        </View>
+                                                                <CommonText>view more</CommonText>
+                                                            </TouchableOpacity>
+                                                        )}
                                                     </View>
-                                                </TouchableOpacity>
-                                            ) : null
-                                        )}
-
-                                        {this.state.tripLength < campaign.trips.length ? (
-                                            <View
-                                                style={{
-                                                    marginTop: 10,
-                                                    justifyContent: 'center',
-                                                    alignItems: 'center'
-                                                }}
-                                            >
-                                                {this.state.loader ? (
-                                                    <ActivityIndicator />
-                                                ) : (
-                                                    <TouchableOpacity
-                                                        onPress={this.viewMoreTrips(campaign.trips.length)}
-                                                    >
-                                                        <CommonText>view more</CommonText>
-                                                    </TouchableOpacity>
-                                                )}
+                                                ) : null}
                                             </View>
-                                        ) : null}
+                                        ) : (
+                                            <View style={{alignSelf: 'center'}}>
+                                                <CommonText>-- no trips recorded --</CommonText>
+                                            </View>
+                                        )}
                                     </View>
                                 </CardBody>
                             </Card>

@@ -1,9 +1,14 @@
 import { TokenSchema } from '../database';
 
-const SERVER_MAIN = 'http://dev.bcdpinpoint.com/TapAdsServer/public';
+const SERVER_MAIN = 'http://192.168.0.100/TapAdsServer/public';
+const SOCKET_SERVER_MAIN = 'http://192.168.0.100';
+const SOCKET_SERVER_PORT = '3000';
+const SOCKET_SERVER = `${SOCKET_SERVER_MAIN}:${SOCKET_SERVER_PORT}`;
 
 const SERVER_API = `${SERVER_MAIN}/api`;
 const SERVER_MEDIA = `${SERVER_MAIN}/storage`;
+
+const token = TokenSchema.get().token;
 
 export const URL = {
   SERVER_MAIN,
@@ -135,5 +140,21 @@ export const earnings = {
     rejected: {
       name: 'Denied'
     }
+  }
+};
+
+export const SOCKET = {
+  SOCKET_SERVER,
+  URL: {
+    login: (args = '') =>
+      `${SOCKET_SERVER}/user/login?token=${token}${args}`,
+    logout: (args = '') =>
+      `${SOCKET_SERVER}/user/logout?token=${token}${args}`,
+    sendMessage: (args = '') =>
+      `${SOCKET_SERVER}/user/message/send?token=${token}${args}`,
+    newMessage: (args = '') =>
+      `${SOCKET_SERVER}/client/message/send?token=${token}${args}`,
+    notification: (args = '') =>
+      `${SOCKET_SERVER}/user/notification?token=${token}${args}`,
   }
 };

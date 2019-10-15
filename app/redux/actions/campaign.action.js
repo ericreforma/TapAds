@@ -116,6 +116,7 @@ export const CampaignAction = {
       })
       .catch(error => {
         console.log(error);
+        console.log(error.response);
         alert('Network Error');
         dispatch({ type: CAMPAIGN.RECOMMENDED.FAILED });
       });
@@ -133,6 +134,7 @@ export const CampaignAction = {
       .catch(e => {
         console.log('Error');
         console.log(e);
+        console.log(e.response);
         alert('Network Error');
       });
   },

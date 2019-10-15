@@ -29,6 +29,18 @@ export const timeStamp = (d) => {
 	}
 };
 
+export const getDate = (date) => {
+	if(date) {
+		var year = date.split('-')[0],
+			month = date.split('-')[1].toString().padStart(2, '0'),
+			day = date.split('-')[2].toString().padStart(2, '0'),
+			date = `${month}-${day}-${year}`;
+		return date;
+	} else {
+		return '---';
+	}
+}
+
 export const timeStampNumeric = (d) => {
 	if(d) {
 		var date = d.split(' ')[0],

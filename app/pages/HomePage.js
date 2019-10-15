@@ -13,14 +13,17 @@ import { NavigationEvents } from 'react-navigation';
 import DropdownAlert from 'react-native-dropdownalert';
 
 import styles from '../styles/page.Home.style';
+import theme from '../styles/theme.style';
 import UserInfo from '../components/UserInfo';
 import CampaignListContainer from '../containers/CampaignListContainer';
 import CampaignRecContainer from '../containers/CampaignRecContainer';
+import CampaignActiveContainer from '../containers/CampaignActiveContainer';
 import { VEHICLE } from '../config/variables';
 import { VehicleCategoryCard } from '../components/VehicleCategoryCard';
 import { LabelText } from '../components/Text';
 
 import { CampaignAction } from '../redux/actions/campaign.action';
+import { CAMPAIGN } from '../redux/actions/types.action';
 import Page from './Page';
 import NavigationService from '../services/navigation';
 
@@ -72,7 +75,7 @@ class HomePage extends Component {
 			<Page>
 				<NavigationEvents
 					onWillFocus={this.init}
-					// onDidFocus={() => NavigationService.navigate('MyCampaign')}
+					onDidFocus={() => NavigationService.navigate('MyCampaign')}
 				/>
 
 				<ScrollView
@@ -106,6 +109,26 @@ class HomePage extends Component {
 							{/* content */}
 							<View style={styles.homePageContentPadding}>
 								<CampaignRecContainer />
+							</View>
+						</View>
+
+						{/* active campaign */}
+						<View style={styles.homePageActiveCampaignContainer}>
+							{/* label text */}
+							<View style={styles.homePageActiveCampaignLabel}>
+								<LabelText color="white">Active Campaigns</LabelText>
+								<TouchableOpacity
+									onPress={() => NavigationService.navigate('MyCampaign')}
+								>
+									<Text style={styles.homePageViewAll}>
+										View All
+									</Text>
+								</TouchableOpacity>
+							</View>
+
+							{/* content */}
+							<View style={styles.homePageContentPadding}>
+								<CampaignActiveContainer />
 							</View>
 						</View>
 

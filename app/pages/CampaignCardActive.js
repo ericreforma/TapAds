@@ -199,7 +199,7 @@ class CampaignCardActive extends Component {
 											P{numberWithCommas(this.props.campaign.campaignDetails.pay_basic)}
 									</LabelText>
 
-									<CommonText color="white">Basic Pay</CommonText>
+									<CommonText color="white">Earn up to</CommonText>
 								</View>
 
 								<View

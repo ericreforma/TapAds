@@ -411,7 +411,7 @@ export const CampaignLocationSchema = {
 
     if(id) {
       const arrayIDs = id.map(i => `table_id == ${i}`);
-      const query = arrayIDs.join(' || ');
+      const query = arrayIDs.join(' OR ');
       locations = locations.filtered(query); 
     }
 

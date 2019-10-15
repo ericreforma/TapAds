@@ -27,7 +27,7 @@ export default StyleSheet.create({
         paddingHorizontal: theme.PAGE_PADDING_HORIZONTAL + 10
     },
     homePageViewAll: {
-        fontFamily: 'Montserrat-Regular',
+        fontFamily: 'Montserrat-Bold',
         color: theme.COLOR_PINK
     },
     homePageContentPadding: {
@@ -149,5 +149,14 @@ export default StyleSheet.create({
     homePageCategoriesNoCampaigns: {
         marginTop: 10,
         alignSelf: 'center'
+    },
+    homePageActiveCampaignContainer: {
+        marginVertical: 20,
+    },
+    homePageActiveCampaignLabel: {
+        paddingHorizontal: theme.PAGE_PADDING_HORIZONTAL + 10,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center'
     }
 });

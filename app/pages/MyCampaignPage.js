@@ -9,6 +9,7 @@ import {
     ActivityIndicator,
     Dimensions
 } from 'react-native';
+import { NavigationEvents } from 'react-navigation';
 
 import {
     Card,
@@ -25,8 +26,11 @@ import { VEHICLE } from '../config/variables';
 import { CampaignAction } from '../redux/actions/campaign.action';
 import theme from '../styles/theme.style';
 import styles from '../styles/page.Home.style';
-import NavigationService from '../services/navigation';
-import { numberWithCommas } from '../config/functions';
+import {
+    numberWithCommas,
+    getTotalEarnings,
+    timestamp
+} from '../config/functions';
 
 class MyCampaignPage extends Component {
     constructor(props) {
@@ -41,22 +45,7 @@ class MyCampaignPage extends Component {
         };
     }
 
-    timeFormat = (timestamp) => {
-        var date = timestamp.split(' ')[0],
-            year = parseInt(date.split('-')[0]),
-            month = parseInt(date.split('-')[1]),
-            day = parseInt(date.split('-')[2]),
-            months = [
-                'Jan', 'Feb', 'Mar',
-                'Apr', 'May', 'Jun',
-                'Jul', 'Aug', 'Sep',
-                'Oct', 'Nov', 'Dec'
-            ];
-
-        return `${months[month - 1].toUpperCase()}. ${day}, ${year}`;
-    }
-    
-    componentDidMount = () => {
+    init = () => {
         this.setState({loader: false});
     }
 
@@ -80,24 +69,13 @@ class MyCampaignPage extends Component {
         this.setState({ myCampaignClick: active })
     }
 
-    viewCampaignDashboard = (id) => () => {
-        alert('View dashboard campaign id: ' + id);
+    activeCampaignFullDetails = (id) => () => {
+        this.props.campaignSelected(id);
     }
 
-    favoriteOnPress = (id) => () => {
-        alert('Favorite pressed campaign id: ' + id);
-    }
-
-    totalEarnings = (campaign) => {
-        var campaignTraveled = parseFloat(campaign.campaign_traveled),
-            payBasic = parseFloat(campaign.campaignDetails.pay_basic),
-            payBasicKm = parseFloat(campaign.campaignDetails.pay_basic_km),
-            payAdditional = parseFloat(campaign.campaignDetails.pay_additional),
-            payAdditionalKm = parseFloat(campaign.campaignDetails.pay_additional_km),
-            d = campaignTraveled - payBasicKm,
-            d = (d >= 1 ? d : 0),
-            totalEarnings = (Math.floor(d / payAdditionalKm) * payAdditional) + (payBasic * (d >= 1 ? 1 : 0));
-            return numberWithCommas(totalEarnings.toFixed(2));
+    startTripButtonPressed = (id) => () => {
+        this.props.campaignSelected(id);
+        this.props.dispatchTrip();
     }
 
     activeCampaignView = () => {
@@ -112,8 +90,9 @@ class MyCampaignPage extends Component {
                                 paddingVertical: 10
                             }}
                         >
-                            <Card shadow={true}>
-                                <CardHeader active={true}>
+                            <Card shadow>
+                                <CardHeader active>
+                                    <LabelText numberOfLines={1}>{data.campaignDetails.name}</LabelText>
                                     <View
                                         style={{
                                             flexDirection: 'row',
@@ -121,71 +100,9 @@ class MyCampaignPage extends Component {
                                             alignItems: 'center'
                                         }}
                                     >
-                                        <View
-                                            style={{
-                                                flexGrow: 1,
-                                                flex: 1
-                                            }}
-                                        >
-                                            <LabelText numberOfLines={1}>{data.campaignDetails.name}</LabelText>
-                                        </View>
-
-                                        <TouchableOpacity
-                                            style={{
-                                                paddingLeft: 15
-                                            }}
-                                            onPress={() => NavigationService.navigate('Chat', {id: data.campaignDetails.client_id})}
-                                        >
-                                            <Image
-                                                style={{
-                                                    height: 17,
-                                                    resizeMode: 'contain'
-                                                }}
-                                                source={require('../assets/image/icons/mail_icon.png')}
-                                            />
-
-                                            {data.messages.length !== 0 ? (
-                                                <View
-                                                    style={{
-                                                        backgroundColor: theme.COLOR_BLUE,
-                                                        width: 14,
-                                                        height: 14,
-                                                        borderRadius: 7,
-                                                        position: 'absolute',
-                                                        justifyContent: 'center',
-                                                        alignItems: 'center',
-                                                        top: -5,
-                                                        right: 3
-                                                    }}
-                                                >
-                                                    <Text
-                                                        style={{
-                                                            fontSize: 8,
-                                                            color: theme.COLOR_WHITE,
-                                                            fontFamily: 'Montserrat-Bold'
-                                                        }}
-                                                    >
-                                                        {data.messages.length}
-                                                    </Text>
-                                                </View>
-                                            ) : null}
-                                        </TouchableOpacity>
-                                    </View>
-                                    <View
-                                        style={{
-                                            flexDirection: 'row',
-                                            justifyContent: 'space-between',
-                                            alignItems: 'center'
-                                        }}
-                                    >
-                                        <View
-                                            style={{
-                                                flexGrow: 1,
-                                                flex: 1
-                                            }}
-                                        >
-                                            <CommonText numberOfLines={1}>{data.client.business_name}</CommonText>
-                                        </View>
+                                        <CommonText numberOfLines={1}>
+                                            {data.client.business_name}
+                                        </CommonText>
                                         
                                         <View
                                             style={{
@@ -193,7 +110,7 @@ class MyCampaignPage extends Component {
                                             }}
                                         >
                                             <TouchableOpacity
-                                                onPress={() => { this.props.campaignSelected(data.id); } }
+                                                onPress={this.activeCampaignFullDetails(data.id)}
                                             >
                                                 <Text
                                                     style={styles.homePageViewAll}
@@ -231,8 +148,24 @@ class MyCampaignPage extends Component {
                                             style={styles.homePageAlignRight}
                                         >
                                             <LabelText>P {numberWithCommas(data.campaignDetails.pay_basic)}</LabelText>
-                                            <CommonText>Basic Pay</CommonText>
+                                            <CommonText>Earn up to</CommonText>
                                         </View>
+                                    </View>
+
+                                    <View>
+                                        <TouchableOpacity
+                                            style={{
+                                                justifyContent: 'center',
+                                                alignItems: 'center',
+                                                backgroundColor: theme.COLOR_BLUE,
+                                                borderRadius: 15,
+                                                paddingVertical: 10,
+                                                marginTop: 15
+                                            }}
+                                            onPress={this.startTripButtonPressed(data.id)}
+                                        >
+                                            <LabelText color="white">Start trip</LabelText>
+                                        </TouchableOpacity>
                                     </View>
                                 </CardBody>
 
@@ -246,7 +179,7 @@ class MyCampaignPage extends Component {
                                         }}
                                     >
                                         <LabelText color="blue" large={true}>{data.campaign_traveled}km</LabelText>
-                                        <LabelText color="blue" large={true}>P {this.totalEarnings(data)}</LabelText>
+                                        <LabelText color="blue" large={true}>P {numberWithCommas(getTotalEarnings(data))}</LabelText>
                                     </View>
 
                                     <View
@@ -311,7 +244,7 @@ class MyCampaignPage extends Component {
                                             }}
                                         >
                                             <LabelText>{data.campaignDetails.name}</LabelText>
-                                            <CommonText>{this.timeFormat(data.end_timestamp)}</CommonText>
+                                            <CommonText>{timeStamp(data.end_timestamp).date}</CommonText>
                                         </View>
 
                                         <View
@@ -381,7 +314,7 @@ class MyCampaignPage extends Component {
                                                 alignItems: 'flex-end'
                                             }}
                                         >
-                                            <LabelText color="blue" large={true}>P {this.totalEarnings(data.id)}</LabelText>
+                                            <LabelText color="blue" large={true}>P {numberWithCommas(getTotalEarnings(data.id))}</LabelText>
                                             <CommonText color="white">Total Earnings</CommonText>
                                         </View>
                                     </View>
@@ -407,6 +340,10 @@ class MyCampaignPage extends Component {
     render() {
         return (
             <Page>
+                <NavigationEvents
+                    onDidFocus={this.init}
+                />
+
                 <ScrollView
                     style={styles.homePageScrollView}
                     overScrollMode='never'
@@ -584,7 +521,8 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
     campaignSelected: (id) => dispatch(CampaignAction.mylistSelected(id)),
-    favoriteCampaign: (id) => dispatch(CampaignAction.favorite(id))
+    favoriteCampaign: (id) => dispatch(CampaignAction.favorite(id)),
+    dispatchTrip: () => dispatch(CampaignAction.startTrip())
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(MyCampaignPage);

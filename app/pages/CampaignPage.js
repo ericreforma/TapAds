@@ -24,7 +24,7 @@ import { VEHICLE } from '../config/variables';
 import theme from '../styles/theme.style';
 import styles from '../styles/page.Home.style';
 import { CampaignAction } from '../redux/actions/campaign.action';
-import { numberWithCommas } from '../config/functions';
+import { numberWithCommas, getDate } from '../config/functions';
 
 class CampaignPage extends Component {
 	constructor(props) {
@@ -119,7 +119,7 @@ class CampaignPage extends Component {
 
 										<View style={styles.homePageAlignRight}>
 											<View style={{flexDirection: 'row'}}>
-												<LabelText>{this.props.campaign.slots_used}</LabelText>
+												<LabelText>{this.props.campaign.slots - this.props.campaign.slots_used}</LabelText>
 												<Text style={styles.homePageOfTextBlack}>of</Text>
 												<LabelText>{this.props.campaign.slots}</LabelText>
 											</View>
@@ -133,47 +133,31 @@ class CampaignPage extends Component {
 											marginVertical: 10
 										}}
 									>
-										<View
-											style={{
-												marginVertical: 10,
-												paddingVertical: 15,
-												flexDirection: 'row',
-												justifyContent: 'center',
-												alignItems: 'center',
-												backgroundColor: theme.COLOR_WHITE,
-												borderRadius: theme.PAGE_CARD_RADIUS,
-												elevation: 3
-											}}
-										>
-											<CommonText>Additional</CommonText>
-											<View style={{width: 5}}></View>
-											<LabelText>P{numberWithCommas(this.props.campaign.pay_additional)}</LabelText>
-											<View style={{width: 5}}></View>
-											<CommonText>every</CommonText>
-											<View style={{width: 5}}></View>
-											<LabelText>{this.props.campaign.pay_additional_km}km</LabelText>
-										</View>
+										<InformationCard
+											info={[
+												{name: 'common', text: 'From'},
+												{name: 'label', text: getDate(this.props.campaign.duration_from)},
+												{name: 'common', text: 'to'},
+												{name: 'label', text: getDate(this.props.campaign.duration_to)},
+											]}
+										/>
 
-										<View
-											style={{
-												marginVertical: 10,
-												paddingVertical: 15,
-												flexDirection: 'row',
-												justifyContent: 'center',
-												alignItems: 'center',
-												backgroundColor: theme.COLOR_WHITE,
-												borderRadius: theme.PAGE_CARD_RADIUS,
-												elevation: 3
-											}}
-										>
-											<CommonText>Basic Pay</CommonText>
-											<View style={{width: 5}}></View>
-											<LabelText>P{numberWithCommas(this.props.campaign.pay_basic)}</LabelText>
-											<View style={{width: 5}}></View>
-											<CommonText>for</CommonText>
-											<View style={{width: 5}}></View>
-											<LabelText>{this.props.campaign.pay_basic_km}km</LabelText>
-										</View>
+										<InformationCard
+											info={[
+												{name: 'common', text: 'Earn up to'},
+												{name: 'label', text: `P${numberWithCommas(this.props.campaign.pay_basic)}`},
+												{name: 'common', text: 'for'},
+												{name: 'label', text: `${this.props.campaign.pay_basic_km}km`},
+											]}
+										/>
+
+										<InformationCard
+											info={[
+												{name: 'common', text: 'Bonus'},
+												{name: 'label', text: `P${numberWithCommas(this.props.campaign.completion_bonus)}`},
+												{name: 'common', text: 'for campaign completion'},
+											]}
+										/>
 									</View>
 
 									<View
@@ -229,3 +213,43 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(CampaignPage);
+
+class InformationCard extends Component {
+	render() {
+		return (
+			<View
+				style={{
+					marginVertical: 10,
+					paddingVertical: 15,
+					flexDirection: 'row',
+					justifyContent: 'center',
+					alignItems: 'center',
+					backgroundColor: theme.COLOR_WHITE,
+					borderRadius: theme.PAGE_CARD_RADIUS,
+					elevation: 3
+				}}
+			>
+				{this.props.info.map((i, index) =>
+					<View
+						key={index}
+						style={{
+							flexDirection: 'row',
+							justifyContent: 'center',
+							alignItems: 'center',
+						}}
+					>
+						{i.name === 'common' ? (
+							<CommonText>{i.text}</CommonText>
+						) : (
+							<LabelText>{i.text}</LabelText>
+						)}
+
+						{index !== (this.props.info.length - 1) ? (
+							<View style={{width: 5}}></View>
+						) : null}
+					</View>
+				)}
+			</View>
+		);
+	}
+}

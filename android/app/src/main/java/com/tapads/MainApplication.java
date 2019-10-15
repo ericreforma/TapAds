@@ -3,6 +3,8 @@ package com.tapads;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
+import com.pilloxa.backgroundjob.BackgroundJobPackage;
 import com.reactnativecommunity.webview.RNCWebViewPackage;
 import com.zmxv.RNSound.RNSoundPackage;
 import com.devfd.RNGeocoder.RNGeocoderPackage;
@@ -31,6 +33,8 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new ReactNativePushNotificationPackage(),
+            new BackgroundJobPackage(),
             new RNCWebViewPackage(),
             new RNSoundPackage(),
             new RNGeocoderPackage(),

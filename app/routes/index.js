@@ -27,11 +27,14 @@ import {
 	RecommendedPage,
 	ForgotPasswordPage
 } from '../pages';
-
-import { YellowBox } from 'react-native';
-YellowBox.ignoreWarnings(['Warning: componentWillReceiveProps']);
+import BackgroundTaskTest from '../pages/BackgroundTaskTest';
 
 export default class Route extends Component {
+	constructor(props) {
+		super(props);
+    console.disableYellowBox = true;
+	}
+
 	render() {
 		return (
 			<AppContainer
@@ -69,6 +72,7 @@ const AppStack = createStackNavigator({
 		StartCampaign: StartCampaignPage,
 		Dashboard: DashboardPage,
 		Recommended: RecommendedPage,
+		// BackgroundTaskTest: BackgroundTaskTest,
 	}, {
 		headerMode: 'none',
 		navigationOptions: {

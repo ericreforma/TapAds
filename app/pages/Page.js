@@ -70,8 +70,8 @@ class Page extends Component {
 		if(page === 'logout') {
 			AuthController.logout()
 			.then(() => {
-				this.props.resetPropsValues();
 			  NavigationService.navigate('Loading');
+				this.props.resetPropsValues();
 			})
 			.catch((e) => {
 				console.log("error");

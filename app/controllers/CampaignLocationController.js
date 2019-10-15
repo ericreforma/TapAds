@@ -5,7 +5,7 @@ export const CampaignLocationController = {
   getLocation: (id, callbackSuccess, callbackFailed) => {
     const loc = CampaignLocationSchema.get(id);
     const locations = [];
-    const allID = id;
+    const allID = id.map(location_id => location_id);
     for(const l of loc) {
       const res = {
         id: l.table_id,
