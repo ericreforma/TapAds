@@ -233,8 +233,10 @@ class InputCodeModal extends Component {
     const { code } = this.state;
     AuthController.forgotPassword.verify(code)
     .then(res => {
+      console.log(code);
       this.toggleSubmitLoader();
       this.props.storeUserData(res.data);
+      console.log(res.data);
     })
     .catch(error => {
       this.toggleSubmitLoader();
