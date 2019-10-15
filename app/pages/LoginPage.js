@@ -27,7 +27,7 @@ class LogInPage extends Component {
 			firstSubmit: false,
 			yPosition: 0
 		};
-
+		
 		this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow);
 	}
 
@@ -47,9 +47,19 @@ class LogInPage extends Component {
 		this.passwordRef = ref;
 	}
 
+	emailRefFunction = (ref) => {
+		this.emailRef = ref;
+	}
+
 	loginSubmit = () => {
 		this.setState({firstSubmit: true});
 		this.props.loginPressed(this.state.email, this.state.password);
+	}
+
+	emailSelectionTextInput = (selection) => () => {
+		const start = selection;
+		const end = selection;
+		this.emailRef.setNativeProps({ text: this.state.email, selection:{start, end} });
 	}
 
 	render() {
@@ -94,10 +104,14 @@ class LogInPage extends Component {
 							style={styles.loginCredentialsView}
 						>
 							<Input
+								loginPage
 								type="email"
 								onSubmitEditing={() => {
 									this.passwordRef.focus();
 								}}
+								onFocus={this.emailSelectionTextInput(this.state.email.length)}
+								onBlur={this.emailSelectionTextInput(0)}
+								emailRefFunction={this.emailRefFunction}
 								returnKeyType="next"
 								onChangeText={(email) => this.setState({ email })}
 							/>

@@ -7,6 +7,8 @@ export default class Input extends Component {
     componentDidMount = () => {
         if(this.props.type === 'password' && this.props.loginPage) {
             this.props.passwordRefFunction(this.textInputRef);
+        } else if(this.props.type === 'email' && this.props.loginPage) {
+            this.props.emailRefFunction(this.textInputRef);
         }
     }
 
@@ -51,6 +53,8 @@ export default class Input extends Component {
                         onChangeText={this.props.onChangeText}
                         onSubmitEditing={this.props.onSubmitEditing}
                         returnKeyType={this.props.returnKeyType}
+                        onBlur={this.props.onBlur}
+                        onFocus={this.props.onFocus}
                     />
                 </View>
             </View>
