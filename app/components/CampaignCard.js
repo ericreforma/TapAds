@@ -60,7 +60,7 @@ export const CampaignCardList = ({ campaigns, isRequesting, viewDetails }) => {
                             Location
                         </Text>
 
-                        <Text style={styles.homePageCampaignCardInfoValue} numberOfLines={2}>
+                        <Text style={styles.homePageCampaignCardInfoValue} numberOfLines={1}>
                             {campaign.location}
                         </Text>
                     </View>
@@ -149,7 +149,7 @@ export const CampaignCardRec = ({ campaigns, viewDetails }) => {
               <CardBody>
                   <View style={styles.homePageRecommendedCampaignBody} >
                       <View style={styles.homePageRecommendedCampaignFirstCol} >
-                          <LabelText numberOfLines={2}>{data.item.location}</LabelText>
+                          <LabelText numberOfLines={1}>{data.item.location}</LabelText>
                           <CommonText>Location</CommonText>
                       </View>
 
