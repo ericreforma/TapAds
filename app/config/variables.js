@@ -1,7 +1,7 @@
 import { TokenSchema } from '../database';
 
-const SERVER_MAIN = 'http://192.168.0.100/TapAdsServer/public';
-// const SERVER_MAIN = 'http://dev.bcdpinpoint.com/TapAdsServer/public';
+// const SERVER_MAIN = 'http://192.168.0.100/TapAdsServer/public';
+const SERVER_MAIN = 'http://dev.bcdpinpoint.com/TapAdsServer/public';
 const SOCKET_SERVER_MAIN = 'http://192.168.0.100';
 const SOCKET_SERVER_PORT = '3000';
 const SOCKET_SERVER = `${SOCKET_SERVER_MAIN}:${SOCKET_SERVER_PORT}`;
