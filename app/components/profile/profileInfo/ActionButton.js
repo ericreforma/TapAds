@@ -180,7 +180,7 @@ class ChangePassword extends Component {
                         this.loadersToggle(false);
                         this.failedFlashMessage(
                             'Wrong password',
-                            'Your fill in a wrong password.\nPlease insert a correct one. Thank you!',
+                            'You fill in a wrong password.\nPlease insert a correct one. Thank you!',
                         );
                     }
                 })
@@ -307,7 +307,7 @@ class DeleteAccount extends Component {
                 } else {
                     this.failedFlashMessage(
                         'Wrong password',
-                        'Your fill in a wrong password.\nPlease insert a correct one. Thank you!',
+                        'Please enter your current password. Thank you!',
                     );
                 }
             })
@@ -345,7 +345,9 @@ class DeleteAccount extends Component {
                     }}
                 >
                     <CommonText color="white">
-                        Are you sure you want to delete your account? Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque luctus eros nec sapien ornare, quis imperdiet felis dignissim. Praesent in.
+                        {'Are you sure you want to delete your account?\n'+
+                        'This will immediately log you out of this account'+
+                        'and you will not be able to log in again'}
                     </CommonText>
                 </View>
                 

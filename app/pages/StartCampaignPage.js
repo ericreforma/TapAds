@@ -577,7 +577,7 @@ class StartCampaignPage extends Component {
               {/* campaign area */}
               <RowContent
                 leftColumn={(
-                  <CommonText large>Counting</CommonText>
+                  <CommonText>Counting</CommonText>
                 )}
                 rightColumn={(
                   <View
@@ -614,7 +614,7 @@ class StartCampaignPage extends Component {
               {/* campaign distance */}
               <RowContent
                 leftColumn={(
-                  <CommonText large>Campaign Distance</CommonText>
+                  <CommonText>Campaign Distance</CommonText>
                 )}
                 rightColumn={(
                   <LabelText large>
