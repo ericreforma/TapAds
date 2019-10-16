@@ -16,9 +16,9 @@ import { WebView } from 'react-native-webview';
 import NavigationService from '../services/navigation';
 import theme from '../styles/theme.style';
 import DatePicker from 'react-native-datepicker';
-import { AuthController } from '../controllers';
+import { AuthController, NetworkController } from '../controllers';
 import { AuthAction } from '../redux/actions/auth.action';
-import { URL } from '../config/variables';
+import { URL, IMAGES } from '../config/variables';
 
 // modals for terms and condition
 import TermsAndCondition from '../components/Modal/signup/TermsAndCondition';
@@ -76,6 +76,9 @@ class SignUpPage extends Component {
             modalUri: '',
 
             loader: false,
+
+            //terms of use
+            privacyPolicyCheckbox: false
         };
     }
 
@@ -93,21 +96,35 @@ class SignUpPage extends Component {
             userData[i.dataName] = this.state[i.dataName];
         });
 
-        AuthController.register(JSON.stringify(userData))
-        .then((e) => {
-            this.props.login(userData.email, userData.password);
-        })
-        .catch((error) => {
-            this.setState({loader: false});
-            const errArr = error.response.data;
-            let msg = '';
-
-            errArr.map((item, i) => {
-                msg += errArr[i] + '\n';
+        if(this.state.privacyPolicyCheckbox) {
+            NetworkController.checkPing()
+            .then(() => {
+                AuthController.register(JSON.stringify(userData))
+                .then((e) => {
+                    this.props.login(userData.email, userData.password);
+                })
+                .catch((error) => {
+                    this.setState({loader: false});
+                    const errArr = error.response.data;
+                    
+                    let msg = '';
+    
+                    errArr.map((item, i) => {
+                        msg += errArr[i] + '\n';
+                    });
+    
+                    Alert.alert('Error',`Please check the following fields:\n${msg}`);
+                });
+            })
+            .catch(error => {
+                this.setState({loader: false});
+                console.log(error);
+                Alert.alert('Sign Up Failed',error.message);
             });
-
-            Alert.alert('Error',`Please check the following fields:\n${msg}`);
-        });
+        } else {
+            this.setState({loader: false});
+            Alert.alert('Error', 'You must accept the Terms of Use and Privacy Policy to proceed');
+        }
     }
 
     termsAndConditionButtonOnPress = (type, modalUri) => () => {
@@ -238,33 +255,58 @@ class SignUpPage extends Component {
 
                         <View
                             style={{
-                                justifyContent: 'center',
+                                marginBottom: 20,
+                                marginTop: 40,
+                                flexDirection: 'row',
                                 alignItems: 'center',
-                                marginVertical: 20
+                                justifyContent: 'center'
                             }}
                         >
+                            <TouchableOpacity
+                                activeOpacity={0.9}
+                                style={{
+                                    height: 25,
+                                    width: 25,
+                                    borderRadius: 5,
+                                    borderColor: "#a7a7a7",
+                                    borderWidth: 1,
+                                    elevation: 2,
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    backgroundColor: theme.COLOR_WHITE
+                                }}
+                                onPress={() => this.setState({privacyPolicyCheckbox: !this.state.privacyPolicyCheckbox})}
+                            >
+                                {this.state.privacyPolicyCheckbox ? (
+                                    <Image
+                                        style={{
+                                            height: 10,
+                                            width: 10
+                                        }}
+                                        source={IMAGES.ICONS.check_blue}
+                                        resizeMode="cover"
+                                    />
+                                ) : null}
+                            </TouchableOpacity>
+
                             <View
                                 style={{
-                                    marginBottom: 20
+                                    paddingLeft: 15
                                 }}
                             >
-                                <Text
-                                    style={{
-                                        fontSize: theme.FONT_SIZE_SMALL,
-                                        color: theme.COLOR_NORMAL_FONT,
-                                        fontFamily: 'Montserrat-Light'
-                                    }}
-                                >
-                                    By creating an account, you agree to the
-                                </Text>
-
                                 <View
                                     style={{
-                                        flexDirection: 'row',
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
+                                        flexDirection: 'row'
                                     }}
                                 >
+                                    <Text
+                                        style={{
+                                            fontSize: theme.FONT_SIZE_SMALL,
+                                            color: theme.COLOR_NORMAL_FONT,
+                                            fontFamily: 'Montserrat-Light'
+                                        }}
+                                    >I agree to the </Text>
+
                                     <TouchableOpacity
                                         style={{
                                             borderBottomColor: theme.COLOR_NORMAL_FONT + '70',
@@ -282,14 +324,20 @@ class SignUpPage extends Component {
                                             Terms of Use
                                         </Text>
                                     </TouchableOpacity>
+                                </View>
 
+                                <View
+                                    style={{
+                                        flexDirection: 'row',
+                                    }}
+                                >
                                     <Text
                                         style={{
                                             fontSize: theme.FONT_SIZE_SMALL,
                                             color: theme.COLOR_NORMAL_FONT,
                                             fontFamily: 'Montserrat-Light'
                                         }}
-                                    > and </Text>
+                                    >and </Text>
 
                                     <TouchableOpacity
                                         style={{
@@ -310,7 +358,15 @@ class SignUpPage extends Component {
                                     </TouchableOpacity>
                                 </View>
                             </View>
+                        </View>
 
+                        <View
+                            style={{
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                marginBottom: 20
+                            }}
+                        >
                             <TouchableOpacity
                                 style={{
                                     backgroundColor: theme.COLOR_BLUE,

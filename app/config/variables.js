@@ -1,7 +1,7 @@
 import { TokenSchema } from '../database';
 
-const SERVER_MAIN = 'http://192.168.0.100/TapAdsServer/public';
-// const SERVER_MAIN = 'http://dev.bcdpinpoint.com/TapAdsServer/public';
+// const SERVER_MAIN = 'http://192.168.0.100/TapAdsServer/public';
+const SERVER_MAIN = 'http://dev.bcdpinpoint.com/TapAdsServer/public';
 const SOCKET_SERVER_MAIN = 'http://192.168.0.100';
 const SOCKET_SERVER_PORT = '3000';
 const SOCKET_SERVER = `${SOCKET_SERVER_MAIN}:${SOCKET_SERVER_PORT}`;
@@ -115,7 +115,8 @@ export const IMAGES = {
     payment_icon: require('../assets/image/icons/payment_icon.png'),
     payment_white_icon: require('../assets/image/icons/payment_white_icon.png'),
     bag_of_cash_icon: require('../assets/image/icons/bag_cash_icon.png'),
-    back_icon: require('../assets/image/icons/back_arrow_left_icon.png')
+    back_icon: require('../assets/image/icons/back_arrow_left_icon.png'),
+    check_blue: require('../assets/image/icons/login_verify_icon_blue.png')
   }
 };
 

@@ -32,7 +32,7 @@ class LoadingPage extends Component {
         });
       })
       .catch((error) => {
-          NavigationService.navigate('Login');
+          NavigationService.navigate('SignUp');
           console.log(error);
       });
   }

@@ -4,3 +4,4 @@ export * from './CampaignController';
 export * from './CampaignLocationController';
 export * from './MapController';
 export * from './ChatController';
+export * from './NetworkController';
