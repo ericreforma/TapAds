@@ -220,7 +220,7 @@ export default class Withdraws extends Component {
 													}}
 												>
 													<CommonText>Earnings</CommonText>
-													<LabelText small>{numberWithCommas(getTotalEarnings(c))}</LabelText>
+													<LabelText small>₱{numberWithCommas(getTotalEarnings(c))}</LabelText>
 												</View>
 
 												<View
@@ -231,7 +231,7 @@ export default class Withdraws extends Component {
 													}}
 												>
 													<CommonText>Withdrawn</CommonText>
-													<LabelText small>{numberWithCommas(getTotalWithdrawals(c))}</LabelText>
+													<LabelText small>₱{numberWithCommas(getTotalWithdrawals(c))}</LabelText>
 												</View>
 												
 												<View
@@ -242,7 +242,7 @@ export default class Withdraws extends Component {
 													}}
 												>
 													<CommonText>Pending</CommonText>
-													<LabelText small>{this.checkPendingAmount(c)}</LabelText>
+													<LabelText small>₱{this.checkPendingAmount(c)}</LabelText>
 												</View>
 
 												<View
@@ -263,7 +263,7 @@ export default class Withdraws extends Component {
 													}}
 												>
 													<CommonText>Remaining</CommonText>
-													<LabelText color="blue">{this.getRemaning(c)}</LabelText>
+													<LabelText color="blue">₱{this.getRemaning(c)}</LabelText>
 												</View>
 											</View>
 											
@@ -304,7 +304,7 @@ export default class Withdraws extends Component {
 													}}
 												>
 													<LabelText color="blue">PENDING PAYMENT</LabelText>
-													<LabelText>{this.checkPendingAmount(c)}</LabelText>
+													<LabelText>₱{this.checkPendingAmount(c)}</LabelText>
 												</View>
 											</View>
 										

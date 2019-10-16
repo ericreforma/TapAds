@@ -459,7 +459,7 @@ class ProfilePage extends Component {
 														fontFamily: 'Montserrat-Bold'
 													}}
 												>
-													P{numberWithCommas(this.state.totalEarnings)}
+													₱{numberWithCommas(this.state.totalEarnings)}
 												</Text>
 											</View>
 
