@@ -15,7 +15,7 @@ import { LabelText } from '../components/Text';
 import Page from '../pages/Page';
 import UserInfo from '../components/UserInfo';
 import { USER } from '../redux/actions/types.action';
-import { UserController } from '../controllers/UserController';
+import { UserController } from '../controllers';
 
 import theme from '../styles/theme.style';
 import styles from '../styles/page.Home.style';
@@ -25,6 +25,7 @@ import PersonalDetails from '../components/profile/profileInfo/PersonalDetails';
 import DriverLicense from '../components/profile/profileInfo/DriverLicense';
 import OwnedCars from '../components/profile/profileInfo/OwnedCars';
 import ActionButton from '../components/profile/profileInfo/ActionButton';
+import CheckPasswordModal from '../components/Modal/CheckPasswordModal'; 
 
 class ProfileInfoPage extends Component {
     constructor(props) {
@@ -88,6 +89,9 @@ class ProfileInfoPage extends Component {
                 driverLicense: false
             },
             logout: false,
+
+						checkPasswordModalVisible: false,
+						checkPasswordModalType: ''
         };
     }
     
@@ -114,7 +118,7 @@ class ProfileInfoPage extends Component {
             carsOwned = vehicles.map(v => {
                 var {vehicle} = v,
                     vehicleType = Object.values(VEHICLE.TYPE)[v.type];
-                console.log(vehicleType);
+                    
                 return {
                     model: vehicle.model,
                     carYear: vehicle.year,
@@ -130,8 +134,14 @@ class ProfileInfoPage extends Component {
     }
 
     updateUploadPhoto = (name) => () => {
-        ImagePicker.launchImageLibrary({
-            // options
+        ImagePicker.showImagePicker({
+            title: name === 'image_url' ? 'Upload Display Photo' : 'Upload License Photo',
+            chooseFromLibraryButtonTitle: 'Open gallery',
+            takePhotoButtonTitle: 'Take a photo',
+            storageOptions: {
+                skipBackup: true,
+                path: 'images',
+            },
         }, response => {
             if (response.didCancel) {
                 console.log('User cancelled image picker');
@@ -299,18 +309,28 @@ class ProfileInfoPage extends Component {
     }
 
     editPersonalDetails = () => {
-        Animated.timing(this.state.personalDetailsXPos, {
-            toValue: -this.state.secondViewXPos,
-            duration: 300
-        }).start();
+			this.setState({checkPasswordModalType: 'editPersonalDetailsProceed'});
+			this.checkPasswordModalToggle();
+    }
 
-        this.editModeToggle();
+    checkPasswordModalToggle = () => {
+			this.setState({checkPasswordModalVisible: !this.state.checkPasswordModalVisible});
+    }
+
+    editPersonalDetailsProceed = () => {
+			this.checkPasswordModalToggle();
+			Animated.timing(this.state.personalDetailsXPos, {
+				toValue: -this.state.secondViewXPos,
+				duration: 300
+			}).start();
+
+			this.editModeToggle();
     }
 
     loadersToggle = (cardName) => {
-        var {loaders} = this.state;
-        loaders[cardName] = !loaders[cardName];
-        this.setState({loaders});
+			var {loaders} = this.state;
+			loaders[cardName] = !loaders[cardName];
+			this.setState({loaders});
     }
 
     editModeToggle = () => {
@@ -375,43 +395,49 @@ class ProfileInfoPage extends Component {
 
 	render() {
 		return (
-            <Page logout={this.state.logout}>
-                <NavigationEvents onWillFocus={this.getUserInfo} />
+			<Page logout={this.state.logout}>
+				<NavigationEvents onWillFocus={this.getUserInfo} />
 
-                <ScrollView
-                    style={styles.homePageScrollView}
-                    overScrollMode='never'
-                    showsVerticalScrollIndicator={false}
-                >
-                    <UserInfo />
+				<CheckPasswordModal
+					isVisible={this.state.checkPasswordModalVisible}
+					close={this.checkPasswordModalToggle}
+					proceed={this[this.state.checkPasswordModalType]}
+				/>
 
-                    <View
-                        style={{
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            marginVertical: 15, 
-                        }}
-                    >
-                        <LabelText color="white">Profile</LabelText>
-                    </View>
+				<ScrollView
+						style={styles.homePageScrollView}
+						overScrollMode='never'
+						showsVerticalScrollIndicator={false}
+				>
+						<UserInfo />
 
-                    <View
-                        style={{
-                            marginBottom: 20,
-                            marginHorizontal: theme.PAGE_PADDING_HORIZONTAL
-                        }}
-                    >
-                        <PersonalDetails {...this} />
-                        <DriverLicense {...this} />
-                        <OwnedCars {...this} />
-                        <ActionButton {...this} />
-                    </View>
-                </ScrollView>
+						<View
+								style={{
+										justifyContent: 'center',
+										alignItems: 'center',
+										marginVertical: 15, 
+								}}
+						>
+								<LabelText color="white">Profile</LabelText>
+						</View>
+
+						<View
+								style={{
+										marginBottom: 20,
+										marginHorizontal: theme.PAGE_PADDING_HORIZONTAL
+								}}
+						>
+								<PersonalDetails {...this} />
+								<DriverLicense {...this} />
+								<OwnedCars {...this} />
+								<ActionButton {...this} />
+						</View>
+				</ScrollView>
 
 				<DropdownAlert ref={ref => this.dropDownMainAlertRef = ref} />
-            </Page>
-        );
-    }
+			</Page>
+		);
+	}
 }
 const mapStateToProps = (state) => ({
 	user: state.userReducer.user

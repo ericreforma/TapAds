@@ -10,7 +10,6 @@ import {
 	ActivityIndicator
 } from 'react-native';
 import { NavigationEvents } from 'react-navigation';
-import DropdownAlert from 'react-native-dropdownalert';
 
 import styles from '../styles/page.Home.style';
 import theme from '../styles/theme.style';
@@ -65,7 +64,7 @@ class HomePage extends Component {
 			<Page>
 				<NavigationEvents
 					onWillFocus={this.init}
-					// onDidFocus={() => NavigationService.navigate('Addvehicle')}
+					// onDidFocus={() => NavigationService.navigate('ProfileInfo')}
 				/>
 
 				<ScrollView
@@ -76,6 +75,26 @@ class HomePage extends Component {
 					<UserInfo />
 
 					<View style={styles.homePageContainer} >
+						{/* active campaign */}
+						<View style={styles.homePageActiveCampaignContainer}>
+							{/* label text */}
+							<View style={styles.homePageActiveCampaignLabel}>
+								<LabelText color="white">Active Campaigns</LabelText>
+								<TouchableOpacity
+									onPress={() => NavigationService.navigate('MyCampaign')}
+								>
+									<Text style={styles.homePageViewAll}>
+										View All
+									</Text>
+								</TouchableOpacity>
+							</View>
+
+							{/* content */}
+							<View style={styles.homePageContentPadding}>
+								<CampaignActiveContainer />
+							</View>
+						</View>
+
 						{/* recommended for you section */}
 						<View
 							style={[
@@ -99,26 +118,6 @@ class HomePage extends Component {
 							{/* content */}
 							<View style={styles.homePageContentPadding}>
 								<CampaignRecContainer />
-							</View>
-						</View>
-
-						{/* active campaign */}
-						<View style={styles.homePageActiveCampaignContainer}>
-							{/* label text */}
-							<View style={styles.homePageActiveCampaignLabel}>
-								<LabelText color="white">Active Campaigns</LabelText>
-								<TouchableOpacity
-									onPress={() => NavigationService.navigate('MyCampaign')}
-								>
-									<Text style={styles.homePageViewAll}>
-										View All
-									</Text>
-								</TouchableOpacity>
-							</View>
-
-							{/* content */}
-							<View style={styles.homePageContentPadding}>
-								<CampaignActiveContainer />
 							</View>
 						</View>
 
@@ -189,8 +188,6 @@ class HomePage extends Component {
 						</View>
 					</View>
 				</ScrollView>
-							
-				<DropdownAlert ref={ref => this.dropDownHomeAlertRef = ref} />
 			</Page>
 		);
 	}

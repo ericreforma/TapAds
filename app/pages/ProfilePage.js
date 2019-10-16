@@ -108,6 +108,7 @@ class ProfilePage extends Component {
 					carSize: v.vehicle.classification,
 					model: v.vehicle.model,
 					year: v.vehicle.year,
+					manufacturer: v.vehicle.manufacturer,
 					vehicleImages: v.photo.map(vp => {
 						return {uri: `${URL.SERVER_MEDIA}/${vp.url}`}
 					})
@@ -804,6 +805,29 @@ class ProfilePage extends Component {
 											<CardColumnContentBody>
 												<View
 													style={{
+														alignItems: 'flex-end'
+													}}
+												>
+													<Text
+														style={{
+															fontSize: 12,
+															fontFamily: 'Montserrat-Bold',
+															color: theme.COLOR_NORMAL_FONT,
+														}}
+														numberOfLines={1}
+													>{vehicle.manufacturer}</Text>
+												</View>
+
+												<View
+													style={{
+														marginVertical: 7,
+														backgroundColor: theme.COLOR_LIGHT_BLUE,
+														height: 2
+													}}
+												></View>
+
+												<View
+													style={{
 														flexDirection: 'row',
 														justifyContent: 'flex-start',
 														alignItems: 'flex-start'
@@ -821,13 +845,14 @@ class ProfilePage extends Component {
 														</Text>
 													</View>
 
-													<View style={{flex: 1, alignSelf: 'flex-end'}}>
+													<View style={{flex: 1, alignItems: 'flex-end'}}>
 														<Text
 															style={{
 																fontSize: 12,
 																fontFamily: 'Montserrat-Bold',
 																color: theme.COLOR_NORMAL_FONT,
 															}}
+															numberOfLines={1}
 														>
 															{vehicle.model}
 														</Text>
@@ -837,9 +862,7 @@ class ProfilePage extends Component {
 												<View
 													style={{
 														flexDirection: 'row',
-														justifyContent: 'flex-start',
-														alignItems: 'center',
-														marginTop: 5
+														alignItems: 'center'
 													}}
 												>
 													<View style={{width: 50}}>
@@ -849,12 +872,13 @@ class ProfilePage extends Component {
 																fontFamily: 'Montserrat-Regular',
 																color: theme.COLOR_NORMAL_FONT
 															}}
+															numberOfLines={1}
 														>
 															Year
 														</Text>
 													</View>
 
-													<View style={{flex: 1, alignSelf: 'flex-end'}}>
+													<View style={{flex: 1, alignItems: 'flex-end'}}>
 														<Text
 															style={{
 																fontSize: 12,

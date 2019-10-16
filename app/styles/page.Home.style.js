@@ -151,12 +151,15 @@ export default StyleSheet.create({
         alignSelf: 'center'
     },
     homePageActiveCampaignContainer: {
-        marginVertical: 20,
+        marginBottom: 20,
+        paddingTop: 20,
+        paddingBottom: 10,
+        backgroundColor: theme.COLOR_BLACK + '50'
     },
     homePageActiveCampaignLabel: {
         paddingHorizontal: theme.PAGE_PADDING_HORIZONTAL + 10,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center'
-    }
+    },
 });

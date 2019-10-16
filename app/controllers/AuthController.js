@@ -12,6 +12,8 @@ export const AuthController = {
     RawHttpRequest.post('/user/register', {
       userData,
     }),
+  
+  checkPassword: (args = {}) => HttpRequest.post('/user/password/verify', args),
 
   forgotPassword: {
     create: (args = {}) => RawHttpRequest.post('/user/password/create', args),
