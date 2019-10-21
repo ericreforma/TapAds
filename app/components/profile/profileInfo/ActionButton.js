@@ -347,7 +347,7 @@ class DeleteAccount extends Component {
                 >
                     <CommonText color="white">
                         {'Are you sure you want to delete your account?\n'+
-                        'This will immediately log you out of this account'+
+                        'This will immediately log you out of this account '+
                         'and you will not be able to log in again'}
                     </CommonText>
                 </View>
