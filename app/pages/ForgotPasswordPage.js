@@ -276,7 +276,7 @@ class InputCodeModal extends Component {
 			<Modal
 				animationType="fade"
 				transparent={true}
-				visible={this.props.modalVisible}
+        visible={this.props.modalVisible}
 			>
         <View
           style={{

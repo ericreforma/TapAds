@@ -129,6 +129,7 @@ export default class Withdraws extends Component {
 				animationType="fade"
 				transparent={true}
 				visible={this.props.modalVisible}
+				onRequestClose={this.props.modalToggle}
 			>
 				<View
 					style={{
@@ -220,7 +221,7 @@ export default class Withdraws extends Component {
 													}}
 												>
 													<CommonText>Earnings</CommonText>
-													<LabelText small>₱{numberWithCommas(getTotalEarnings(c))}</LabelText>
+													<LabelText small>P{numberWithCommas(getTotalEarnings(c))}</LabelText>
 												</View>
 
 												<View
@@ -231,7 +232,7 @@ export default class Withdraws extends Component {
 													}}
 												>
 													<CommonText>Withdrawn</CommonText>
-													<LabelText small>₱{numberWithCommas(getTotalWithdrawals(c))}</LabelText>
+													<LabelText small>P{numberWithCommas(getTotalWithdrawals(c))}</LabelText>
 												</View>
 												
 												<View
@@ -242,7 +243,7 @@ export default class Withdraws extends Component {
 													}}
 												>
 													<CommonText>Pending</CommonText>
-													<LabelText small>₱{this.checkPendingAmount(c)}</LabelText>
+													<LabelText small>P{this.checkPendingAmount(c)}</LabelText>
 												</View>
 
 												<View
@@ -263,7 +264,7 @@ export default class Withdraws extends Component {
 													}}
 												>
 													<CommonText>Remaining</CommonText>
-													<LabelText color="blue">₱{this.getRemaning(c)}</LabelText>
+													<LabelText color="blue">P{this.getRemaning(c)}</LabelText>
 												</View>
 											</View>
 											
@@ -304,7 +305,7 @@ export default class Withdraws extends Component {
 													}}
 												>
 													<LabelText color="blue">PENDING PAYMENT</LabelText>
-													<LabelText>₱{this.checkPendingAmount(c)}</LabelText>
+													<LabelText>P{this.checkPendingAmount(c)}</LabelText>
 												</View>
 											</View>
 										

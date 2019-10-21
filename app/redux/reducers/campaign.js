@@ -131,6 +131,12 @@ export function campaignReducer(state = initialState, action) {
         campaign_loc_isRequesting: false
       });
 
+    case CAMPAIGN.VEHICLE_MONTHLY_UPDATE:
+      return Object.assign({}, state, {
+        mylist: action.mylist,
+        mylist_selected: action.mylist_selected
+      });
+
     default:
       return state;
   }

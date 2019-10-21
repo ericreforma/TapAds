@@ -108,15 +108,24 @@ export const MAP = {
 export const IMAGES = {
   ICONS: {
     close_red: require('../assets/image/icons/close_icon.png'),
+    close_white: require('../assets/image/icons/close_icon_white.png'),
     add: require('../assets/image/icons/add_icon.png'),
     car_icon: require('../assets/image/car_blue_marker.png'),
     end_trip_icon: require('../assets/image/icons/car_end_trip.png'),
+    send_icon: require('../assets/image/icons/send_icon.png'),
     peso_sign_icon: require('../assets/image/icons/peso_sign.png'),
     payment_icon: require('../assets/image/icons/payment_icon.png'),
     payment_white_icon: require('../assets/image/icons/payment_white_icon.png'),
     bag_of_cash_icon: require('../assets/image/icons/bag_cash_icon.png'),
     back_icon: require('../assets/image/icons/back_arrow_left_icon.png'),
-    check_blue: require('../assets/image/icons/login_verify_icon_blue.png')
+    back_icon_white: require('../assets/image/icons/back_arrow_left_white_icon.png'),
+    check_blue: require('../assets/image/icons/login_verify_icon_blue.png'),
+    flash_icon: {
+      on: require('../assets/image/icons/flash_on_icon.png'),
+      auto: require('../assets/image/icons/flash_auto_icon.png'),
+      off: require('../assets/image/icons/flash_off_icon.png'),
+    },
+    cameraRotate: require('../assets/image/icons/image_rotate_icon.png'),
   }
 };
 

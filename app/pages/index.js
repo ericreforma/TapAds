@@ -16,6 +16,7 @@ import AddVehiclePage from './AddVehiclePage';
 import DashboardPage from './DashboardPage';
 import RecommendedPage from './RecommendedPage';
 import ForgotPasswordPage from './ForgotPasswordPage';
+import MonthlyCarPhotoPage from './MonthlyCarPhotoPage';
 
 export {
 	LogInPage,
@@ -35,5 +36,6 @@ export {
 	AddVehiclePage,
 	DashboardPage,
 	RecommendedPage,
-	ForgotPasswordPage
+	ForgotPasswordPage,
+	MonthlyCarPhotoPage
 };

@@ -44,6 +44,7 @@ export default class VehicleFilter extends Component {
 				animationType="fade"
 				transparent={true}
 				visible={this.props.modalVisible}
+				onRequestClose={this.props.modalToggle}
 			>
         <View
           style={{

@@ -25,7 +25,8 @@ import {
 	AddVehiclePage,
 	DashboardPage,
 	RecommendedPage,
-	ForgotPasswordPage
+	ForgotPasswordPage,
+	MonthlyCarPhotoPage
 } from '../pages';
 import BackgroundTaskTest from '../pages/BackgroundTaskTest';
 
@@ -72,6 +73,7 @@ const AppStack = createStackNavigator({
 		StartCampaign: StartCampaignPage,
 		Dashboard: DashboardPage,
 		Recommended: RecommendedPage,
+		MonthlyCarPhoto: MonthlyCarPhotoPage,
 		// BackgroundTaskTest: BackgroundTaskTest,
 	}, {
 		headerMode: 'none',

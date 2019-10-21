@@ -58,6 +58,7 @@ export default class CheckPasswordModal extends Component {
         visible={this.props.isVisible}
         transparent={true}
         animationType="fade"
+        onRequestClose={this.props.close}
       >
         <View
           style={{

@@ -209,6 +209,7 @@ export default class DashboardTrip extends Component {
 							animationType="fade"
 							transparent={true}
 							visible={this.props.modalVisible}
+							onRequestClose={this.closeModal}
 					>
 							<View
 									style={{

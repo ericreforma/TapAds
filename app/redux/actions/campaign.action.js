@@ -47,14 +47,14 @@ export const CampaignAction = {
     dispatch({ type: CAMPAIGN.SELECTED, campaign });
   },
 
-  mylistSelected: id => (dispatch, getState) => {
+  mylistSelected: (id, navigate) => (dispatch, getState) => {
     const state = getState();
     const campaignList = state.campaignReducer.mylist;
     const campaign = campaignList.find(x => x.id === id);
 
     dispatch({ type: CAMPAIGN.MYLIST.SELECTED, campaign });
 
-    NavigationService.navigate('CampaignCardActive');
+    NavigationService.navigate(navigate ? navigate : 'CampaignCardActive');
   },
 
   updateSelected: () => (dispatch, getState) => {
@@ -150,6 +150,37 @@ export const CampaignAction = {
     }, error => {
       console.log(error);
       dispatch({ type: CAMPAIGN.LOCATION.FAILED });
+    });
+  },
+
+  addVehicleMonthlyUpdate: (id, photo) => (dispatch, getState) => {
+    const state = getState();
+    const campaignList = state.campaignReducer.mylist;
+    const campaign = campaignList.find(x => x.campaign_id === id);
+
+    const objectKeys = Object.keys(campaign);
+    const newCampaign = {};
+    for(const k of objectKeys) {
+      var objValue = campaign[k];
+      if(k === 'vehicleMonthlyUpdate') {
+        objValue.unshift(photo);
+      }
+      newCampaign[k] = objValue;
+    }
+    
+    const newCampaignSelected = [];
+    for(const c of campaignList) {
+      if(c.campaign_id === id) {
+        newCampaignSelected.push(newCampaign);
+      } else {
+        newCampaignSelected.push(c);
+      }
+    }
+
+    dispatch({
+      type: CAMPAIGN.VEHICLE_MONTHLY_UPDATE,
+      mylist: newCampaignSelected,
+      mylist_selected: newCampaign
     });
   }
 };

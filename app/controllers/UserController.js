@@ -14,7 +14,8 @@ export const UserController = {
       photo: (args = {}) => HttpRequest.post('/user/update/photo', args),
       license: (args = {}) => HttpRequest.post('/user/update/license', args),
       password: (args = {}) => HttpRequest.post('/user/update/password', args),
-      bankDetails: (args = {}) => HttpRequest.post('/user/update/bank', args)
+      bankDetails: (args = {}) => HttpRequest.post('/user/update/bank', args),
+      carMonthlyUpdate: (args = {}) => HttpRequest.post('/user/update/cars/monthly', args),
     },
     create: {
       vehicle: (args = {}) => HttpRequest.post('/user/create/vehicle', args),

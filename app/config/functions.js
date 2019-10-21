@@ -128,3 +128,95 @@ export const checkPendingPayment = (campaign) => {
 			return pendingAmount.reduce((total, number) => total + number).toFixed(2);
 		}
 }
+
+export const getMonthlyVehiclePhoto = (campaignSelected) => {
+	const { campaignDetails, vehicleMonthlyUpdate } = campaignSelected,
+		from = campaignDetails.duration_from,
+		to = campaignDetails.duration_to,
+		months = [
+			'Jan', 'Feb', 'Mar',
+			'Apr', 'May', 'Jun',
+			'Jul', 'Aug', 'Sep',
+			'Oct', 'Nov', 'Dec'
+		],
+		fromDate = {
+			year: parseInt(from.split('-')[0]),
+			month: parseInt(from.split('-')[1])
+		},
+		toDate = {
+			year: parseInt(to.split('-')[0]),
+			month: parseInt(to.split('-')[1])
+		},
+		deadlineDifference = 2;
+		monthDiff = toDate.month - fromDate.month + (12 * (toDate.year - fromDate.year)),
+		returnData = Array(monthDiff).fill(null).map((m, mIdx) => {
+			var month = fromDate.month + mIdx;
+			var year = fromDate.year;
+			if(month >= 12) {
+				year = year + Math.floor(month/12);
+				month = month % 12;
+			};
+
+			// set deadline date
+			var deadline = parseInt(campaignDetails.vehicle_update_date);
+			const maxDate = new Date(year, month + 1, 0).getDate();
+			if(parseInt(deadline) > maxDate) deadline = maxDate;
+
+			// set 'from' deadline
+			var deadlineFrom = deadline - deadlineDifference;
+			var monthFrom = month;
+			var yearFrom = year;
+			var maxDateFrom = new Date(year, month + 1, 0).getDate();
+			if(deadlineFrom < 0) {
+				monthFrom = month - 1 >= 0 ? month - 1 : 11;
+				yearFrom = month - 1 >= 0 ? year : year - 1;
+				maxDateFrom = new Date(yearFrom, monthFrom, 0).getDate();
+				deadlineFrom += maxDateFrom;
+			}
+
+			var deadlineTo = deadline + deadlineDifference;
+			var monthTo = month;
+			var yearTo = year;
+			var maxDateTo = new Date(year, month + 1, 0).getDate();
+			if(maxDateTo < deadlineTo) {
+				monthTo = month + 1 <= 11 ? month + 1 : 0;
+				yearTo = month + 1 <= 11 ? year : year + 1;
+				maxDateTo = new Date(yearTo, monthTo, 0).getDate();
+				deadlineTo = deadlineTo - maxDateTo;
+			}
+
+			const d = new Date();
+			const yearNow = d.getFullYear();
+			const monthNow = d.getMonth();
+			const dateNow = d.getDate();
+			let deadlineToday = false;
+			if((yearNow >= yearFrom && yearNow <= yearTo)
+				&& (monthNow >= monthFrom && monthNow <= monthTo)
+				&& (dateNow >= deadlineFrom && dateNow <= deadlineTo)) {
+				deadlineToday = true;
+			}
+
+			const vehiclePhotos = vehicleMonthlyUpdate.filter(v => {
+				const vD = v.created_at.split(' ')[0];
+				const vYear = parseInt(vD.split('-')[0]);
+				const vMonth = parseInt(vD.split('-')[1]) - 1;
+				const vDate = parseInt(vD.split('-')[2]);
+				
+				if((yearFrom <= vYear && vYear <= yearTo)
+					&& (monthFrom <= vMonth && vMonth <= monthTo)
+					&& (deadlineFrom <= vDate && vDate <= deadlineTo)) {
+					return true;
+				}
+				return false;
+			});
+
+			return {
+				monthDuration: `${months[month == 0 ? 11 : month - 1]} - ${months[month]}`,
+				deadline: `${months[monthFrom]} ${deadlineFrom} - ${months[monthTo]} ${deadlineTo}`,
+				vehiclePhotos,
+				deadlineToday
+			};
+		});
+
+	return returnData;
+}

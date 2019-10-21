@@ -54,6 +54,7 @@ export default class ActionButton extends Component {
                     style={{
                         zIndex: 1
                     }}
+                    onRequestClose={() => this.setState({modalVisible: false})}
                 >
                     <View
                         style={{

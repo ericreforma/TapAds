@@ -69,10 +69,6 @@ class MyCampaignPage extends Component {
         this.setState({ myCampaignClick: active })
     }
 
-    activeCampaignFullDetails = (id) => () => {
-        this.props.campaignSelected(id);
-    }
-
     startTripButtonPressed = (id) => () => {
         this.props.campaignSelected(id);
         this.props.dispatchTrip();
@@ -110,7 +106,7 @@ class MyCampaignPage extends Component {
                                             }}
                                         >
                                             <TouchableOpacity
-                                                onPress={this.activeCampaignFullDetails(data.id)}
+                                                onPress={this.props.campaignSelected(data.id)}
                                             >
                                                 <Text
                                                     style={styles.homePageViewAll}
@@ -152,20 +148,39 @@ class MyCampaignPage extends Component {
                                         </View>
                                     </View>
 
-                                    <View>
-                                        <TouchableOpacity
-                                            style={{
-                                                justifyContent: 'center',
-                                                alignItems: 'center',
-                                                backgroundColor: theme.COLOR_BLUE,
-                                                borderRadius: 15,
-                                                paddingVertical: 10,
-                                                marginTop: 15
-                                            }}
-                                            onPress={this.startTripButtonPressed(data.id)}
-                                        >
-                                            <LabelText color="white">Start trip</LabelText>
-                                        </TouchableOpacity>
+                                    <View
+                                        style={{
+                                            flexDirection: 'row',
+                                            alignItems: 'center',
+                                            marginTop: 15
+                                        }}
+                                    >
+																			<TouchableOpacity
+																				style={{
+																					flex: 1,
+																					marginRight: 10,
+																				}}
+																				onPress={this.props.campaignSelected(data.id, 'MonthlyCarPhoto')}
+																			>
+																				<Text style={styles.homePageViewAll}>
+																					Calendar
+																				</Text>
+																			</TouchableOpacity>
+
+																			<TouchableOpacity
+																				style={{
+																					flex: 1,
+																					marginLeft: 10,
+																					justifyContent: 'center',
+																					alignItems: 'center',
+																					backgroundColor: theme.COLOR_BLUE,
+																					borderRadius: 15,
+																					paddingVertical: 10,
+																				}}
+																				onPress={this.props.campaignSelected(data.id)}
+																			>
+																				<LabelText color="white">Start trip</LabelText>
+																			</TouchableOpacity>
                                     </View>
                                 </CardBody>
 
@@ -303,7 +318,7 @@ class MyCampaignPage extends Component {
                                         >
                                             <ButtonBlue
                                                 label="Dashboard"
-                                                onPress={() => { this.props.campaignSelected(data.id); }}
+                                                onPress={this.props.campaignSelected(data.id)}
                                             />
                                         </View>
 
@@ -520,7 +535,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-    campaignSelected: (id) => dispatch(CampaignAction.mylistSelected(id)),
+    campaignSelected: (id, navigate = false) => () => dispatch(CampaignAction.mylistSelected(id, navigate)),
     favoriteCampaign: (id) => dispatch(CampaignAction.favorite(id)),
     dispatchTrip: () => dispatch(CampaignAction.startTrip())
 });

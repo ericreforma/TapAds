@@ -72,6 +72,7 @@
 		7CE31D62098B49C68016025F /* libRNCWebView.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 80D07D2135DC4C7085DB7987 /* libRNCWebView.a */; };
 		F8F160C60652475CB2B8F4A8 /* libRNBackgroundJob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F91B1CA98B9421BA4A309AC /* libRNBackgroundJob.a */; };
 		D44FE94049C54043A6201466 /* libRNCPushNotificationIOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 372A1E99FED94C37BE6147FD /* libRNCPushNotificationIOS.a */; };
+		02C02AB0BFD9486DBD456002 /* libRNCamera.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 21F6BB503AC14A90A406CD5F /* libRNCamera.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -422,6 +423,8 @@
 		0F91B1CA98B9421BA4A309AC /* libRNBackgroundJob.a */ = {isa = PBXFileReference; name = "libRNBackgroundJob.a"; path = "libRNBackgroundJob.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 		8FD4A74FD8D046B9BBCF4046 /* PushNotificationIOS.xcodeproj */ = {isa = PBXFileReference; name = "PushNotificationIOS.xcodeproj"; path = "../node_modules/@react-native-community/push-notification-ios/ios/PushNotificationIOS.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
 		372A1E99FED94C37BE6147FD /* libRNCPushNotificationIOS.a */ = {isa = PBXFileReference; name = "libRNCPushNotificationIOS.a"; path = "libRNCPushNotificationIOS.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		B162C4CA4D73449387382646 /* RNCamera.xcodeproj */ = {isa = PBXFileReference; name = "RNCamera.xcodeproj"; path = "../node_modules/react-native-camera/ios/RNCamera.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		21F6BB503AC14A90A406CD5F /* libRNCamera.a */ = {isa = PBXFileReference; name = "libRNCamera.a"; path = "libRNCamera.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -462,6 +465,7 @@
 				7CE31D62098B49C68016025F /* libRNCWebView.a in Frameworks */,
 				F8F160C60652475CB2B8F4A8 /* libRNBackgroundJob.a in Frameworks */,
 				D44FE94049C54043A6201466 /* libRNCPushNotificationIOS.a in Frameworks */,
+				02C02AB0BFD9486DBD456002 /* libRNCamera.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -666,6 +670,7 @@
 				B6E2CDF17E054AF88C700CA6 /* RNCWebView.xcodeproj */,
 				F4F6ECA1AFD044F1BF9C3CEC /* RNBackgroundJob.xcodeproj */,
 				8FD4A74FD8D046B9BBCF4046 /* PushNotificationIOS.xcodeproj */,
+				B162C4CA4D73449387382646 /* RNCamera.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -1347,6 +1352,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1361,6 +1367,7 @@
 					"$(SRCROOT)\..\node_modules\react-native-webview\ios",
 					"$(SRCROOT)\..\node_modules\react-native-background-job\ios",
 					"$(SRCROOT)\..\node_modules\@react-native-community\push-notification-ios\ios",
+					"$(SRCROOT)\..\node_modules\react-native-camera\ios/**",
 				);
 			};
 			name = Debug;
@@ -1387,6 +1394,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1401,6 +1409,7 @@
 					"$(SRCROOT)\..\node_modules\react-native-webview\ios",
 					"$(SRCROOT)\..\node_modules\react-native-background-job\ios",
 					"$(SRCROOT)\..\node_modules\@react-native-community\push-notification-ios\ios",
+					"$(SRCROOT)\..\node_modules\react-native-camera\ios/**",
 				);
 			};
 			name = Release;
@@ -1434,6 +1443,7 @@
 					"$(SRCROOT)\..\node_modules\react-native-webview\ios",
 					"$(SRCROOT)\..\node_modules\react-native-background-job\ios",
 					"$(SRCROOT)\..\node_modules\@react-native-community\push-notification-ios\ios",
+					"$(SRCROOT)\..\node_modules\react-native-camera\ios/**",
 				);
 			};
 			name = Debug;
@@ -1466,6 +1476,7 @@
 					"$(SRCROOT)\..\node_modules\react-native-webview\ios",
 					"$(SRCROOT)\..\node_modules\react-native-background-job\ios",
 					"$(SRCROOT)\..\node_modules\@react-native-community\push-notification-ios\ios",
+					"$(SRCROOT)\..\node_modules\react-native-camera\ios/**",
 				);
 			};
 			name = Release;
@@ -1500,6 +1511,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1514,6 +1526,7 @@
 					"$(SRCROOT)\..\node_modules\react-native-webview\ios",
 					"$(SRCROOT)\..\node_modules\react-native-background-job\ios",
 					"$(SRCROOT)\..\node_modules\@react-native-community\push-notification-ios\ios",
+					"$(SRCROOT)\..\node_modules\react-native-camera\ios/**",
 				);
 			};
 			name = Debug;
@@ -1548,6 +1561,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1562,6 +1576,7 @@
 					"$(SRCROOT)\..\node_modules\react-native-webview\ios",
 					"$(SRCROOT)\..\node_modules\react-native-background-job\ios",
 					"$(SRCROOT)\..\node_modules\@react-native-community\push-notification-ios\ios",
+					"$(SRCROOT)\..\node_modules\react-native-camera\ios/**",
 				);
 			};
 			name = Release;
@@ -1595,6 +1610,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1609,6 +1625,7 @@
 					"$(SRCROOT)\..\node_modules\react-native-webview\ios",
 					"$(SRCROOT)\..\node_modules\react-native-background-job\ios",
 					"$(SRCROOT)\..\node_modules\@react-native-community\push-notification-ios\ios",
+					"$(SRCROOT)\..\node_modules\react-native-camera\ios/**",
 				);
 			};
 			name = Debug;
@@ -1642,6 +1659,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1656,6 +1674,7 @@
 					"$(SRCROOT)\..\node_modules\react-native-webview\ios",
 					"$(SRCROOT)\..\node_modules\react-native-background-job\ios",
 					"$(SRCROOT)\..\node_modules\@react-native-community\push-notification-ios\ios",
+					"$(SRCROOT)\..\node_modules\react-native-camera\ios/**",
 				);
 			};
 			name = Release;
