@@ -80,15 +80,15 @@ export const VEHICLE = {
     },
   },
   TYPE: {
-    public: {
-      id: 0,
-      name: 'public',
-      nameOnCaps: 'Public',
-    },
     private: {
-      id: 1,
+      id: 0,
       name: 'private',
       nameOnCaps: 'Private',
+    },
+    public: {
+      id: 1,
+      name: 'public',
+      nameOnCaps: 'Public',
     },
     oncall: {
       id: 2,

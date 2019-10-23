@@ -137,24 +137,6 @@ class CardColumnContent extends Component {
     }
 
     additionalCarInfo = (type, size) => {
-        const classifications = [
-            {
-                url: VEHICLE.CLASS.small.icon.white,
-            }, {
-                url: VEHICLE.CLASS.mid.icon.white
-            }, {
-                url: VEHICLE.CLASS.large.icon.white
-            }, {
-                url: VEHICLE.CLASS.motorcycle.icon.white
-            }
-        ];
-
-        const types = [
-					VEHICLE.TYPE.private.name,
-          VEHICLE.TYPE.public.name,
-          VEHICLE.TYPE.oncall.name
-        ];
-
         if (type != null) {
             return (
                 <View style={styles.cardColumnContentCarInfo}>
@@ -163,12 +145,12 @@ class CardColumnContent extends Component {
                     >
                         <Image
                             style={styles.cardColumnContentCarInfoImage}
-                            source={classifications[size].url}
+                            source={Object.values(VEHICLE.CLASS)[size].icon.white}
                             resizeMode="contain"
                         />
                     </View>
 
-                    <Text style={styles.cardColumnContentCarInfoType}>{types[type]}</Text>
+                    <Text style={styles.cardColumnContentCarInfoType}>{Object.keys(VEHICLE.TYPE)[type]}</Text>
                 </View>
             );
         }
