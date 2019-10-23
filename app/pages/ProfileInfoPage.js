@@ -10,6 +10,7 @@ import ImagePicker from 'react-native-image-picker';
 import { connect } from 'react-redux';
 import DropdownAlert from 'react-native-dropdownalert';
 import { NavigationEvents } from 'react-navigation';
+import fileType from 'react-native-file-type';
 
 import { LabelText } from '../components/Text';
 import Page from '../pages/Page';
@@ -150,51 +151,61 @@ class ProfileInfoPage extends Component {
             } else if (response.customButton) {
                 console.log('User tapped custom button: ', response.customButton);
             } else {
-                var { data, type } = response;
-
-                if(name === 'image_url') {
-                    this.loadersToggle('displayPhoto');
-
-                    UserController.request.update.photo({file: data, type: type})
-                    .then(res => {
-                        var { imageResponse, media } = res.data;
-                        if(imageResponse) {
-                            this.setImage(name, media.url);
-                            this.dispatchUserProfile(media);
-                            this.successFlashMessage('Display photo successfully uploaded!');
-                        } else {
-                            this.failedFlashMessage('Error occured while uploading image.\nCan you try again later? Thanks!');
-                        }
-                        this.loadersToggle('displayPhoto');
-                    })
-                    .catch(error => {
-                        console.log(error);
-                        this.loadersToggle('displayPhoto');
-                        this.failedFlashMessage('Error occured while uploading image.\nCan you try again later? Thanks!');
-                    });
-                } else if(name === 'licenseImage') {
-                    this.loadersToggle('driverLicense');
-
-                    UserController.request.update.license({file: data, type: type})
-                    .then(res => {
-                        var { imageResponse, media } = res.data;
-                        if(imageResponse) {
-                            this.setImage(name, media.url);
-                            this.dispatchUserProfile(false, media);
-                            this.successFlashMessage('License photo successfully uploaded!');
-                        } else {
-                            this.failedFlashMessage('Error occured while uploading image.\nCan you try again later? Thanks!');
-                        }
-                        this.loadersToggle('driverLicense');
-                    })
-                    .catch(error => {
-                        console.log(error);
-                        this.loadersToggle('driverLicense');
-                        this.failedFlashMessage('Error occured while uploading image.\nCan you try again later? Thanks!');
-                    });
+                if(!response.type) {
+									fileType(response.path).then(file => {
+										response.type = file.mime;
+										this.updateImage(name, response);
+									});
+                } else {
+									this.updateImag(name, response);
                 }
             }
         });
+    }
+
+    updateImage = (name, response) => {
+			var { type, data } = response;
+			if(name === 'image_url') {
+				this.loadersToggle('displayPhoto');
+
+				UserController.request.update.photo({file: data, type: type})
+				.then(res => {
+					var { imageResponse, media } = res.data;
+					if(imageResponse) {
+						this.setImage(name, media.url);
+						this.dispatchUserProfile(media);
+						this.successFlashMessage('Display photo successfully uploaded!');
+					} else {
+						this.failedFlashMessage('Error occured while uploading image.\nCan you try again later? Thanks!');
+					}
+					this.loadersToggle('displayPhoto');
+				})
+				.catch(error => {
+					console.log(error);
+					this.loadersToggle('displayPhoto');
+					this.failedFlashMessage('Error occured while uploading image.\nCan you try again later? Thanks!');
+				});
+			} else if(name === 'licenseImage') {
+				this.loadersToggle('driverLicense');
+
+				UserController.request.update.license({file: data, type: type})
+				.then(res => {
+					var { imageResponse, media } = res.data;
+					if(imageResponse) {
+						this.setImage(name, media.url);
+						this.dispatchUserProfile(false, media);
+						this.successFlashMessage('License photo successfully uploaded!');
+					} else {
+						this.failedFlashMessage('Error occured while uploading image.\nCan you try again later? Thanks!');
+					}
+					this.loadersToggle('driverLicense');
+				})
+				.catch(error => {
+					console.log(error);
+					this.loadersToggle('driverLicense');
+					this.failedFlashMessage('Error occured while uploading image.\nCan you try again later? Thanks!');
+				});
+			}
     }
 
     setImage = (name, value = false) => {

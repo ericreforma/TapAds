@@ -13,6 +13,7 @@ import {
 import { connect } from 'react-redux';
 import ImagePicker from 'react-native-image-picker';
 import DropdownAlert from 'react-native-dropdownalert';
+import fileType from 'react-native-file-type';
 
 import { USER } from '../redux/actions/types.action';
 import Page from './Page';
@@ -88,17 +89,18 @@ class AddVehiclePage extends Component {
 					} else {
 							const source = { uri: response.uri },
 									{ vehicles, vehicleToUpload } = this.state,
-									{ data, type } = response;
+									{ data, type, path } = response;
 							
 							if(!type) {
-									this.failedFlashMessage(
-											'Error',
-											'Picture is corrupted',
-									);
-							} else {
+								fileType(path).then(file => {
 									vehicles.splice(1, 0, { url: source });
-									vehicleToUpload.push({ data, type });
+									vehicleToUpload.push({ data, type: file.mime });
 									this.setState({ vehicles, vehicleToUpload });
+								});
+							} else {
+								vehicles.splice(1, 0, { url: source });
+								vehicleToUpload.push({ data, type });
+								this.setState({ vehicles, vehicleToUpload });
 							}
 					}
 			});

@@ -78,7 +78,7 @@ export default class CheckPasswordModal extends Component {
               elevation: 5
             }}
           >
-            <LabelText>Input password to proceed:</LabelText>
+            <LabelText>Enter password to proceed:</LabelText>
 
             <View
               style={{

@@ -19,10 +19,9 @@ import CampaignRecContainer from '../containers/CampaignRecContainer';
 import CampaignActiveContainer from '../containers/CampaignActiveContainer';
 import { VEHICLE } from '../config/variables';
 import { VehicleCategoryCard } from '../components/VehicleCategoryCard';
-import { LabelText } from '../components/Text';
+import { LabelText, CommonText } from '../components/Text';
 
 import { CampaignAction } from '../redux/actions/campaign.action';
-import { CAMPAIGN } from '../redux/actions/types.action';
 import Page from './Page';
 import NavigationService from '../services/navigation';
 
@@ -64,7 +63,7 @@ class HomePage extends Component {
 			<Page>
 				<NavigationEvents
 					onWillFocus={this.init}
-					// onDidFocus={() => NavigationService.navigate('MyCampaign')}
+					onDidFocus={() => NavigationService.navigate('ProfileInfo')}
 				/>
 
 				<ScrollView
