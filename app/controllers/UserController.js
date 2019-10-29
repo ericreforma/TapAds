@@ -1,11 +1,11 @@
-import { HttpRequest } from '../services/http';
+import { HttpRequest, RawHttpRequest } from '../services/http';
 
 export const UserController = {
   request: {
     profile: () => HttpRequest.get('/user'),
     chatList: () => HttpRequest.get('/user/chat/list'),
     messages: (cid) => HttpRequest.get(`/user/chat/${cid}`),
-    vehicleDB: () => HttpRequest.get('/user/vehicle/all'),
+    vehicleDB: () => RawHttpRequest.get('/user/vehicle/all'),
     notificationContent: () => HttpRequest.get('/user/notif/content'),
     tripInfo: (tripID) => HttpRequest.get(`/user/campaign/trip/info/${tripID}`),
     submitPayment: (args = {}) => HttpRequest.post('/user/payment/withdraw', args),

@@ -3,6 +3,8 @@ import LogInPage from './LoginPage';
 import NotificationPage from './NotificationPage';
 import ProfilePage from './ProfilePage';
 import SignUpPage from './SignUpPage';
+import SignUpAddImagePage from './SignUpAddImagePage';
+import SignUpAddVehiclesPage from './SignUpAddVehiclesPage';
 import LoadingPage from './LoadingPage';
 import CampaignPage from './CampaignPage';
 import MyCampaignPage from './MyCampaignPage';
@@ -23,6 +25,8 @@ export {
 	HomePage,
 	NotificationPage,
 	SignUpPage,
+	SignUpAddImagePage,
+	SignUpAddVehiclesPage,
 	ProfilePage,
 	LoadingPage,
 	CampaignPage,

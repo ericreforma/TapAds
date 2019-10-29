@@ -1,43 +1,37 @@
 import React, { Component } from 'react';
 import {
+    Text,
     View,
+    Image,
+    TextInput,
     ScrollView,
     TouchableOpacity,
-    TextInput,
-    Dimensions,
-    FlatList,
-    Text,
-    ActivityIndicator,
-    Image
+		Dimensions,
+		FlatList,
+    ActivityIndicator
 } from 'react-native';
 import { connect } from 'react-redux';
 import ImagePicker from 'react-native-image-picker';
 import DropdownAlert from 'react-native-dropdownalert';
 import fileType from 'react-native-file-type';
 
-import { USER } from '../redux/actions/types.action';
-import Page from './Page';
-import UserInfo from '../components/UserInfo';
-import {
-		LabelText,
-    Common,
-    Label,
-} from '../components/Text';
+import { AuthController, UserController } from '../controllers';
+import { AuthAction } from '../redux/actions/auth.action';
 import { IMAGES, VEHICLE } from '../config/variables';
-import { UserController } from '../controllers/UserController';
 import AutoComplete from '../components/AutoComplete';
-import NavigationService from '../services/navigation';
 
-import theme from '../styles/theme.style';
+import {
+	LabelText,
+	Common,
+	Label,
+} from '../components/Text';
 import { Card, CardBody } from '../components/Card';
+import theme from '../styles/theme.style';
 
-import PopupMessage from '../components/Modal/popup';
-
-class AddVehiclePage extends Component {
-	constructor(props) {
-		super(props);
-
-		this.state = {
+class SignUpAddVehiclesPage extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
 			width: Dimensions.get('window').width,
 			height: Dimensions.get('window').height,
 			activeTypeVehicle: 0,
@@ -54,56 +48,50 @@ class AddVehiclePage extends Component {
 			uploadColor: '',
 			uploadColorOnFocus: false,
 			addCarLoading: false,
-			vehicleDatabase: [],
-
-			popupModal: {
-				visible: false,
-				message: '',
-				description: ''
-			}
-		};
+			vehicleDatabase: []
+    };
 	}
-
+	
 	componentDidMount = () => {
-			UserController.request.vehicleDB()
-			.then(res => this.setState({ vehicleDatabase: res.data }))
-			.catch(error => console.log(error));
+		UserController.request.vehicleDB()
+		.then(res => this.setState({ vehicleDatabase: res.data }))
+		.catch(error => console.log(error.response));
 	}
 
 	addVehicleButtonOnPress = () => {
-			ImagePicker.showImagePicker({
-				title: 'Select Vehicle Photo',
-				chooseFromLibraryButtonTitle: 'Open gallery',
-				takePhotoButtonTitle: 'Take a photo',
-				storageOptions: {
-					skipBackup: true,
-					path: 'images',
-				},
-			}, response => {
-					if (response.didCancel) {
-							console.log('User cancelled image picker');
-					} else if (response.error) {
-							console.log('ImagePicker Error: ', response.error);
-					} else if (response.customButton) {
-							console.log('User tapped custom button: ', response.customButton);
-					} else {
-							const source = { uri: response.uri },
-									{ vehicles, vehicleToUpload } = this.state,
-									{ data, type, path } = response;
-							
-							if(!type) {
-								fileType(path).then(file => {
-									vehicles.splice(1, 0, { url: source });
-									vehicleToUpload.push({ data, type: file.mime });
-									this.setState({ vehicles, vehicleToUpload });
-								});
-							} else {
-								vehicles.splice(1, 0, { url: source });
-								vehicleToUpload.push({ data, type });
-								this.setState({ vehicles, vehicleToUpload });
-							}
-					}
-			});
+		ImagePicker.showImagePicker({
+			title: 'Select Vehicle Photo',
+			chooseFromLibraryButtonTitle: 'Open gallery',
+			takePhotoButtonTitle: 'Take a photo',
+			storageOptions: {
+				skipBackup: true,
+				path: 'images',
+			},
+		}, response => {
+			if (response.didCancel) {
+				console.log('User cancelled image picker');
+			} else if (response.error) {
+				console.log('ImagePicker Error: ', response.error);
+			} else if (response.customButton) {
+				console.log('User tapped custom button: ', response.customButton);
+			} else {
+				const source = { uri: response.uri },
+					{ vehicles, vehicleToUpload } = this.state,
+					{ data, type, path } = response;
+				
+				if(!type) {
+					fileType(path).then(file => {
+						vehicles.splice(1, 0, { url: source });
+						vehicleToUpload.push({ data, type: file.mime });
+						this.setState({ vehicles, vehicleToUpload });
+					});
+				} else {
+					vehicles.splice(1, 0, { url: source });
+					vehicleToUpload.push({ data, type });
+					this.setState({ vehicles, vehicleToUpload });
+				}
+			}
+		});
 	}
 
 	removeCar = (index) => () => {
@@ -113,7 +101,7 @@ class AddVehiclePage extends Component {
 			this.setState({vehicles});
 	}
 
-	submitAddedCar = (e) => {
+	signUpButtonOnSubmit = (e) => {
 		this.toggleAddCarLoading(true);
 		var { vehicleToUpload,
 			activeTypeVehicle,
@@ -161,36 +149,30 @@ class AddVehiclePage extends Component {
 				};
 			}
 
-			UserController.request.create.vehicle({
-				vehicleToUpload,
-				activeTypeVehicle,
-				vehicleId,
-				newVehicle,
-				uploadColor,
-				plateNumber
-			})
-			.then(res => {
-				UserController.request.profile()
-				.then(res => {
-					this.props.dispatchGetProfile(res.data);
-					this.resetInputFields();
+			const { signupData } = this.props,
+				{ info, licenseImage, profileImage } = signupData,
+				vehicleData = {
+					vehicleToUpload,
+					activeTypeVehicle,
+					vehicleId,
+					newVehicle,
+					uploadColor,
+					plateNumber
+				},
+				form = {
+					userData: JSON.stringify(info),
+					vehicleData,
+					licenseImage,
+					profileImage
+				};
 
-					const { popupModal } = this.state;
-					popupModal.visible = true;
-					popupModal.message = 'Great!';
-					popupModal.description = 'Vehicle added successfully!';
-					this.setState({popupModal});
-				})
-				.catch(error => {
-					console.log(error);
-				});
+			AuthController.register(form)
+			.then(() => {
+				this.props.login(info.email, info.password);
 			})
 			.catch(error => {
 				console.log(error);
-				this.failedFlashMessage(
-					'Error',
-					'Error connecting to the server, could you please try again later? Thanks!',
-				);
+				console.log(error.response);
 				this.toggleAddCarLoading(false);
 			});
 		} else {
@@ -205,75 +187,75 @@ class AddVehiclePage extends Component {
 	toggleAddCarLoading = (addCarLoading) => {
 		this.setState({ addCarLoading });
 	}
-
+	
 	renderVehicles = ({item, index}) => {
-			return (
-					<View
-							style={{
-									height: this.state.width / 3.5,
-									width: this.state.width / 3.5,
-									marginLeft: index == 0 ? 0 : 3,
-									marginRight: index == (this.state.vehicles - 1) ? 0 : 3
-							}}
-					>
-							{index == 0 ? (
-									<TouchableOpacity
+		return (
+			<View
+					style={{
+							height: this.state.width / 3.5,
+							width: this.state.width / 3.5,
+							marginLeft: index == 0 ? 0 : 3,
+							marginRight: index == (this.state.vehicles - 1) ? 0 : 3
+					}}
+			>
+					{index == 0 ? (
+							<TouchableOpacity
+									style={{
+											flex: 1,
+											justifyContent: 'center',
+											alignItems: 'center',
+											backgroundColor: theme.COLOR_LIGHT_BLUE + '90',
+											borderRadius: 10,
+									}}
+									activeOpacity={0.8}
+									onPress={this.addVehicleButtonOnPress}
+							>
+									<Image
 											style={{
-													flex: 1,
-													justifyContent: 'center',
-													alignItems: 'center',
-													backgroundColor: theme.COLOR_LIGHT_BLUE + '90',
+													width: '33%',
+													height: '33%'
+											}}
+											resizeMode="contain"
+											source={item.url}
+									/>
+							</TouchableOpacity>
+					) : (
+							<View>
+									<Image
+											style={{
+													width: '100%',
+													height: '100%',
+													borderRadius: 10,
+													backgroundColor: theme.COLOR_BLUE,
 													borderRadius: 10,
 											}}
-											activeOpacity={0.8}
-											onPress={this.addVehicleButtonOnPress}
+											resizeMode="cover"
+											source={item.url}
+									/>
+
+									<TouchableOpacity
+											style={{
+													width: 15,
+													height: 15,
+													position: 'absolute',
+													top: 10,
+													right: 10
+											}}
+											onPress={this.removeCar(index)}
 									>
 											<Image
 													style={{
-															width: '33%',
-															height: '33%'
-													}}
-													resizeMode="contain"
-													source={item.url}
-											/>
-									</TouchableOpacity>
-							) : (
-									<View>
-											<Image
-													style={{
-															width: '100%',
-															height: '100%',
-															borderRadius: 10,
-															backgroundColor: theme.COLOR_BLUE,
-															borderRadius: 10,
-													}}
-													resizeMode="cover"
-													source={item.url}
-											/>
-
-											<TouchableOpacity
-													style={{
 															width: 15,
 															height: 15,
-															position: 'absolute',
-															top: 10,
-															right: 10
 													}}
-													onPress={this.removeCar(index)}
-											>
-													<Image
-															style={{
-																	width: 15,
-																	height: 15,
-															}}
-															resizeMode="contain"
-															source={IMAGES.ICONS.close_red}
-													/>
-											</TouchableOpacity>
-									</View>
-							)}
-					</View>
-			);
+													resizeMode="contain"
+													source={IMAGES.ICONS.close_red}
+											/>
+									</TouchableOpacity>
+							</View>
+					)}
+			</View>
+		);
 	}
 
 	successFlashMessage = (message, description) => {
@@ -387,54 +369,58 @@ class AddVehiclePage extends Component {
 		}
 	}
 
-	closePopupModal = () => {
-		const { popupModal } = this.state;
-		popupModal.visible = false;
-		this.setState({popupModal});
-		NavigationService.navigate('Profile');
-	}
-
-	render() {
-		return (
-			<Page>
-				<PopupMessage
-					isVisible={this.state.popupModal.visible}
-					message={this.state.popupModal.message}
-					description={this.state.popupModal.description}
-					closeModal={this.closePopupModal}
-				/>
-
+  render() {
+    return (
+			<View
+				style={{
+					backgroundColor: theme.COLOR_WHITE
+				}}
+			>
 				<ScrollView
 					overScrollMode='never'
 					showsVerticalScrollIndicator={false}
 					keyboardShouldPersistTaps='always'
 				>
-					<UserInfo />
+					<View
+						style={{
+							justifyContent: 'center',
+							alignItems: 'center',
+							paddingVertical: 80
+						}}
+					>
+						<Image
+							source={require('../assets/image/app_logo.png')}
+						/>
+					</View>
 
 					<View
 						style={{
-							margin: 20,
-							marginBottom: 90
+							paddingHorizontal: 30
 						}}
 					>
-						<View
+						{/* label */}
+						<Text
 							style={{
-								justifyContent: 'center',
-								alignItems: 'center',
-								marginBottom: 20,
+								color: theme.COLOR_BLUE,
+								fontSize: theme.FONT_SIZE_LARGE,
+								fontFamily: 'Montserrat-Bold'
 							}}
 						>
-							<LabelText color="white">Add Vehicle</LabelText>
-						</View>
+							Add Vehicle
+						</Text>
 
-						<View>
+            <View
+              style={{
+                marginVertical: 20
+              }}
+            >
 							{/* car details */}
 							<View
 								style={{
 									marginVertical: 7
 								}}
 							>
-								<Card>
+								<Card shadow>
 									<CardBody
 										header={true}
 										footer={true}
@@ -725,7 +711,8 @@ class AddVehiclePage extends Component {
 										backgroundColor: theme.COLOR_WHITE,
 										borderRadius: 15,
 										paddingVertical: 15,
-										paddingHorizontal: 30
+										paddingHorizontal: 30,
+										elevation: 5
 									}}
 								>
 									<LabelText>
@@ -777,7 +764,8 @@ class AddVehiclePage extends Component {
 											style={{
 													backgroundColor: theme.COLOR_WHITE,
 													borderRadius: 15,
-													paddingVertical: 15
+													paddingVertical: 15,
+													elevation: 5
 											}}
 									>
 											<View
@@ -823,50 +811,61 @@ class AddVehiclePage extends Component {
 											</View>
 									</View>
 							</View>
+						</View>
 
-							<View
-									style={{
-											marginTop: 10,
-											alignItems: 'center',
-											justifyContent: 'center'
-									}}
+						<View
+							style={{
+								justifyContent: 'center',
+								alignItems: 'center',
+								marginBottom: 30,
+								marginTop: 10
+							}}
+						>
+							<TouchableOpacity
+								style={{
+									backgroundColor: theme.COLOR_BLUE,
+									borderRadius: 15,
+									paddingHorizontal: 15,
+									alignItems: 'center',
+									justifyContent: 'center',
+									width: Dimensions.get('window').width / 2,
+									maxWidth: 300,
+									height: 45,
+								}}
+								onPress={this.signUpButtonOnSubmit}
+								disabled={this.state.addCarLoading}
 							>
-									<TouchableOpacity
-											style={{
-													backgroundColor: theme.COLOR_LIGHT_BLUE,
-													borderRadius: 15,
-													paddingHorizontal: 25,
-													alignItems: 'center',
-													paddingVertical: 13,
-											}}
-											onPress={this.submitAddedCar}
+								{this.state.addCarLoading ? (
+									<ActivityIndicator color="#fff" />
+								) : (
+									<Text
+										style={{
+											color: theme.COLOR_WHITE,
+											fontFamily: 'Montserrat-Medium',
+											fontSize: 16,
+											paddingVertical: 11
+										}}
 									>
-											{this.state.addCarLoading ? (
-													<ActivityIndicator size="small" color="#ffffff" />
-											) : (
-													<Text
-															style={{
-																	textAlign: 'center',
-																	color: theme.COLOR_WHITE,
-																	fontFamily: 'Montserrat-Medium',
-																	fontSize: 12,
-															}}
-													>Add Car</Text>
-											)}
-									</TouchableOpacity>
-							</View>
+										Sign Up
+									</Text>
+								)}
+							</TouchableOpacity>
 						</View>
 					</View>
 				</ScrollView>
-
+			
 				<DropdownAlert ref={ref => this.dropDownAVPAlertRef = ref} />
-			</Page>
-		);
-	}
+			</View>
+    );
+  }
 }
 
-const mapDispatchToProps = (dispatch) => ({
-	dispatchGetProfile: (user) => dispatch({ type: USER.GET.PROFILE.SUCCESS, user }),
+const mapStateToProps = (state) => ({
+  signupData: state.signupReducer
 });
-  
-export default connect(null, mapDispatchToProps)(AddVehiclePage);
+
+const mapDispatchToProps = (dispatch) => ({
+	login: (email, password) => dispatch(AuthAction.login(email, password))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(SignUpAddVehiclesPage);

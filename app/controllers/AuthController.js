@@ -8,8 +8,11 @@ export const AuthController = {
     }),
   logout: () => HttpRequest.get('/user/logout'),
 
-  register: userData =>
-    RawHttpRequest.post('/user/register', {
+  register: form =>
+    RawHttpRequest.post('/user/register', form),
+
+  registerValidation: userData =>
+    RawHttpRequest.post('/user/register/validation', {
       userData,
     }),
   

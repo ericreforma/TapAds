@@ -12,6 +12,8 @@ import {
 	HomePage,
 	NotificationPage,
 	SignUpPage,
+	SignUpAddImagePage,
+	SignUpAddVehiclesPage,
 	ProfilePage,
 	LoadingPage,
 	CampaignPage,
@@ -50,6 +52,8 @@ export default class Route extends Component {
 const AuthStack = createStackNavigator({
 	Login: LogInPage,
 	SignUp: SignUpPage,
+	SignUpAddImage: SignUpAddImagePage,
+	SignUpAddVehicles: SignUpAddVehiclesPage,
 	ForgotPassword: ForgotPasswordPage
 	}, {
 		headerMode: 'none',
