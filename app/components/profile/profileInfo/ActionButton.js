@@ -166,45 +166,51 @@ class ChangePassword extends Component {
 
     changePasswordOnPress = () => {
         const { state } = this.props;
-        var { curPass, newPass } = this.state;
-        
+				var { curPass, newPass } = this.state;
+				
         this.loadersToggle(true);
         if(curPass !== '') {
-            if(newPass !== '') {
-                UserController.request.update.password({curPass, newPass})
-                .then(res => {
-                    if(res.data) {
-                        this.loadersToggle(false);
-                        this.setModalVisible(!state.modalVisible, state.visibleModal);
-                        this.successFlashMessage('Your new password saved successfully!');
-                    } else {
-                        this.loadersToggle(false);
-                        this.failedFlashMessage(
-                            'Wrong password',
-                            'You fill in a wrong password.\nPlease insert a correct one. Thank you!',
-                        );
-                    }
-                })
-                .catch(error => {
-                    console.log(error);
-                    this.loadersToggle(false);
-                    this.failedFlashMessage(
-                        'Server error!',
-                        'An error occurred while saving your new password. Please try again later.',
-                    );
-                });
-            } else {
-                this.loadersToggle(false);
-                this.failedFlashMessage(
-                    'Fill in new password',
-                    'Hi! I think you forgot\nto fill in your new password.',
-                );
-            }
+					if(newPass.toString().length <= 7) {
+						this.loadersToggle(false);
+						this.failedFlashMessage(
+								'Password length invalid',
+								'Your new password should be at least 8 characters.',
+						);
+					} else if(newPass !== '') {
+						UserController.request.update.password({curPass, newPass})
+						.then(res => {
+								if(res.data) {
+										this.loadersToggle(false);
+										this.setModalVisible(!state.modalVisible, state.visibleModal);
+										this.successFlashMessage('Your new password saved successfully!');
+								} else {
+										this.loadersToggle(false);
+										this.failedFlashMessage(
+												'Wrong password',
+												'You fill in a wrong password.\nPlease enter a correct one. Thank you!',
+										);
+								}
+						})
+						.catch(error => {
+								console.log(error);
+								this.loadersToggle(false);
+								this.failedFlashMessage(
+										'Server error!',
+										'An error occurred while saving your new password. Please try again later.',
+								);
+						});
+					} else {
+						this.loadersToggle(false);
+						this.failedFlashMessage(
+								'Fill in new password',
+								'Hi! I think you forgot\nto fill in your new password.',
+						);
+					}
         } else {
             this.loadersToggle(false);
             this.failedFlashMessage(
                 'Fill in current password',
-                'Please input your current password to proceed. Thanks!',
+                'Please enter your current password to proceed. Thanks!',
             );
         }
     }
