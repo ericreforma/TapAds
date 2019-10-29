@@ -157,7 +157,7 @@ class ProfileInfoPage extends Component {
 										this.updateImage(name, response);
 									});
                 } else {
-									this.updateImag(name, response);
+									this.updateImage(name, response);
                 }
             }
         });
