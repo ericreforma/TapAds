@@ -7,8 +7,9 @@ const mapStatetoProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  campaignSelected: (id) => dispatch(CampaignAction.mylistSelected(id)),
-  dispatchTrip: () => dispatch(CampaignAction.startTrip())
+  campaignSelected: (id, navigate = false, callback = false) => dispatch(CampaignAction.mylistSelected(id, navigate, callback)),
+  dispatchTrip: () => dispatch(CampaignAction.startTrip()),
+  checkCampaignLocation: (id, callback) => dispatch(CampaignAction.checkCampaignLocation(id, callback))
 });
 
 export default connect(mapStatetoProps, mapDispatchToProps)(CampaignCardActive);

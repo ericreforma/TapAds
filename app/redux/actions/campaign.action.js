@@ -50,14 +50,18 @@ export const CampaignAction = {
     dispatch({ type: CAMPAIGN.SELECTED, campaign });
   },
 
-  mylistSelected: (id, navigate) => (dispatch, getState) => {
+  mylistSelected: (id, navigate, callback = false) => (dispatch, getState) => {
     const state = getState();
     const campaignList = state.campaignReducer.mylist;
     const campaign = campaignList.find(x => x.id === id);
 
     dispatch({ type: CAMPAIGN.MYLIST.SELECTED, campaign });
 
-    NavigationService.navigate(navigate ? navigate : 'CampaignCardActive');
+    if(callback) {
+      callback();
+    } else {
+      NavigationService.navigate(navigate ? navigate : 'CampaignCardActive');
+    }
   },
 
   updateSelected: () => (dispatch, getState) => {
@@ -150,9 +154,13 @@ export const CampaignAction = {
     });
   },
 
-  checkCampaignLocation: id => dispatch => {
+  checkCampaignLocation: (id, successCallBack = false) => dispatch => {
     CampaignLocationController.getLocation(id, locations => {
       dispatch({ type: CAMPAIGN.LOCATION.SUCCESS, campaign_location: locations });
+
+      if(successCallBack) {
+        successCallBack();
+      }
     }, error => {
       console.log(error);
       dispatch({ type: CAMPAIGN.LOCATION.FAILED });

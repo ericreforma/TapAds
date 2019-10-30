@@ -526,7 +526,7 @@ class StartCampaignPage extends Component {
         <View style={style.viewButtonRow}>
             <TouchableOpacity
               style={[buttonStyle.buttonStyle]}
-              onPress={() => this.closeTrip()}
+              onPress={this.closeTrip}
             >
               <Text style={[buttonStyle.buttonLabel, style.button]}>
                 Exit
@@ -537,7 +537,8 @@ class StartCampaignPage extends Component {
     </Modal>
 
   closeTrip = () => {
-      NavigationService.navigate('CampaignCardActive');
+    this.setState({summaryModalVisible: false});
+    NavigationService.back();
   }
 
   render() {

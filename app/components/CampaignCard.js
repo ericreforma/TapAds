@@ -210,8 +210,8 @@ export const CampaignCardRec = ({ campaigns, viewDetails }) => {
   }
 };
 
-export const CampaignCardActive = ({ myList, campaignSelected, dispatchTrip }) => {
-	async function requestCameraPermission(id) {
+export const CampaignCardActive = ({ myList, campaignSelected, dispatchTrip, checkCampaignLocation }) => {
+	async function requestCameraPermission(id, location_id) {
 		try {
 			const granted = await PermissionsAndroid.request(
 				PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
@@ -223,8 +223,11 @@ export const CampaignCardActive = ({ myList, campaignSelected, dispatchTrip }) =
 				},
 			);
 			if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        campaignSelected(id);
-				dispatchTrip();
+        campaignSelected(id, false, () => {
+          checkCampaignLocation(location_id, () => {
+            dispatchTrip();
+          });
+        });
 			} else {
 
 			}
@@ -302,7 +305,7 @@ export const CampaignCardActive = ({ myList, campaignSelected, dispatchTrip }) =
               borderRadius: 15,
               paddingVertical: 10
             }}
-            onPress={() => { requestCameraPermission(data.item.id); }}
+            onPress={() => { requestCameraPermission(data.item.id, data.item.campaignDetails.location_id); }}
           >
             <LabelText color="white">Start trip</LabelText>
           </TouchableOpacity>

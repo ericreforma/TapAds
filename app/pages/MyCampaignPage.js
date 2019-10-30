@@ -7,6 +7,7 @@ import {
     ScrollView,
     TouchableOpacity,
     ActivityIndicator,
+		PermissionsAndroid,
     Dimensions
 } from 'react-native';
 import { NavigationEvents } from 'react-navigation';
@@ -46,33 +47,54 @@ class MyCampaignPage extends Component {
     }
 
     init = () => {
-        this.setState({loader: false});
+			this.setState({loader: false});
     }
 
     static getDerivedStateFromProps(nextProps) {
-        const campaignID = nextProps.navigation.getParam('cid', false);
-        var myList = nextProps.myList;
-        if(campaignID) {
-            var index = myList.findIndex((e) => {
-                return e.id === campaignID;
-            });
-    
-            if(index !== -1) {
-                var campaign = myList.splice(index, 1);
-                myList.unshift(campaign);
-            }
-        }
-        return { myList };
+			const campaignID = nextProps.navigation.getParam('cid', false);
+			var myList = nextProps.myList;
+			if(campaignID) {
+					var index = myList.findIndex((e) => {
+							return e.id === campaignID;
+					});
+	
+					if(index !== -1) {
+							var campaign = myList.splice(index, 1);
+							myList.unshift(campaign);
+					}
+			}
+			return { myList };
     }
 
     clickCampaign = (active) => () => {
-        this.setState({ myCampaignClick: active })
-    }
-
-    startTripButtonPressed = (id) => () => {
-        this.props.campaignSelected(id);
-        this.props.dispatchTrip();
-    }
+			this.setState({ myCampaignClick: active })
+		}
+		
+		async requestCameraPermission(id, location_id) {
+			try {
+				const granted = await PermissionsAndroid.request(
+					PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+					{
+						title: 'TapAds',
+						message: `TapAds reuires your location`,
+						buttonNegative: 'Cancel',
+						buttonPositive: 'OK',
+					},
+				);
+				if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+					console.log(id);
+					this.props.campaignSelected(id, false, () => {
+						this.props.checkCampaignLocation(location_id, () => {
+							this.props.dispatchTrip();
+						});
+					});
+				} else {
+	
+				}
+			} catch (err) {
+				console.warn(err);
+			}
+		}
 
     activeCampaignView = () => {
         return (
@@ -106,7 +128,7 @@ class MyCampaignPage extends Component {
                                             }}
                                         >
                                             <TouchableOpacity
-                                                onPress={this.props.campaignSelected(data.id)}
+                                                onPress={() => { this.props.campaignSelected(data.id); }}
                                             >
                                                 <Text
                                                     style={styles.homePageViewAll}
@@ -160,7 +182,7 @@ class MyCampaignPage extends Component {
 																					flex: 1,
 																					marginRight: 10,
 																				}}
-																				onPress={this.props.campaignSelected(data.id, 'MonthlyCarPhoto')}
+																				onPress={() => { this.props.campaignSelected(data.id, 'MonthlyCarPhoto') }}
 																			>
 																				<Text style={styles.homePageViewAll}>
 																					Calendar
@@ -177,7 +199,7 @@ class MyCampaignPage extends Component {
 																					borderRadius: 15,
 																					paddingVertical: 10,
 																				}}
-																				onPress={this.props.campaignSelected(data.id)}
+																				onPress={() => { this.requestCameraPermission(data.id, data.campaignDetails.location_id); }}
 																			>
 																				<LabelText color="white">Start trip</LabelText>
 																			</TouchableOpacity>
@@ -318,7 +340,7 @@ class MyCampaignPage extends Component {
                                         >
                                             <ButtonBlue
                                                 label="Dashboard"
-                                                onPress={this.props.campaignSelected(data.id)}
+                                                onPress={() => { this.props.campaignSelected(data.id); }}
                                             />
                                         </View>
 
@@ -535,9 +557,10 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-    campaignSelected: (id, navigate = false) => () => dispatch(CampaignAction.mylistSelected(id, navigate)),
-    favoriteCampaign: (id) => dispatch(CampaignAction.favorite(id)),
-    dispatchTrip: () => dispatch(CampaignAction.startTrip())
+  campaignSelected: (id, navigate = false, callback = false) => dispatch(CampaignAction.mylistSelected(id, navigate, callback)),
+	favoriteCampaign: (id) => dispatch(CampaignAction.favorite(id)),
+	dispatchTrip: () => dispatch(CampaignAction.startTrip()),
+	checkCampaignLocation: (id, callback) => dispatch(CampaignAction.checkCampaignLocation(id, callback))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(MyCampaignPage);
