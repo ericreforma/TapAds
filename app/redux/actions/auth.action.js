@@ -59,4 +59,18 @@ export const AuthAction = {
     });
   },
 
+  getProfile: () => dispatch => {
+		UserController.request.profile()
+		.then(userResponse => {
+      dispatch({
+        type: USER.GET.PROFILE.SUCCESS,
+        user: userResponse.data,
+      });
+		})
+		.catch(error => {
+      console.log(error);
+			console.log(error.response);
+      dispatch({ type: USER.GET.PROFILE.FAILED });
+		});
+  }
 };

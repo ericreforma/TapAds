@@ -10,37 +10,39 @@ import styles from '../styles/component.NotificationCard.style';
 export default class NotificationCard extends Component {
     notificationIcon = (action, requestStatus) => {
         if(!requestStatus) {
-            const icons = [
+            const icons = {
+                action: 1,
+                message: 'sent you a message',
+                source: require('../assets/image/icons/mail_icon.png')
+            };
+    
+            return icons;
+        } else {
+            const status = [
                 {
-                    action: 1,
-                    message: 'sent you a message',
-                    source: require('../assets/image/icons/mail_icon.png')
-                }, {
                     action: 2,
+                    requestStatus: 1,
                     message: 'approved your post',
                     source: require('../assets/image/icons/approve_icon.png')
                 }, {
+                    action: 2,
+                    requestStatus: 2,
+                    message: 'rejected your post',
+                    source: require('../assets/image/icons/reject_icon.png')
+                }, {
                     action: 3,
+                    requestStatus: 1,
+                    message: 'sent payment',
+                    source: require('../assets/image/icons/payment_icon.png')
+                }, {
+                    action: 3,
+                    requestStatus: 2,
                     message: 'sent payment',
                     source: require('../assets/image/icons/payment_icon.png')
                 }
             ];
     
-            return icons.filter(i => i.action === action)[0];
-        } else {
-            const status = [
-                {
-                    requestStatus: 1,
-                    message: 'approved your post',
-                    source: require('../assets/image/icons/approve_icon.png')
-                }, {
-                    requestStatus: 2,
-                    message: 'rejected your post',
-                    source: require('../assets/image/icons/reject_icon.png')
-                }
-            ];
-    
-            return status.filter(i => i.requestStatus === requestStatus)[0];
+            return status.find(i => i.requestStatus === requestStatus && i.action === action);
         }
     }
 

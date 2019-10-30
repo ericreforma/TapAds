@@ -1,12 +1,15 @@
 import React, { Component } from 'react';
 import {
-  View,
+	View,
+	AppState,
   Animated,
   Dimensions
 } from 'react-native';
 import { connect } from 'react-redux';
 
-import { CAMPAIGN } from '../redux/actions/types.action';
+import { CAMPAIGN, SIGNUP } from '../redux/actions/types.action';
+import { AuthAction } from '../redux/actions/auth.action';
+import { UserController } from '../controllers';
 
 import { AppBackground } from '../components/AppBackground';
 import HeaderNav from '../components/HeaderNav';
@@ -27,10 +30,12 @@ class Page extends Component {
 			carouselPage: 0,
 			width: Dimensions.get('window').width,
 			height: Dimensions.get('window').height,
-			scrollEnable: true
+			scrollEnable: true,
+
+			appState: AppState.currentState
 		};
 
-			this.woosh = new Sound('chat_sound.mp3', Sound.MAIN_BUNDLE, (error) => {
+		this.woosh = new Sound('chat_sound.mp3', Sound.MAIN_BUNDLE, (error) => {
 			if (error) {
 				console.log('failed to load the sound', error);
 				return;
@@ -38,6 +43,34 @@ class Page extends Component {
 		});
 		
 		// this.woosh.play();
+	}
+
+  componentDidMount() {
+    AppState.addEventListener('change', this._handleAppStateChange);
+  }
+
+  componentWillUnmount() {
+    AppState.removeEventListener('change', this._handleAppStateChange);
+  }
+
+  _handleAppStateChange = (nextAppState) => {
+    if(this.state.appState.match(/inactive|background/)
+      && nextAppState === 'active') {
+			this.setState({appState: nextAppState});
+			this.appStateActive();
+		} else {
+			this.setState({appState: nextAppState});
+			this.appStateInactive();
+		}
+	};
+	
+	appStateActive = () => {
+		console.log('Active');
+		this.props.getProfile();
+	}
+
+	appStateInactive = () => {
+		console.log('Inactive');
 	}
 
 	menuButtonOnPress = () => {
@@ -120,7 +153,9 @@ class Page extends Component {
 }
 
 const mapDispatchToProps = (dispatch) => ({
-	resetPropsValues: () => dispatch({ type: CAMPAIGN.RESET })
+	resetPropsValues: () => dispatch({ type: CAMPAIGN.RESET }),
+	resetSignupValues: () => dispatch({ type: SIGNUP.RESET }),
+	getProfile: () => dispatch(AuthAction.getProfile())
 });
 
 export default connect(null, mapDispatchToProps)(Page);

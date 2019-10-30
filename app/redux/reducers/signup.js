@@ -19,6 +19,13 @@ export function signupReducer(state = initialState, action) {
         profileImage: action.data.profileImage
       });
 
+    case SIGNUP.RESET:
+      return Object.assign({}, state, {
+        info: null,
+        licenseImage: null,
+        profileImage: null
+      });
+
     default:
       return state;
   }

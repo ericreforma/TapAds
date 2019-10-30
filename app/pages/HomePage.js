@@ -4,6 +4,7 @@ import Carousel from 'react-native-snap-carousel';
 import {
 	View,
 	Text,
+  RefreshControl,
 	ScrollView,
 	TouchableOpacity,
 	Dimensions,
@@ -33,14 +34,43 @@ class HomePage extends Component {
 			width: Dimensions.get('window').width,
 			categoryData: Object.values(VEHICLE.CLASS),
 			vehicleCategoryIndex: 0,
-			categoryStartDrag: false
+			categoryStartDrag: false,
+			refreshing: false,
+			campaignRec: false,
+			campaignList: false,
+			campaignMyList: false
 		};
 	}
 
 	init = () => {
-		this.props.CampaignRecRequest();
-		this.props.CampaignListRequest();
-		this.props.dispatchMyList();
+		this.defaultValues();
+		this.props.CampaignRecRequest(() => {
+			this.setState({ campaignRec: true });
+			if(this.state.campaignList && this.state.campaignMyList) {
+				this.setState({ refreshing: false });
+			}
+		});
+		this.props.CampaignListRequest(() => {
+			this.setState({ campaignList: true });
+			if(this.state.campaignRec && this.state.campaignMyList) {
+				this.setState({ refreshing: false });
+			}
+		});
+		this.props.dispatchMyList(() => {
+			this.setState({ campaignMyList: true });
+			if(this.state.campaignRec && this.state.campaignList) {
+				this.setState({ refreshing: false });
+			}
+		});
+	}
+
+	defaultValues = () => {
+		this.setState({
+			refreshing: true,
+			campaignRec: false,
+			campaignList: false,
+			campaignMyList: false
+		});
 	}
 
 	_renderCategoryItem = ({ item }) => (
@@ -67,9 +97,17 @@ class HomePage extends Component {
 				/>
 
 				<ScrollView
+					alwaysBounceVertical={false}
 					style={styles.homePageScrollView}
-					overScrollMode='never'
+					// overScrollMode='never'
 					showsVerticalScrollIndicator={false}
+					refreshControl={
+						<RefreshControl
+							tintColor={theme.COLOR_GRAY_LIGHT}
+							refreshing={this.state.refreshing}
+							onRefresh={this.init}
+						/>
+					}
 				>
 					<UserInfo />
 
@@ -199,9 +237,9 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   CampaignChangeCategory: (category) => dispatch(CampaignAction.changeCategory(category)),
-  CampaignListRequest: () => dispatch(CampaignAction.list()),
-  CampaignRecRequest: () => dispatch(CampaignAction.recommended()),
-	dispatchMyList: () => dispatch(CampaignAction.mylist())
+  CampaignListRequest: callback => dispatch(CampaignAction.list(callback)),
+  CampaignRecRequest: callback => dispatch(CampaignAction.recommended(callback)),
+	dispatchMyList: callback => dispatch(CampaignAction.mylist(callback))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(HomePage);

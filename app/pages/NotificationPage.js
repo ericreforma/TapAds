@@ -37,28 +37,25 @@ class NotificationPage extends Component {
     getNotificationContent = () => {
         UserController.request.notificationContent()
         .then(res => {
-            const { updatedCount,
-                notif } = res.data;
+            const { notif } = res.data;
             this.setState({
                 notification: notif,
                 loader: false
             });
-
-            if(parseInt(updatedCount) > 0) {
-                const { user } = this.props;
-                const userKeys = Object.keys(user);
-                const newUserData = {};
-                for(const u of userKeys) {
-                    if(u === 'notificationCount') {
-                        newUserData[u] = parseInt(updatedCount);
-                    } else {
-                        newUserData[u] = user[u];
-                    }
+            
+            const { user } = this.props;
+            const userKeys = Object.keys(user);
+            const newUserData = {};
+            for(const u of userKeys) {
+                if(u === 'notificationCount') {
+                    newUserData[u] = 0;
+                } else {
+                    newUserData[u] = user[u];
                 }
-                this.props.updateUserNotification(newUserData);
             }
+            this.props.updateUserNotification(newUserData);
         })
-        .catch(error => console.log(error));
+        .catch(error => console.log(error.response));
     }
 
     notificationOnPress = (action, id) => () => {
