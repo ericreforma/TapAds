@@ -133,8 +133,7 @@ export const getMonthlyVehiclePhoto = (campaignSelected) => {
 	const { campaignDetails, vehicleMonthlyUpdate } = campaignSelected,
 		from = campaignDetails.duration_from,
 		to = campaignDetails.duration_to;
-		console.log({from});
-		console.log({to});
+		
 	const months = [
 			'Jan', 'Feb', 'Mar',
 			'Apr', 'May', 'Jun',

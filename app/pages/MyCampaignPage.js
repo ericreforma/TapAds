@@ -44,7 +44,7 @@ class MyCampaignPage extends Component {
             loader: true,
             myList: []
         };
-    }
+		}
 
     init = () => {
 			this.setState({loader: false});

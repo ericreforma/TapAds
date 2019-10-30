@@ -113,6 +113,7 @@ export const IMAGES = {
     car_icon: require('../assets/image/car_blue_marker.png'),
     end_trip_icon: require('../assets/image/icons/car_end_trip.png'),
     send_icon: require('../assets/image/icons/send_icon.png'),
+    send_icon_circle: require('../assets/image/icons/send_icon_circle.png'),
     peso_sign_icon: require('../assets/image/icons/peso_sign.png'),
     payment_icon: require('../assets/image/icons/payment_icon.png'),
     payment_white_icon: require('../assets/image/icons/payment_white_icon.png'),

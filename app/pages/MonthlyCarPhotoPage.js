@@ -32,7 +32,8 @@ class MonthlyCarPhotoPage extends Component {
 
     this.state = {
       cameraOpen: false,
-      loader: true
+      loader: true,
+      uploading: false,
     };
   }
 
@@ -43,6 +44,7 @@ class MonthlyCarPhotoPage extends Component {
   }
 
   getImageData = (imageData) => {
+    this.setState({uploading: true});
     const file = imageData.base64;
     const uriSplit = imageData.uri.split('/');
     const type = `image/${uriSplit[uriSplit.length - 1].split('.')[1]}`;
@@ -54,6 +56,7 @@ class MonthlyCarPhotoPage extends Component {
     .then(res => {
       this.successFlashMessage('Photo uploaded successfully!');
       this.props.campaignVehicleMonthlyUpdate(campaignId, res.data);
+      this.setState({uploading: false});
     })
     .catch(error => {
       console.log(error);
@@ -204,9 +207,24 @@ class MonthlyCarPhotoPage extends Component {
                   >
                     <LabelText>{m.monthDuration}</LabelText>
                     {m.deadlineToday ? (
-                      <TouchableOpacity onPress={this.uploadPhoto}>
-                        <LabelText color={theme.COLOR_PINK}>Upload</LabelText>
-                      </TouchableOpacity>
+                      <View
+                        style={{
+                          flexDirection: 'row'
+                        }}
+                      >
+                        {this.state.uploading ? (
+                          <View style={{marginRight: 10}}>
+                            <ActivityIndicator color={theme.COLOR_BLUE} />
+                          </View>
+                        ) : null}
+
+                        <TouchableOpacity
+                          onPress={this.uploadPhoto}
+                          disabled={this.state.uploading}
+                        >
+                          <LabelText color={theme.COLOR_PINK}>Upload</LabelText>
+                        </TouchableOpacity>
+                      </View>
                     ) : null}
                   </View>
 

@@ -77,16 +77,19 @@ export default class CameraView extends Component {
           }}
         >
           <TouchableOpacity
+            style={{
+              elevation: 5
+            }}
             onPress={this.sendButton}
           >
             <Image
               style={{
-                width: width / 10,
-                height: width / 10,
-                maxWidth: 30,
-                maxHeight: 30
+                width: width / 9,
+                height: width / 9,
+                maxWidth: 60,
+                maxHeight: 60
               }}
-              source={IMAGES.ICONS.send_icon}
+              source={IMAGES.ICONS.send_icon_circle}
               resizeMode="center"
             />
           </TouchableOpacity>
