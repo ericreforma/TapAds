@@ -54,6 +54,7 @@ export const AuthAction = {
     })
     .catch(error => {
       console.log(error);
+      console.log(error.response);
       dispatch({ type: AUTH.LOGIN.FAILED });
       Alert.alert('Login Failed',error.message);
     });

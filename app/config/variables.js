@@ -96,6 +96,37 @@ export const VEHICLE = {
       nameOnCaps: 'On-call',
     },
   },
+  STICKER_AREA: {
+    full_wrap: {
+      name: 'Full Wrap',
+      image: require('../assets/image/full-wrap.png')
+    },
+    '4_doors': {
+      name: '4 Doors',
+      imageLeft: require('../assets/image/two-door-left.png'),
+      imageRight: require('../assets/image/two-door-right.png'),
+    },
+    '2_doors': {
+      name: '2 Doors',
+      image: require('../assets/image/two-door-right.png'),
+    },
+    bumper: {
+      name: 'Bumper',
+      image: require('../assets/image/bumper.png'),
+    },
+    rear_windows: {
+      name: 'Rear Windows',
+      image: require('../assets/image/rear-window.png'),
+    },
+    in_car: {
+      name: 'In-Car',
+      image: require('../assets/image/in-car.png'),
+    },
+    motorcycle: {
+      name: 'Motorcycle',
+      image: require('../assets/image/motorcycle.png'),
+    }
+  }
 };
 
 export const MAP = {

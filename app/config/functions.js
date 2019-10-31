@@ -66,6 +66,21 @@ export const getHourDiff = (date1, date2) => {
 	}
 }
 
+export const getMonthDiff = (date1, date2) => {
+	if(!date1 || !date2) {
+		return false;
+	} else {
+		var months,
+			date1 = new Date(date1),
+			date2 = new Date(date2);
+
+    months = (date2.getFullYear() - date1.getFullYear()) * 12;
+    months -= date1.getMonth();
+    months += date2.getMonth();
+		return months <= 0 ? 0 : months;
+	}
+}
+
 const radiansToDegrees = (radians) => {
 	var pi = Math.PI;
 	return radians * (180/pi);

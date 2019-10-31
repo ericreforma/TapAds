@@ -24,10 +24,12 @@ import { VEHICLE } from '../config/variables';
 import theme from '../styles/theme.style';
 import styles from '../styles/page.Home.style';
 import { CampaignAction } from '../redux/actions/campaign.action';
-import { numberWithCommas, getDate } from '../config/functions';
+import { numberWithCommas, getDate, getMonthDiff } from '../config/functions';
 import NavigationService from '../services/navigation';
 
 import PopupMessage from '../components/Modal/popup';
+
+const STICKER_AREA = Object.values(VEHICLE.STICKER_AREA);
 
 class CampaignPage extends Component {
 	constructor(props) {
@@ -81,6 +83,12 @@ class CampaignPage extends Component {
 		popupModal.visible = false;
 		this.setState({popupModal});
 		NavigationService.navigate('Home');
+	}
+
+	getKmLength = () => {
+		const km = parseFloat(this.props.campaign.pay_basic_km);
+		const monthDiff = getMonthDiff(this.props.campaign.duration_from, this.props.campaign.duration_to);
+		return (km * monthDiff).toFixed(2);
 	}
 
 	render() {
@@ -174,9 +182,9 @@ class CampaignPage extends Component {
 										<InformationCard
 											info={[
 												{name: 'common', text: 'Earn up to'},
-												{name: 'label', text: `P${numberWithCommas(this.props.campaign.pay_basic)}`},
+												{name: 'label', text: `P${numberWithCommas(this.props.campaign.pay_basic * getMonthDiff(this.props.campaign.duration_from, this.props.campaign.duration_to))}`},
 												{name: 'common', text: 'for'},
-												{name: 'label', text: `${this.props.campaign.pay_basic_km}km`},
+												{name: 'label', text: `${this.getKmLength()}km`},
 											]}
 										/>
 
@@ -195,14 +203,47 @@ class CampaignPage extends Component {
 											paddingHorizontal: 20
 										}}
 									>
-										<Image
+										<View
 											style={{
-												width: '100%',
-												height: this.state.height / 5
+												marginTop: 10,
+												marginBottom: [3,4,6].indexOf(parseInt(this.props.campaign.vehicle_stickerArea)) !== -1 ? 20 : 0,
+												alignItems: 'center',
+												justifyContent: 'center'
 											}}
-											resizeMode="contain"
-											source={require('../assets/image/car_sticker_placement_front.png')}
-										/>
+										>
+											<LabelText>{STICKER_AREA[this.props.campaign.vehicle_stickerArea].name}</LabelText>
+										</View>
+
+										{this.props.campaign.vehicle_stickerArea === 1 ? (
+											<View>
+												<Image
+													style={{
+														width: '100%',
+														height: this.state.height / 5,
+													}}
+													resizeMode="contain"
+													source={STICKER_AREA[this.props.campaign.vehicle_stickerArea].imageLeft}
+												/>
+												
+												<Image
+													style={{
+														width: '100%',
+														height: this.state.height / 5
+													}}
+													resizeMode="contain"
+													source={STICKER_AREA[this.props.campaign.vehicle_stickerArea].imageRight}
+												/>
+											</View>
+										) : (
+											<Image
+												style={{
+													width: '100%',
+													height: this.state.height / 5
+												}}
+												resizeMode="contain"
+												source={STICKER_AREA[this.props.campaign.vehicle_stickerArea].image}
+											/>
+										)}
 									</View>
 								</CardBody>
 
