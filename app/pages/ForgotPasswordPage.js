@@ -229,26 +229,33 @@ class InputCodeModal extends Component {
   }
 
   verifyCode = () => {
-    this.toggleSubmitLoader();
     const { code } = this.state;
-    AuthController.forgotPassword.verify(code)
-    .then(res => {
-      console.log(code);
+    if(code === '') {
+      this.dropDownAlertRef.alertWithType(
+        'error',
+        'Enter code',
+        'Enter the code that was sent in your email to proceed'
+      );
+    } else {
       this.toggleSubmitLoader();
-      this.props.storeUserData(res.data);
-      console.log(res.data);
-    })
-    .catch(error => {
-      this.toggleSubmitLoader();
-      const { data } = error.response;
-      if(data.message) {
-        this.dropDownAlertRef.alertWithType(
-          'error',
-          'Invalid Code',
-          data.message
-        );
-      }
-    });
+      AuthController.forgotPassword.verify(code, this.props.email)
+      .then(res => {
+        this.toggleSubmitLoader();
+        this.props.storeUserData(res.data);
+        console.log(res.data);
+      })
+      .catch(error => {
+        this.toggleSubmitLoader();
+        const { data } = error.response;
+        if(data.message) {
+          this.dropDownAlertRef.alertWithType(
+            'error',
+            'Invalid Code',
+            data.message
+          );
+        }
+      });
+    }
   }
 
   resendCode = () => {
@@ -345,6 +352,7 @@ class InputCodeModal extends Component {
               placeholder="Enter code"
               placeholderTextColor={theme.COLOR_NORMAL_FONT + '70'}
               onChangeText={code => this.setState({code})}
+              onSubmitEditing={this.verifyCode}
             />
 
             {/* resend code button */}
