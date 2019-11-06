@@ -41,7 +41,7 @@ export default class PopupMessage extends Component {
             <View
               style={{
                 backgroundColor: theme.COLOR_GRAY_HEAVY,
-                padding: 20,
+                padding: 15,
                 alignItems: 'center',
                 justifyContent: 'center'
               }}
@@ -57,9 +57,16 @@ export default class PopupMessage extends Component {
                 padding: 20
               }}
             >
-              <CommonText>
-                {this.props.description}
-              </CommonText>
+              {this.props.description.split('\n').map((d, dIdx) =>
+                <View
+                  key={dIdx}
+                  style={{
+                    alignSelf: 'center'
+                  }}
+                >
+                  <CommonText>{d}</CommonText>
+                </View>
+              )}
 
               <View
                 style={{

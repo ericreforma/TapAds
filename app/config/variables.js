@@ -1,7 +1,7 @@
 import { TokenSchema } from '../database';
 
-// const SERVER_MAIN = 'http://192.168.0.100/TapAdsServer/public';
-const SERVER_MAIN = 'https://dev.bcdpinpoint.com/TapAdsServer/public';
+const SERVER_MAIN = 'http://192.168.0.100/TapAdsServer/public';
+// const SERVER_MAIN = 'https://dev.bcdpinpoint.com/TapAdsServer/public';
 const SOCKET_SERVER_MAIN = 'http://192.168.0.100';
 const SOCKET_SERVER_PORT = '3000';
 const SOCKET_SERVER = `${SOCKET_SERVER_MAIN}:${SOCKET_SERVER_PORT}`;
@@ -38,29 +38,19 @@ export const URL = {
 
 export const VEHICLE = {
   CLASS: {
-    small: {
+    regular: {
       id: 0,
-      name: 'small',
-      description: 'Sedan or smaller',
+      name: 'regular',
+      description: ['Compact SUV to', 'Regular SUV,', 'Sedan or smaller'],
       icon: {
         large: require('../assets/image/category_car_small.png'),
         black: require('../assets/image/icons/car_small_black_icon.png'),
         white: require('../assets/image/icons/car_small_white_icon.png'),
       },
     },
-    mid: {
+    premium: {
       id: 1,
-      name: 'mid',
-      description: ['Compact SUV to', 'Regular SUV'],
-      icon: {
-        large: require('../assets/image/category_car_mid.png'),
-        black: require('../assets/image/icons/car_mid_black_icon.png'),
-        white: require('../assets/image/icons/car_mid_white_icon.png'),
-      },
-    },
-    large: {
-      id: 2,
-      name: 'large',
+      name: 'premium',
       description: 'Van to Truck',
       icon: {
         large: require('../assets/image/category_car_large.png'),
@@ -69,7 +59,7 @@ export const VEHICLE = {
       },
     },
     motorcycle: {
-      id: 3,
+      id: 2,
       name: 'motorcycle',
       description: 'Motorcycle',
       icon: {

@@ -24,10 +24,11 @@ import { VEHICLE } from '../config/variables';
 import theme from '../styles/theme.style';
 import styles from '../styles/page.Home.style';
 import { CampaignAction } from '../redux/actions/campaign.action';
-import { numberWithCommas, getDate, getMonthDiff } from '../config/functions';
+import { numberWithCommas, getDate, totalKmDistance, earnUpTo } from '../config/functions';
 import NavigationService from '../services/navigation';
 
 import PopupMessage from '../components/Modal/popup';
+import ChooseVehicleModal from '../components/Modal/ChooseVehicleModal';
 
 const STICKER_AREA = Object.values(VEHICLE.STICKER_AREA);
 
@@ -44,6 +45,10 @@ class CampaignPage extends Component {
 				visible: false,
 				message: '',
 				description: ''
+			},
+
+			chooseVehicleModal: {
+				visible: false
 			}
 		};
 	}
@@ -60,13 +65,8 @@ class CampaignPage extends Component {
 			noLicense = true;
 			
 		if(!noVehicles && !noLicense) {
-			this.props.interestedCampaign();
-
-			const { popupModal } = this.state;
-			popupModal.visible = true;
-			popupModal.message = 'Campaign request sent!';
-			popupModal.description = 'You will be notified once the request status has been updated.\nThank you!';
-			this.setState({popupModal});
+			this.setState({loader: false});
+			this.toggleVehicleModal();
 		} else {
 			this.setState({loader: false});
 			const description = `Please register your${noVehicles ? ' vehicle' : ''}${noVehicles && noLicense ? ' and ' : ' '}${noLicense ? 'license ' : ''}in Profile page in order to proceed. Thank you!`;
@@ -85,10 +85,22 @@ class CampaignPage extends Component {
 		NavigationService.navigate('Home');
 	}
 
-	getKmLength = () => {
-		const km = parseFloat(this.props.campaign.pay_basic_km);
-		const monthDiff = getMonthDiff(this.props.campaign.duration_from, this.props.campaign.duration_to);
-		return (km * monthDiff).toFixed(2);
+	toggleVehicleModal = () => {
+		const {chooseVehicleModal} = this.state;
+		chooseVehicleModal.visible = !chooseVehicleModal.visible;
+		this.setState({chooseVehicleModal});
+	}
+
+	vehicleSelect = selectedVehicleId => {
+		this.props.interestedCampaign(selectedVehicleId, () => {
+			this.toggleVehicleModal();
+			
+			const { popupModal } = this.state;
+			popupModal.visible = true;
+			popupModal.message = 'Campaign request sent!';
+			popupModal.description = 'You will be notified once the\nrequest status has been updated.\n\nThank you!';
+			this.setState({popupModal});
+		});
 	}
 
 	render() {
@@ -99,6 +111,15 @@ class CampaignPage extends Component {
 					message={this.state.popupModal.message}
 					description={this.state.popupModal.description}
 					closeModal={this.closePopupModal}
+				/>
+
+				<ChooseVehicleModal
+					isVisible={this.state.chooseVehicleModal.visible}
+					closeModal={this.toggleVehicleModal}
+					vehicles={this.props.user.vehicles}
+					mylist={this.props.mylist}
+					campaign={this.props.campaign}
+					vehicleSelect={this.vehicleSelect}
 				/>
 
 				<ScrollView
@@ -182,9 +203,9 @@ class CampaignPage extends Component {
 										<InformationCard
 											info={[
 												{name: 'common', text: 'Earn up to'},
-												{name: 'label', text: `P${numberWithCommas(this.props.campaign.pay_basic * getMonthDiff(this.props.campaign.duration_from, this.props.campaign.duration_to))}`},
+												{name: 'label', text: `P${earnUpTo(this.props.campaign)}`},
 												{name: 'common', text: 'for'},
-												{name: 'label', text: `${this.getKmLength()}km`},
+												{name: 'label', text: `${totalKmDistance(this.props.campaign)}km`},
 											]}
 										/>
 
@@ -214,36 +235,46 @@ class CampaignPage extends Component {
 											<LabelText>{STICKER_AREA[this.props.campaign.vehicle_stickerArea].name}</LabelText>
 										</View>
 
-										{this.props.campaign.vehicle_stickerArea === 1 ? (
-											<View>
-												<Image
-													style={{
-														width: '100%',
-														height: this.state.height / 5,
-													}}
-													resizeMode="contain"
-													source={STICKER_AREA[this.props.campaign.vehicle_stickerArea].imageLeft}
-												/>
-												
-												<Image
-													style={{
-														width: '100%',
-														height: this.state.height / 5
-													}}
-													resizeMode="contain"
-													source={STICKER_AREA[this.props.campaign.vehicle_stickerArea].imageRight}
-												/>
-											</View>
-										) : (
+										{this.props.campaign.vehicle_classification === 2 ? (
 											<Image
 												style={{
 													width: '100%',
 													height: this.state.height / 5
 												}}
 												resizeMode="contain"
-												source={STICKER_AREA[this.props.campaign.vehicle_stickerArea].image}
+												source={VEHICLE.STICKER_AREA.motorcycle.image}
 											/>
-										)}
+										) : this.props.campaign.vehicle_stickerArea === 1 ? (
+												<View>
+													<Image
+														style={{
+															width: '100%',
+															height: this.state.height / 5,
+														}}
+														resizeMode="contain"
+														source={STICKER_AREA[this.props.campaign.vehicle_stickerArea].imageLeft}
+													/>
+													
+													<Image
+														style={{
+															width: '100%',
+															height: this.state.height / 5
+														}}
+														resizeMode="contain"
+														source={STICKER_AREA[this.props.campaign.vehicle_stickerArea].imageRight}
+													/>
+												</View>
+											) : (
+												<Image
+													style={{
+														width: '100%',
+														height: this.state.height / 5
+													}}
+													resizeMode="contain"
+													source={STICKER_AREA[this.props.campaign.vehicle_stickerArea].image}
+												/>
+											)
+										}
 									</View>
 								</CardBody>
 
@@ -275,11 +306,12 @@ class CampaignPage extends Component {
 
 const mapStateToProps = (state) => ({
 	campaign: state.campaignReducer.selected,
+	mylist: state.campaignReducer.mylist,
 	user: state.userReducer.user,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  interestedCampaign: () => dispatch(CampaignAction.interested()),
+  interestedCampaign: (userVehicleId, successCallback) => dispatch(CampaignAction.interested(userVehicleId, successCallback)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(CampaignPage);

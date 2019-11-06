@@ -106,16 +106,35 @@ export const getHeading = (a, b) => {
 	return changeBasis(rotate);
 };
 
+export const earnUpTo = (c) => {
+	const payBasic = parseFloat(c.pay_basic);
+	const returnValue = payBasic * getMonthDiff(c.duration_from, c.duration_to);
+	return numberWithCommas(returnValue.toFixed(2));
+}
+
+export const totalKmDistance = (c) => {
+	const km = c.pay_basic_km;
+	return (km * getMonthDiff(c.duration_from, c.duration_to)).toFixed(2);
+}
+
 export const getTotalEarnings = (campaign) => {
-	var campaignTraveled = parseFloat(campaign.campaign_traveled),
-		payBasic = parseFloat(campaign.campaignDetails.pay_basic),
-		payBasicKm = parseFloat(campaign.campaignDetails.pay_basic_km),
-		payAdditional = parseFloat(campaign.campaignDetails.pay_additional),
-		payAdditionalKm = parseFloat(campaign.campaignDetails.pay_additional_km),
-		d = campaignTraveled - payBasicKm,
-		d = (d >= 1 ? d : 0),
-		totalEarnings = (Math.floor(d / payAdditionalKm) * payAdditional) + (payBasic * (d >= 1 ? 1 : 0));
-		return totalEarnings.toFixed(2);
+	const { trips, campaignDetails } = campaign,
+		payBasic = parseFloat(campaignDetails.pay_basic),
+		payBasicKm = parseFloat(campaignDetails.pay_basic_km),
+		dateNow = new Date(),
+		dateNowString = `${dateNow.getFullYear()}-${(dateNow.getMonth() + 2).toString().padStart(2, '0')}-${(dateNow.getDate()).toString().padStart(2, '0')}`,
+		durationFromNow = getMonthDiff(campaignDetails.duration_from, dateNowString),
+		maxEarnings = (durationFromNow == 0 ? payBasic : durationFromNow * payBasic);
+		
+	var distanceArray = trips.map(t => parseFloat(t.campaign_traveled)),
+		distance = distanceArray.length === 0 ? 0 : distanceArray.reduce((total, num) => total + num),
+		earnings = Math.floor(distance / payBasicKm) * payBasic;
+		
+	if(earnings >= maxEarnings) {
+		earnings = maxEarnings;
+	}
+
+	return earnings.toFixed(2);
 }
 
 export const getTotalWithdrawals = (campaign) => {
@@ -137,11 +156,20 @@ export const checkPendingPayment = (campaign) => {
 			return p.status === 0 ? parseFloat(p.amount) : 0;
 		});
 
-		if(pendingAmount.length === 0) {
-			return false;
-		} else {
-			return pendingAmount.reduce((total, number) => total + number).toFixed(2);
-		}
+	if(pendingAmount.length === 0) {
+		return false;
+	} else {
+		return pendingAmount.reduce((total, number) => total + number).toFixed(2);
+	}
+}
+
+export const getBonus = (c) => {
+	var bonus = 0;
+	if(c.completed === 1) {
+		bonus = parseFloat(c.campaignDetails.completion_bonus);
+	}
+
+	return bonus.toFixed(2);
 }
 
 export const getMonthlyVehiclePhoto = (campaignSelected) => {

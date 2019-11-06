@@ -93,7 +93,7 @@ class HomePage extends Component {
 			<Page>
 				<NavigationEvents
 					onWillFocus={this.init}
-					// onDidFocus={() => NavigationService.navigate('Profile')}
+					onDidFocus={() => NavigationService.navigate('MyCampaign')}
 				/>
 
 				<ScrollView

@@ -6,43 +6,33 @@ class VehicleType extends Component {
 	render() {
         var vehicleUrl = [
             { 
-                vehicle: 'small',
+                vehicle: 'regular',
                 number: 0,
                 color: 'black',
                 url: require('../assets/image/icons/car_small_black_icon.png')
-            },{ 
-                vehicle: 'mid',
+            },{
+                vehicle: 'premium',
                 number: 1,
-                color: 'black',
-                url: require('../assets/image/icons/car_mid_black_icon.png')
-            },{ 
-                vehicle: 'large',
-                number: 2,
                 color: 'black',
                 url: require('../assets/image/icons/car_large_black_icon.png')
             },{ 
                 vehicle: 'motorcycle',
-                number: 3,
+                number: 2,
                 color: 'black',
                 url: require('../assets/image/icons/motorcycle_black_icon.png')
             },{ 
-                vehicle: 'small',
+                vehicle: 'regular',
                 number: 0,
                 color: 'white',
                 url: require('../assets/image/icons/car_small_white_icon.png')
-            },{ 
-                vehicle: 'mid',
+            },{
+                vehicle: 'premium',
                 number: 1,
-                color: 'white',
-                url: require('../assets/image/icons/car_mid_white_icon.png')
-            },{ 
-                vehicle: 'large',
-                number: 2,
                 color: 'white',
                 url: require('../assets/image/icons/car_large_white_icon.png')
             },{ 
                 vehicle: 'motorcycle',
-                number: 3,
+                number: 2,
                 color: 'white',
                 url: require('../assets/image/icons/motorcycle_white_icon.png')
             }

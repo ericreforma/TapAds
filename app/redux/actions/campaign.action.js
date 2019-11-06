@@ -73,7 +73,7 @@ export const CampaignAction = {
     dispatch({ type: CAMPAIGN.MYLIST.SELECTED, campaign: campaign });
   },
 
-  interested: () => (dispatch, getState) => {
+  interested: (userVehicleId = 0, successCallBack) => (dispatch, getState) => {
     // NavigationService.navigate('MyCampaign');
 
     const state = getState();
@@ -86,17 +86,17 @@ export const CampaignAction = {
         console.log('Error Saving');
       });
 
-      CampaignController.interested(0, selectedCampaign.id)
+      CampaignController.interested(userVehicleId, selectedCampaign.id)
         .then(() => {
-          // CampaignController.mylist()
-          //   .then(response => {
-          //     dispatch({ type: CAMPAIGN.MYLIST.GET, mylist: response.data });
-          //     NavigationService.navigate('MyCampaign');
-          //   })
-          //   .catch(e => {
-          //     console.log('error');
-          //     console.log(e);
-          //   });
+          CampaignController.mylist()
+            .then(response => {
+              dispatch({ type: CAMPAIGN.MYLIST.GET, mylist: response.data });
+              successCallBack();
+            })
+            .catch(e => {
+              console.log('error');
+              console.log(e);
+            });
         })
         .catch(e => {
           console.log('error');

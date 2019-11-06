@@ -19,7 +19,8 @@ import {
 	getTotalEarnings,
 	numberWithCommas,
 	getTotalWithdrawals,
-	checkPendingPayment
+	checkPendingPayment,
+	getBonus
 } from '../../../config/functions';
 
 import theme from '../../../styles/theme.style';
@@ -46,7 +47,8 @@ export default class Withdraws extends Component {
 		const earnings = parseFloat(getTotalEarnings(c));
 		const withdraws = parseFloat(getTotalWithdrawals(c));
 		const pending = parseFloat(this.checkPendingAmount(c).replace(',', ''));
-		const diff = earnings - (withdraws + pending);
+		const bonus = parseFloat(getBonus(c));
+		const diff = (earnings + bonus) - (withdraws + pending);
 		return numberWithCommas(diff.toFixed(2));
 	}
 
@@ -222,6 +224,17 @@ export default class Withdraws extends Component {
 												>
 													<CommonText>Earnings</CommonText>
 													<LabelText small>P{numberWithCommas(getTotalEarnings(c))}</LabelText>
+												</View>
+												
+												<View
+													style={{
+														flexDirection: 'row',
+														justifyContent: 'space-between',
+														alignItems: 'center'
+													}}
+												>
+													<CommonText>Bonus</CommonText>
+													<LabelText small>P{numberWithCommas(getBonus(c))}</LabelText>
 												</View>
 
 												<View

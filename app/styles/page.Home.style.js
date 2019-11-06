@@ -144,7 +144,7 @@ export default StyleSheet.create({
         marginVertical: 10
     },
     homePageCategoryDescriptionWrapper: {
-        height: 35
+        height: 50
     },
     homePageCategoriesNoCampaigns: {
         marginTop: 10,

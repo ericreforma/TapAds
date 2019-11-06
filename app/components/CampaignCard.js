@@ -21,10 +21,7 @@ import styles from '../styles/page.Home.style';
 import theme from '../styles/theme.style';
 import { VehicleType } from './VehicleType';
 import { VEHICLE } from '../config/variables';
-import { toMoney } from '../utils';
-import {
-  numberWithCommas
-} from '../config/functions';
+import { earnUpTo } from '../config/functions';
 
 const windowWidth = Dimensions.get('window').width;
 const vehicleTypes = Object.values(VEHICLE.TYPE);
@@ -71,7 +68,7 @@ export const CampaignCardList = ({ campaigns, isRequesting, viewDetails }) => {
                         </Text>
 
                         <Text style={styles.homePageCampaignCardInfoValue}>
-                            P {toMoney(campaign.pay_basic)}
+                            P {earnUpTo(campaign)}
                         </Text>
                     </View>
 
@@ -186,7 +183,7 @@ export const CampaignCardRec = ({ campaigns, viewDetails }) => {
               buttonViewInfo
               buttonViewOnPress={() => { viewDetails(data.item.id); }}
             >
-                <LabelText color="white">P {toMoney(data.item.pay_basic)}</LabelText>
+                <LabelText color="white">P {earnUpTo(data.item)}</LabelText>
                 <CommonText color="white">Earn up to</CommonText>
             </CardFooter>
         </Card>
@@ -290,7 +287,7 @@ export const CampaignCardActive = ({ myList, campaignSelected, dispatchTrip, che
             </View>
 
             <View style={styles.homePageAlignRight}>
-              <LabelText>P {numberWithCommas(data.item.campaignDetails.pay_basic)}</LabelText>
+              <LabelText>P {earnUpTo(data.item.campaignDetails)}</LabelText>
               <CommonText>Earn up to</CommonText>
             </View>
           </View>
@@ -314,10 +311,12 @@ export const CampaignCardActive = ({ myList, campaignSelected, dispatchTrip, che
     </View>
   );
 
-  if(myList.length > 0) {
+  const activeCampaignList = myList.filter(l => l.request_status === 1);
+
+  if(activeCampaignList.length > 0) {
     return (
       <Carousel
-        data={myList}
+        data={activeCampaignList}
         renderItem={activeCampaignBody}
         layout={'default'}
         sliderWidth={windowWidth}
