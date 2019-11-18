@@ -54,21 +54,27 @@ export default class TestPage extends Component {
   messageListener = async () => {
     this.notificationListener = firebase.notifications().onNotification((notification) => {
       console.log('Notification Listener');
-      console.log(notification);
-      const { title, body } = notification;
-      this.showAlert(title, body);
+      const { title, body, data } = notification;
+      const res = JSON.parse(data.data);
+      console.log(res);
+
+      // this.showAlert(title, body);
     });
   
     this.notificationOpenedListener = firebase.notifications().onNotificationOpened((notificationOpen) => {
       console.log('Notification opened');
       const { title, body } = notificationOpen.notification;
-      this.showAlert(title, body);
+      console.log('Notification open: ', notificationOpen);
+
+      // this.showAlert(title, body);
     });
   
     const notificationOpen = await firebase.notifications().getInitialNotification();
     if (notificationOpen) {
       const { title, body } = notificationOpen.notification;
-      this.showAlert(title, body);
+      console.log('Notification open: ', notificationOpen);
+      
+      // this.showAlert(title, body);
     }
   
     this.messageListener = firebase.messaging().onMessage((message) => {

@@ -7,14 +7,18 @@ const headers = {
   'Content-Type': 'application/json',
   'Access-Control-Allow-Origin': '*',
 };
+const firebaseHeader = {
+  'Content-Type': 'application/json',
+  'Authorization': `key=${URL.FIREBASE_TOKEN}`
+};
 
-const API = {
+export const API = {
   baseURL,
   timeout,
   headers
 };
 
-const TOKENIZED_API = () => {
+export const TOKENIZED_API = () => {
   const schema = TokenSchema.get();
   const api = API;
 
@@ -23,4 +27,10 @@ const TOKENIZED_API = () => {
   return api;
 };
 
-export { API, TOKENIZED_API };
+export const FIREBASE_API = () => {
+  return {
+    baseURL: URL.FIREBASE_API,
+    timeout,
+    headers: firebaseHeader
+  }
+};

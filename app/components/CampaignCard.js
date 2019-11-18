@@ -281,7 +281,7 @@ export class CampaignCardActive extends Component {
               }}
             >
               <TouchableOpacity
-                onPress={() => { campaignSelected(data.item.id); }}
+                onPress={() => { this.props.campaignSelected(data.item.id); }}
               >
                 <Text style={styles.homePageViewAll}>
                   Full details

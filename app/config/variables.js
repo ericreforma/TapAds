@@ -3,11 +3,15 @@ const SERVER_MAIN = 'https://dev.bcdpinpoint.com/TapAdsServer/public';
 
 const SERVER_API = `${SERVER_MAIN}/api`;
 const SERVER_MEDIA = `${SERVER_MAIN}/storage`;
+const FIREBASE_API = 'https://fcm.googleapis.com';
+const FIREBASE_TOKEN = 'AAAApdV3IHA:APA91bECXNiEFnF3C2C3B7N3fYHUuITkodN13fIa8UF1qWky_93n6-3hN-39iT7-XypuuIh2Bw8mn3rWnIhWCZKf6-hI8AysiuMakAY7kf-7zTNB6oZSisPGMId0CMeRSJKwJtPAkTv0';
 
 export const URL = {
   SERVER_MAIN,
   SERVER_API,
   SERVER_MEDIA,
+  FIREBASE_TOKEN,
+  FIREBASE_API,
   PAGE: {
     USER: '/user',
     CAMPAIGN: {

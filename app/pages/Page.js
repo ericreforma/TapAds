@@ -101,7 +101,6 @@ class Page extends Component {
 		if(page === 'logout') {
 			AuthController.logout()
 			.then(() => {
-				this.props.disconnectSocket();
 			  NavigationService.navigate('Loading');
 				this.props.resetPropsValues();
 			})
