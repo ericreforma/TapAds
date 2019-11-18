@@ -113,7 +113,7 @@ class MessengerPage extends Component {
 
     render() {
         return (
-            <Page>
+            <Page messenger>
                 <NavigationEvents onWillFocus={this.getChatList} />
 
                 <ScrollView

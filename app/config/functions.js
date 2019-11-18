@@ -4,6 +4,18 @@ export const numberWithCommas = (x) => {
 	return parts.join(".");
 };
 
+export const getCurrentTime = () => {
+  var date = new Date,
+    month = (parseInt(date.getMonth()) + 1).toString().padStart(2, "0"),
+    day = date.getDate().toString().padStart(2, "0"),
+    year = date.getFullYear(),
+    hour = date.getHours().toString().padStart(2, "0"),
+    min = date.getMinutes().toString().padStart(2, "0"),
+    sec = date.getSeconds().toString().padStart(2, "0");
+
+  return `${month}-${day}-${year} ${hour}:${min}:${sec}`;
+};
+
 export const timeStamp = (d) => {
 	if(d) {
 		var date = d.split(' ')[0],

@@ -50,7 +50,7 @@ class HomePage extends Component {
 				this.setState({ refreshing: false });
 			}
 		});
-		this.props.CampaignListRequest(() => {
+		this.props.CampaignListRequest(true, () => {
 			this.setState({ campaignList: true });
 			if(this.state.campaignRec && this.state.campaignMyList) {
 				this.setState({ refreshing: false });
@@ -93,7 +93,7 @@ class HomePage extends Component {
 			<Page>
 				<NavigationEvents
 					onWillFocus={this.init}
-					onDidFocus={() => NavigationService.navigate('MyCampaign')}
+					// onDidFocus={() => NavigationService.navigate('MyCampaign')}
 				/>
 
 				<ScrollView
@@ -237,7 +237,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   CampaignChangeCategory: (category) => dispatch(CampaignAction.changeCategory(category)),
-  CampaignListRequest: callback => dispatch(CampaignAction.list(callback)),
+  CampaignListRequest: (newBatch = false, callback) => dispatch(CampaignAction.list(newBatch, callback)),
   CampaignRecRequest: callback => dispatch(CampaignAction.recommended(callback)),
 	dispatchMyList: callback => dispatch(CampaignAction.mylist(callback))
 });

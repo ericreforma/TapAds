@@ -68,7 +68,7 @@ class NotificationPage extends Component {
 
     render() {
         return (
-            <Page>
+            <Page notif>
                 <NavigationEvents onWillFocus={this.getNotificationContent} />
 
                 <ScrollView

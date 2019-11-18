@@ -30,14 +30,15 @@ import {
 	ForgotPasswordPage,
 	MonthlyCarPhotoPage
 } from '../pages';
-import BackgroundTaskTest from '../pages/BackgroundTaskTest';
+
+import TestPage from '../pages/TestPage'; 
 
 export default class Route extends Component {
 	constructor(props) {
 		super(props);
     console.disableYellowBox = true;
 	}
-
+	
 	render() {
 		return (
 			<AppContainer
@@ -78,7 +79,6 @@ const AppStack = createStackNavigator({
 		Dashboard: DashboardPage,
 		Recommended: RecommendedPage,
 		MonthlyCarPhoto: MonthlyCarPhotoPage,
-		// BackgroundTaskTest: BackgroundTaskTest,
 	}, {
 		headerMode: 'none',
 		navigationOptions: {
@@ -88,6 +88,7 @@ const AppStack = createStackNavigator({
 
 const AppRoute = createSwitchNavigator({
 	Loading: LoadingPage,
+	TestPage: TestPage,
 	Auth: AuthStack,
 	App: AppStack,
 	StartCampaign: StartCampaignPage

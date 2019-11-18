@@ -17,6 +17,7 @@ export default {
   COLOR_NORMAL_FONT: '#5f5f5f',
   COLOR_SIGNUP_FONT: '#b5b5b5',
   COLOR_RED: '#d75a4a',
+  COLOR_YELLOW: '#ffc107',
   NEW_COLOR: {
     COLOR_BLACK: '#000124',
     COLOR_GRAY: '#999999',

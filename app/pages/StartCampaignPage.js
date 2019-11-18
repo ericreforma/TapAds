@@ -11,7 +11,6 @@ import {
 import Geolocation from 'react-native-geolocation-service';
 import Modal from 'react-native-modal';
 import { connect } from 'react-redux';
-import { CampaignTripSchema, CampaignTripMapSchema } from '../database';
 import MapView, { Marker, Polygon, PROVIDER_GOOGLE, Polyline } from 'react-native-maps';
 import { MapController } from '../controllers';
 import NavigationService from '../services/navigation';
@@ -23,6 +22,7 @@ import mapStyle from '../styles/map.style';
 import buttonStyle from '../styles/component.ButtonBlue.style';
 import theme from '../styles/theme.style';
 import { LabelText, CommonText } from '../components/Text';
+import Page from './Page';
 
 class StartCampaignPage extends Component {
   constructor(props) {
@@ -90,8 +90,6 @@ class StartCampaignPage extends Component {
 
   componentDidMount() {
     // Create CampaignTrip Instance
-    const trip_id = CampaignTripSchema
-
     let polys = [];
 
     this.state.map.coordinates.map((polygon) =>
@@ -543,165 +541,166 @@ class StartCampaignPage extends Component {
 
   render() {
     return (
-      <View style={style.container}>
-      {this.summaryModal()}
-      {this.savingModal()}
-      {this.mapContent()}
-        <View style={style.bottomPanel}>
+      <Page nonPage>
+        <View style={style.container}>
+          {this.summaryModal()}
+          {this.savingModal()}
+          {this.mapContent()}
 
-          <View style={[style.viewCampaignRow, this.state.styleAlarm]}>
+          <View style={style.bottomPanel}>
+            <View style={[style.viewCampaignRow, this.state.styleAlarm]}>
 
-            {/* <Text style={[style.textCampaignRow, this.state.styleAlarm]}>
-              {this.state.campaign.campaignDetails.name}
-            </Text>
-            <Text style={style.textBrandRow}>
-              {this.state.campaign.client.business_name}
-            </Text> */}
-
-            <LabelText color={this.state.counted ? "black" : "white"}>
-              {this.state.campaign.campaignDetails.name}
-            </LabelText>
-
-            <CommonText color={this.state.counted ? "black" : "white"}>
-              {this.state.campaign.client.business_name}
-            </CommonText>
-          </View>
-
-          <View style={{padding: 14}}>
-            <View
-              style={{
-                paddingBottom: 7,
-                borderBottomColor: '#a7a7a7',
-                borderBottomWidth: 1
-              }}
-            >
-              {/* campaign area */}
-              <RowContent
-                leftColumn={(
-                  <CommonText>Counting</CommonText>
-                )}
-                rightColumn={(
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center'
-                    }}
-                  >
-                    {/* red part */}
-                    <View
-                      style={{
-                        width: 20,
-                        height: 20,
-                        borderRadius: 10,
-                        marginRight: 4,
-                        backgroundColor: this.state.counted ? theme.COLOR_GRAY_MEDIUM : theme.COLOR_RED
-                      }}
-                    ></View>
-
-                    {/* green part */}
-                    <View
-                      style={{
-                        width: 20,
-                        height: 20,
-                        borderRadius: 10,
-                        marginLeft: 4,
-                        backgroundColor: this.state.counted ? theme.COLOR_GREEN : theme.COLOR_GRAY_MEDIUM
-                      }}
-                    ></View>
-                  </View>
-                )}
-              />
-
-              {/* campaign distance */}
-              <RowContent
-                leftColumn={(
-                  <CommonText>Campaign Distance</CommonText>
-                )}
-                rightColumn={(
-                  <LabelText large>
-                    {((this.state.totalCampaignTraveled)).toFixed(2)}km
-                  </LabelText>
-                )}
-              />
-
-              {/* total distance */}
-              <RowContent
-                leftColumn={(
-                  <CommonText>Total Distance</CommonText>
-                )}
-                rightColumn={(
-                  <LabelText>
-                    {((this.state.totalCarTraveled)).toFixed(2)}km
-                  </LabelText>
-                )}
-              />
-            </View>
-
-            <View
-              style={{
-                paddingTop: 7
-              }}
-            >
-              {/* time started */}
-              <RowContent
-                leftColumn={(
-                  <CommonText xsmall>Time Started</CommonText>
-                )}
-                rightColumn={(
-                  <CommonText xsmall>
-                    {this.state.startTimeText}
-                  </CommonText>
-                )}
-              />
-
-              {/* duration */}
-              <RowContent
-                leftColumn={(
-                  <CommonText xsmall>Duration</CommonText>
-                )}
-                rightColumn={(
-                  <CommonText xsmall>
-                    {this.state.spanTime}min
-                  </CommonText>
-                )}
-              />
-            </View>
-          </View >
-
-          {/* <View style={style.viewColumn}>
-            <Text style={style.textCampaignTraveled}>
-              {((this.state.totalCampaignTraveled)).toFixed(2)}km
-            </Text>
-            <Text style={style.textCarTraveled}>
-              {((this.state.totalCarTraveled)).toFixed(2)}km 
-            </Text>
-          </View>
-
-          <View style={style.viewColumn}>
-            <Text style={style.textLocation}>
-              {this.state.map.name}
-            </Text>
-            <Text style={style.textTime}>
-              {this.state.startTimeText}
-            </Text>
-            <Text style={style.textTime}>
-              {this.state.spanTime}min
-            </Text>
-          </View> */}
-
-          <View style={style.viewButtonRow}>
-            <TouchableOpacity
-              style={[buttonStyle.buttonStyle]}
-              onPress={() => this.save()}
-            >
-              <Text style={[buttonStyle.buttonLabel, style.button]}>
-                End
+              {/* <Text style={[style.textCampaignRow, this.state.styleAlarm]}>
+                {this.state.campaign.campaignDetails.name}
               </Text>
-            </TouchableOpacity>
-          </View>
+              <Text style={style.textBrandRow}>
+                {this.state.campaign.client.business_name}
+              </Text> */}
 
+              <LabelText color={this.state.counted ? "black" : "white"}>
+                {this.state.campaign.campaignDetails.name}
+              </LabelText>
+
+              <CommonText color={this.state.counted ? "black" : "white"}>
+                {this.state.campaign.client.business_name}
+              </CommonText>
+            </View>
+
+            <View style={{padding: 14}}>
+              <View
+                style={{
+                  paddingBottom: 7,
+                  borderBottomColor: '#a7a7a7',
+                  borderBottomWidth: 1
+                }}
+              >
+                {/* campaign area */}
+                <RowContent
+                  leftColumn={(
+                    <CommonText>Counting</CommonText>
+                  )}
+                  rightColumn={(
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center'
+                      }}
+                    >
+                      {/* red part */}
+                      <View
+                        style={{
+                          width: 20,
+                          height: 20,
+                          borderRadius: 10,
+                          marginRight: 4,
+                          backgroundColor: this.state.counted ? theme.COLOR_GRAY_MEDIUM : theme.COLOR_RED
+                        }}
+                      ></View>
+
+                      {/* green part */}
+                      <View
+                        style={{
+                          width: 20,
+                          height: 20,
+                          borderRadius: 10,
+                          marginLeft: 4,
+                          backgroundColor: this.state.counted ? theme.COLOR_GREEN : theme.COLOR_GRAY_MEDIUM
+                        }}
+                      ></View>
+                    </View>
+                  )}
+                />
+
+                {/* campaign distance */}
+                <RowContent
+                  leftColumn={(
+                    <CommonText>Campaign Distance</CommonText>
+                  )}
+                  rightColumn={(
+                    <LabelText large>
+                      {((this.state.totalCampaignTraveled)).toFixed(2)}km
+                    </LabelText>
+                  )}
+                />
+
+                {/* total distance */}
+                <RowContent
+                  leftColumn={(
+                    <CommonText>Total Distance</CommonText>
+                  )}
+                  rightColumn={(
+                    <LabelText>
+                      {((this.state.totalCarTraveled)).toFixed(2)}km
+                    </LabelText>
+                  )}
+                />
+              </View>
+
+              <View
+                style={{
+                  paddingTop: 7
+                }}
+              >
+                {/* time started */}
+                <RowContent
+                  leftColumn={(
+                    <CommonText xsmall>Time Started</CommonText>
+                  )}
+                  rightColumn={(
+                    <CommonText xsmall>
+                      {this.state.startTimeText}
+                    </CommonText>
+                  )}
+                />
+
+                {/* duration */}
+                <RowContent
+                  leftColumn={(
+                    <CommonText xsmall>Duration</CommonText>
+                  )}
+                  rightColumn={(
+                    <CommonText xsmall>
+                      {this.state.spanTime}min
+                    </CommonText>
+                  )}
+                />
+              </View>
+            </View >
+
+            {/* <View style={style.viewColumn}>
+              <Text style={style.textCampaignTraveled}>
+                {((this.state.totalCampaignTraveled)).toFixed(2)}km
+              </Text>
+              <Text style={style.textCarTraveled}>
+                {((this.state.totalCarTraveled)).toFixed(2)}km 
+              </Text>
+            </View>
+
+            <View style={style.viewColumn}>
+              <Text style={style.textLocation}>
+                {this.state.map.name}
+              </Text>
+              <Text style={style.textTime}>
+                {this.state.startTimeText}
+              </Text>
+              <Text style={style.textTime}>
+                {this.state.spanTime}min
+              </Text>
+            </View> */}
+
+            <View style={style.viewButtonRow}>
+              <TouchableOpacity
+                style={[buttonStyle.buttonStyle]}
+                onPress={() => this.save()}
+              >
+                <Text style={[buttonStyle.buttonLabel, style.button]}>
+                  End
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
         </View>
-      </View>
+      </Page>
     );
   }
 }

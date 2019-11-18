@@ -142,7 +142,23 @@ export default class ChooseVehicleModal extends Component {
       );
     } else {
       this.setState({loader: true});
-      this.props.vehicleSelect(this.state.selectedVehicle);
+      this.props.vehicleSelect(this.state.selectedVehicle, error => {
+        this.setState({loader: false});
+        if(error.existingCampaign) {
+          this.dropDownAlertRef.alertWithType(
+            'error',
+            error.message,
+            ''
+          );
+        } else {
+          console.log(error.message);
+          this.dropDownAlertRef.alertWithType(
+            'error',
+            'Server error',
+            ''
+          );
+        }
+      });
     }
   }
 

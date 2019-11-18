@@ -3,6 +3,11 @@ import PushNotification from 'react-native-push-notification';
 import PushNotificationIOS from "@react-native-community/push-notification-ios";
 
 export default class PushController extends Component {
+  constructor(props) {
+    super(props);
+    this.changePage = 'test';
+  }
+
   componentDidMount = () => {
     PushNotification.configure({
       // (optional) Called when Token is generated (iOS and Android)
@@ -12,7 +17,10 @@ export default class PushController extends Component {
     
       // (required) Called when a remote or local notification is opened or received
       onNotification: function(notification) {
-        console.log("NOTIFICATION:", notification);
+        console.log(notification);
+        const { data } = notification;
+        const params = data.id ? {id: data.id} : null;
+        console.log(data);
     
         // process the notification
     

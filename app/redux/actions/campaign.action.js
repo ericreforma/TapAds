@@ -1,16 +1,16 @@
 import { CAMPAIGN } from './types.action';
 import { CampaignController, CampaignLocationController } from '../../controllers';
 import NavigationService from '../../services/navigation';
-import { CampaignSchema } from '../../database';
 
 export const CampaignAction = {
-  list: (successCallBack = false) => (dispatch, getState) => {
+  list: (newBatch, successCallBack = false) => (dispatch, getState) => {
     dispatch({ type: CAMPAIGN.LIST.REQUEST });
     const state = getState();
+    const page = newBatch ? 1 : state.campaignReducer.current_page + 1;
     CampaignController.home.list(
-        `?cl=${state.campaignReducer.vehicle_classification}&page=${state.campaignReducer.current_page + 1}`)
+        `?cl=${state.campaignReducer.vehicle_classification}&page=${page}`)
       .then(response => {
-        dispatch({ type: CAMPAIGN.LIST.SUCCESS, data: response.data });
+        dispatch({ type: CAMPAIGN.LIST.SUCCESS, data: response.data, newBatch });
         if(successCallBack) {
           successCallBack();
         }
@@ -23,6 +23,7 @@ export const CampaignAction = {
   },
 
   mylist: (successCallBack = null) => dispatch => {
+    dispatch({ type: CAMPAIGN.MYLIST.REQUEST });
     CampaignController.mylist()
       .then(response => {
         dispatch({ type: CAMPAIGN.MYLIST.GET, mylist: response.data });
@@ -73,35 +74,47 @@ export const CampaignAction = {
     dispatch({ type: CAMPAIGN.MYLIST.SELECTED, campaign: campaign });
   },
 
-  interested: (userVehicleId = 0, successCallBack) => (dispatch, getState) => {
+  interested: (userVehicleId = 0, successCallBack, errorCallback) => (dispatch, getState) => {
     // NavigationService.navigate('MyCampaign');
 
     const state = getState();
     const selectedCampaign = state.campaignReducer.selected;
     const mylist = state.campaignReducer.mylist;
 
-    if (mylist.find(x => x.id === selectedCampaign.id) === undefined) {
-      CampaignSchema.insert(selectedCampaign, e => {
-        console.log(e);
-        console.log('Error Saving');
-      });
-
+    if (mylist.find(x => x.campaign_id === selectedCampaign.id && x.request_status !== 2) === undefined) {
       CampaignController.interested(userVehicleId, selectedCampaign.id)
-        .then(() => {
+      .then((res) => {
+        if(res.data.status === 'success') {
           CampaignController.mylist()
-            .then(response => {
-              dispatch({ type: CAMPAIGN.MYLIST.GET, mylist: response.data });
-              successCallBack();
-            })
-            .catch(e => {
-              console.log('error');
-              console.log(e);
+          .then(response => {
+            dispatch({ type: CAMPAIGN.MYLIST.GET, mylist: response.data });
+            successCallBack();
+          })
+          .catch(e => {
+            errorCallback({
+              existingCampaign: false,
+              message: e.response
             });
-        })
-        .catch(e => {
-          console.log('error');
-          console.log(e);
+          });
+        } else {
+          errorCallback({
+            existingCampaign: true,
+            message: 'Campaign already on the list'
+          });
+        }
+      })
+      .catch(e => {
+        console.log('error');
+        errorCallback({
+          existingCampaign: false,
+          message: e.response
         });
+      });
+    } else {
+      errorCallback({
+        existingCampaign: true,
+        message: 'Campaign already on the list'
+      });
     }
   },
 

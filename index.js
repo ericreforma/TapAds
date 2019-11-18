@@ -5,8 +5,6 @@ import Route from './app/routes';
 import { store } from './app/redux/store';
 
 export default class App extends Component {
-
-
 	render() {
 		return (
 			// <BackgroundTaskTest />
@@ -17,8 +15,6 @@ export default class App extends Component {
 			</Provider>
 		);
 	}
-
-
 }
 
 AppRegistry.registerComponent('TapAds', () => App);

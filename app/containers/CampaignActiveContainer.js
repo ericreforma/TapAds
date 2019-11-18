@@ -3,7 +3,9 @@ import { CampaignCardActive } from '../components/CampaignCard';
 import { CampaignAction } from '../redux/actions/campaign.action';
 
 const mapStatetoProps = (state) => ({
-  myList: state.campaignReducer.mylist
+  myList: state.campaignReducer.mylist,
+  mylistRequesting: state.campaignReducer.mylistRequesting,
+  mylistRequestDone: state.campaignReducer.mylistRequestDone
 });
 
 const mapDispatchToProps = (dispatch) => ({

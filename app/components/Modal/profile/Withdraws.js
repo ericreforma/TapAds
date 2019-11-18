@@ -188,162 +188,174 @@ export default class Withdraws extends Component {
 									marginTop: 20,
 								}}
 							>
-								{this.props.campaigns.map((c, cIdx) =>
-									<View
-										key={cIdx}
-										style={{
-											paddingVertical: 7
-										}}
-									>
-										<CardContainer>
-											{/* body */}
-											<View
-												style={{
-													paddingVertical: 20,
-													marginHorizontal: 20,
-													borderBottomWidth: 2,
-													borderBottomColor: '#e7e7e7',
-												}}
-											>
+								{this.props.campaigns.filter(c => c.request_status === 1 && !c.end).length !== 0 ?
+									this.props.campaigns
+									.filter(c => c.request_status === 1 && !c.end)
+									.map((c, cIdx) =>
+										<View
+											key={cIdx}
+											style={{
+												paddingVertical: 7
+											}}
+										>
+											<CardContainer>
+												{/* body */}
 												<View
 													style={{
-														marginBottom: 15,
-														alignItems: 'center'
+														paddingVertical: 20,
+														marginHorizontal: 20,
+														borderBottomWidth: 2,
+														borderBottomColor: '#e7e7e7',
 													}}
 												>
-													<LabelText>{c.campaignDetails.name}</LabelText>
-													<CommonText>{c.client.business_name}</CommonText>
-												</View>
-
-												<View
-													style={{
-														flexDirection: 'row',
-														justifyContent: 'space-between',
-														alignItems: 'center'
-													}}
-												>
-													<CommonText>Earnings</CommonText>
-													<LabelText small>P{numberWithCommas(getTotalEarnings(c))}</LabelText>
-												</View>
-												
-												<View
-													style={{
-														flexDirection: 'row',
-														justifyContent: 'space-between',
-														alignItems: 'center'
-													}}
-												>
-													<CommonText>Bonus</CommonText>
-													<LabelText small>P{numberWithCommas(getBonus(c))}</LabelText>
-												</View>
-
-												<View
-													style={{
-														flexDirection: 'row',
-														justifyContent: 'space-between',
-														alignItems: 'center'
-													}}
-												>
-													<CommonText>Withdrawn</CommonText>
-													<LabelText small>P{numberWithCommas(getTotalWithdrawals(c))}</LabelText>
-												</View>
-												
-												<View
-													style={{
-														flexDirection: 'row',
-														justifyContent: 'space-between',
-														alignItems: 'center'
-													}}
-												>
-													<CommonText>Pending</CommonText>
-													<LabelText small>P{this.checkPendingAmount(c)}</LabelText>
-												</View>
-
-												<View
-													style={{
-														height: 2,
-														width: 80,
-														backgroundColor: '#e7e7e7',
-														alignSelf: 'flex-end',
-														marginTop: 5
-													}}
-												></View>
-
-												<View
-													style={{
-														flexDirection: 'row',
-														justifyContent: 'space-between',
-														alignItems: 'center'
-													}}
-												>
-													<CommonText>Remaining</CommonText>
-													<LabelText color="blue">P{this.getRemaning(c)}</LabelText>
-												</View>
-											</View>
-											
-											<View
-												style={{
-													paddingVertical: 15,
-													paddingRight: 20,
-													flexDirection: 'row',
-													justifyContent: 'space-between',
-													alignItems: 'center'
-												}}
-											>
-												<View
-													style={{
-														width: 90,
-														paddingVertical: 5,
-														justifyContent: 'center',
-														alignItems: 'center',
-														borderTopRightRadius: 20,
-														borderBottomRightRadius: 20,
-														backgroundColor: theme.COLOR_BLUE
-													}}
-												>
-													<Image
+													<View
 														style={{
-															width: 45,
-															height: 45,
+															marginBottom: 15,
+															alignItems: 'center'
 														}}
-														resizeMode="contain"
-														source={IMAGES.ICONS.payment_white_icon}
-													/>
+													>
+														<LabelText>{c.campaignDetails.name}</LabelText>
+														<CommonText>{c.client.business_name}</CommonText>
+													</View>
+
+													<View
+														style={{
+															flexDirection: 'row',
+															justifyContent: 'space-between',
+															alignItems: 'center'
+														}}
+													>
+														<CommonText>Earnings</CommonText>
+														<LabelText small>P{numberWithCommas(getTotalEarnings(c))}</LabelText>
+													</View>
+													
+													<View
+														style={{
+															flexDirection: 'row',
+															justifyContent: 'space-between',
+															alignItems: 'center'
+														}}
+													>
+														<CommonText>Bonus</CommonText>
+														<LabelText small>P{numberWithCommas(getBonus(c))}</LabelText>
+													</View>
+
+													<View
+														style={{
+															flexDirection: 'row',
+															justifyContent: 'space-between',
+															alignItems: 'center'
+														}}
+													>
+														<CommonText>Withdrawn</CommonText>
+														<LabelText small>P{numberWithCommas(getTotalWithdrawals(c))}</LabelText>
+													</View>
+													
+													<View
+														style={{
+															flexDirection: 'row',
+															justifyContent: 'space-between',
+															alignItems: 'center'
+														}}
+													>
+														<CommonText>Pending</CommonText>
+														<LabelText small>P{this.checkPendingAmount(c)}</LabelText>
+													</View>
+
+													<View
+														style={{
+															height: 2,
+															width: 80,
+															backgroundColor: '#e7e7e7',
+															alignSelf: 'flex-end',
+															marginTop: 5
+														}}
+													></View>
+
+													<View
+														style={{
+															flexDirection: 'row',
+															justifyContent: 'space-between',
+															alignItems: 'center'
+														}}
+													>
+														<CommonText>Remaining</CommonText>
+														<LabelText color="blue">P{this.getRemaning(c)}</LabelText>
+													</View>
 												</View>
 												
 												<View
 													style={{
-														alignItems: 'flex-end',
-														flex: 1
+														paddingVertical: 15,
+														paddingRight: 20,
+														flexDirection: 'row',
+														justifyContent: 'space-between',
+														alignItems: 'center'
 													}}
 												>
-													<LabelText color="blue">PENDING PAYMENT</LabelText>
-													<LabelText>P{this.checkPendingAmount(c)}</LabelText>
+													<View
+														style={{
+															width: 90,
+															paddingVertical: 5,
+															justifyContent: 'center',
+															alignItems: 'center',
+															borderTopRightRadius: 20,
+															borderBottomRightRadius: 20,
+															backgroundColor: theme.COLOR_BLUE
+														}}
+													>
+														<Image
+															style={{
+																width: 45,
+																height: 45,
+															}}
+															resizeMode="contain"
+															source={IMAGES.ICONS.payment_white_icon}
+														/>
+													</View>
+													
+													<View
+														style={{
+															alignItems: 'flex-end',
+															flex: 1
+														}}
+													>
+														<LabelText color="blue">PENDING PAYMENT</LabelText>
+														<LabelText>P{this.checkPendingAmount(c)}</LabelText>
+													</View>
 												</View>
-											</View>
-										
-											<View
-												style={{
-													backgroundColor: theme.COLOR_GRAY_HEAVY,
-												}}
-											>
-												<TouchableOpacity
+											
+												<View
 													style={{
-														alignItems: 'center',
-														paddingVertical: 15
+														backgroundColor: theme.COLOR_GRAY_HEAVY,
 													}}
-													onPress={this.withdrawButtonOnPress(cIdx, c)}
 												>
-													{this.state.loaders[cIdx] ? (
-														<ActivityIndicator color="#fff" />
-													) : (
-														<LabelText color="white">Withdraw</LabelText>
-													)}
-												</TouchableOpacity>
-											</View>
-										</CardContainer>
-									</View>
-								)}
+													<TouchableOpacity
+														style={{
+															alignItems: 'center',
+															paddingVertical: 15
+														}}
+														onPress={this.withdrawButtonOnPress(cIdx, c)}
+													>
+														{this.state.loaders[cIdx] ? (
+															<ActivityIndicator color="#fff" />
+														) : (
+															<LabelText color="white">Withdraw</LabelText>
+														)}
+													</TouchableOpacity>
+												</View>
+											</CardContainer>
+										</View>
+									) : (
+										<View
+											style={{
+												paddingVertical: 7
+											}}
+										>
+											<CommonText>-- no campaign available --</CommonText>
+										</View>
+									)
+								}
 							</View>
 						</View>
 					</ScrollView>

@@ -91,16 +91,15 @@ class CampaignPage extends Component {
 		this.setState({chooseVehicleModal});
 	}
 
-	vehicleSelect = selectedVehicleId => {
+	vehicleSelect = (selectedVehicleId, errorCallback) => {
 		this.props.interestedCampaign(selectedVehicleId, () => {
 			this.toggleVehicleModal();
-			
 			const { popupModal } = this.state;
 			popupModal.visible = true;
 			popupModal.message = 'Campaign request sent!';
 			popupModal.description = 'You will be notified once the\nrequest status has been updated.\n\nThank you!';
 			this.setState({popupModal});
-		});
+		}, errorCallback);
 	}
 
 	render() {
@@ -311,7 +310,8 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  interestedCampaign: (userVehicleId, successCallback) => dispatch(CampaignAction.interested(userVehicleId, successCallback)),
+	interestedCampaign: (userVehicleId, successCallback, errorCallback) =>
+		dispatch(CampaignAction.interested(userVehicleId, successCallback, errorCallback)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(CampaignPage);

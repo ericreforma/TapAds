@@ -58,8 +58,8 @@ class ChatPage extends Component {
 	}
 
 	componentWillUnmount = () => {
-			this.keyboardDidShowListener.remove();
-			this.keyboardDidHideListener.remove();
+		this.keyboardDidShowListener.remove();
+		this.keyboardDidHideListener.remove();
 	}
 	
 	getMessages = () => {
@@ -135,7 +135,10 @@ class ChatPage extends Component {
 
 	render() {
 		return (
-			<Page message>
+			<Page
+				message
+				clientId={this.cid}
+			>
 				<View
 					style={{
 						flex: 1,

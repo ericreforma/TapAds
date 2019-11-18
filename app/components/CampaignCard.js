@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import Carousel from 'react-native-snap-carousel';
 import {
   View,
@@ -6,7 +6,7 @@ import {
   Dimensions,
   PermissionsAndroid,
   ActivityIndicator,
-  TouchableOpacity
+  TouchableOpacity,
 } from 'react-native';
 import {
     Card,
@@ -207,8 +207,27 @@ export const CampaignCardRec = ({ campaigns, viewDetails }) => {
   }
 };
 
-export const CampaignCardActive = ({ myList, campaignSelected, dispatchTrip, checkCampaignLocation }) => {
-	async function requestCameraPermission(id, location_id) {
+export class CampaignCardActive extends Component {
+  state = {
+    loader: [],
+    activeCampaignList: []
+  }
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    const { mylistRequesting, mylistRequestDone, myList } = nextProps;
+    if(!mylistRequestDone && mylistRequesting) {
+      return { loader: [] };
+    } else if(mylistRequestDone && !mylistRequesting) {
+      const activeCampaignList = myList.filter(l => l.request_status === 1 && !l.end);
+      var loader = prevState.loader;
+      if(prevState.loader.length === 0) loader = Array(activeCampaignList.length).fill(false);
+      return { activeCampaignList, loader };
+    } else {
+      return null;
+    }
+  }
+
+	async requestCameraPermission(id, location_id, index) {
 		try {
 			const granted = await PermissionsAndroid.request(
 				PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
@@ -220,9 +239,13 @@ export const CampaignCardActive = ({ myList, campaignSelected, dispatchTrip, che
 				},
 			);
 			if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        campaignSelected(id, false, () => {
-          checkCampaignLocation(location_id, () => {
-            dispatchTrip();
+        const { loader } = this.state;
+        loader[index] = !loader[index];
+        this.setState({loader});
+
+        this.props.campaignSelected(id, false, () => {
+          this.props.checkCampaignLocation(location_id, () => {
+            this.props.dispatchTrip();
           });
         });
 			} else {
@@ -233,7 +256,7 @@ export const CampaignCardActive = ({ myList, campaignSelected, dispatchTrip, che
 		}
   }
 
-  const activeCampaignBody = (data) => (
+  activeCampaignBody = (data) => (
     <View style={styles.homePageRecommendedCampaignInfoContainer}>
       <Card>
         <CardHeader active>
@@ -271,7 +294,7 @@ export const CampaignCardActive = ({ myList, campaignSelected, dispatchTrip, che
         <CardBody>
           <View style={styles.homePageRecommendedCampaignBody}>
             <View style={styles.homePageRecommendedCampaignFirstCol}>
-              <LabelText>{data.item.campaignDetails.location}</LabelText>
+              <LabelText numberOfLines={1}>{data.item.campaignDetails.location}</LabelText>
               <CommonText>Location</CommonText>
             </View>
 
@@ -302,46 +325,51 @@ export const CampaignCardActive = ({ myList, campaignSelected, dispatchTrip, che
               borderRadius: 15,
               paddingVertical: 10
             }}
-            onPress={() => { requestCameraPermission(data.item.id, data.item.campaignDetails.location_id); }}
+            onPress={() => { this.requestCameraPermission(data.item.id, data.item.campaignDetails.location_id, data.index); }}
+            disabled={this.state.loader[data.index]}
           >
-            <LabelText color="white">Start trip</LabelText>
+            {this.state.loader[data.index] ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <LabelText color="white">Start trip</LabelText>
+            )}
           </TouchableOpacity>
         </CardFooter>
       </Card>
     </View>
   );
 
-  const activeCampaignList = myList.filter(l => l.request_status === 1);
-
-  if(activeCampaignList.length > 0) {
-    return (
-      <Carousel
-        data={activeCampaignList}
-        renderItem={activeCampaignBody}
-        layout={'default'}
-        sliderWidth={windowWidth}
-        itemWidth={(windowWidth - 50)}
-      />
-    );
-  } else {
-    return (
-      <View
-        style={{
-          flex: 1,
-          padding: 20,
-          marginHorizontal: 20,
-          borderRadius: theme.PAGE_CARD_RADIUS,
-          backgroundColor: theme.COLOR_WHITE
-        }}
-      >
+  render() {
+    if(this.state.activeCampaignList.length > 0) {
+      return (
+        <Carousel
+          data={this.state.activeCampaignList}
+          renderItem={this.activeCampaignBody}
+          layout={'default'}
+          sliderWidth={windowWidth}
+          itemWidth={(windowWidth - 50)}
+        />
+      );
+    } else {
+      return (
         <View
           style={{
-            alignSelf: 'center'
+            flex: 1,
+            padding: 20,
+            marginHorizontal: 20,
+            borderRadius: theme.PAGE_CARD_RADIUS,
+            backgroundColor: theme.COLOR_WHITE
           }}
         >
-          <CommonText>-- no active campaigns --</CommonText>
+          <View
+            style={{
+              alignSelf: 'center'
+            }}
+          >
+            <CommonText>-- no active campaigns --</CommonText>
+          </View>
         </View>
-      </View>
-    );
+      );
+    }
   }
 }

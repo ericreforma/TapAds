@@ -9,6 +9,8 @@ const initialState = {
   isRequesting: false,
   isRequestDone: false,
   recommended: [],
+  mylistRequesting: false,
+  mylistRequestDone: false,
   mylist: [],
   mylist_selected: {},
   trip: {},
@@ -27,7 +29,8 @@ export function campaignReducer(state = initialState, action) {
     case CAMPAIGN.LIST.SUCCESS:
       return Object.assign({}, state, {
         list: state.list === [] ? action.data.data :
-          [...state.list, ...action.data.data],
+          ( action.newBatch ? action.data.data :
+            [...state.list, ...action.data.data] ),
         current_page: action.data.current_page,
         total_page: action.data.last_page,
         isRequesting: false,
@@ -77,9 +80,17 @@ export function campaignReducer(state = initialState, action) {
           [...state.mylist, action.campaign]
       });
 
+    case CAMPAIGN.MYLIST.REQUEST:
+      return Object.assign({}, state, {
+        mylistRequesting: true,
+        mylistRequestDone: false
+      });
+
     case CAMPAIGN.MYLIST.GET:
       return Object.assign({}, state, {
-        mylist: action.mylist
+        mylist: action.mylist,
+        mylistRequesting: false,
+        mylistRequestDone: true
       });
 
     case CAMPAIGN.MYLIST.SELECTED:

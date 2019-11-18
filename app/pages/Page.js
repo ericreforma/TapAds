@@ -6,23 +6,23 @@ import {
   Dimensions
 } from 'react-native';
 import { connect } from 'react-redux';
+import { NavigationEvents } from 'react-navigation';
 
-import { CAMPAIGN, SIGNUP } from '../redux/actions/types.action';
+import { CAMPAIGN, SIGNUP, FIREBASE } from '../redux/actions/types.action';
 import { AuthAction } from '../redux/actions/auth.action';
-import { UserController } from '../controllers';
+import NavigationService from '../services/navigation';
+import { AuthController } from '../controllers';
+import { getCurrentTime } from '../config/functions';
 
 import { AppBackground } from '../components/AppBackground';
 import HeaderNav from '../components/HeaderNav';
 import ModalMenu from '../components/Modal/Navigation';
-import NavigationService from '../services/navigation';
-import { AuthController } from '../controllers';
 
 import Sound from 'react-native-sound';
 
 class Page extends Component {
 	constructor(props) {
 		super(props);
-
 		this.state = {
 			modalFadeBackground: new Animated.Value(0),
 			modalContainerzIndex: 0,
@@ -31,7 +31,6 @@ class Page extends Component {
 			width: Dimensions.get('window').width,
 			height: Dimensions.get('window').height,
 			scrollEnable: true,
-
 			appState: AppState.currentState
 		};
 
@@ -41,17 +40,17 @@ class Page extends Component {
 				return;
 			}
 		});
-		
-		// this.woosh.play();
+
+		// this.woosh.play();		
 	}
 
-  componentDidMount() {
+  mountComponent = () => {
     AppState.addEventListener('change', this._handleAppStateChange);
   }
 
-  componentWillUnmount() {
+  unmountComponent = () => {
     AppState.removeEventListener('change', this._handleAppStateChange);
-  }
+	}
 
   _handleAppStateChange = (nextAppState) => {
     if(this.state.appState.match(/inactive|background/)
@@ -62,15 +61,14 @@ class Page extends Component {
 			this.setState({appState: nextAppState});
 			this.appStateInactive();
 		}
-	};
+	}
 	
 	appStateActive = () => {
-		console.log('Active');
 		this.props.getProfile();
 	}
 
 	appStateInactive = () => {
-		console.log('Inactive');
+		console.log(`App State: ${this.state.appState}, ${getCurrentTime()}`);
 	}
 
 	menuButtonOnPress = () => {
@@ -103,6 +101,7 @@ class Page extends Component {
 		if(page === 'logout') {
 			AuthController.logout()
 			.then(() => {
+				this.props.disconnectSocket();
 			  NavigationService.navigate('Loading');
 				this.props.resetPropsValues();
 			})
@@ -120,42 +119,64 @@ class Page extends Component {
 			this.navigate('logout');
 		}
 		
-		return (
-			<View
-				style={
-					this.props.message ? {
-						flex: 1,
-						flexDirection: 'column'
-					} : {}
-				}
-			>
-				<AppBackground />
-				
-				<HeaderNav
-					menuButtonOnPress={this.menuButtonOnPress}
-					navigate={this.navigate}
-				/>
+		if(this.props.nonPage) {
+			return (
+				<View style={{flex: 1}}>
+					<NavigationEvents
+						onDidFocus={this.mountComponent}
+						onWillBlur={this.unmountComponent}
+					/>
 
-				{this.props.children}
+					{this.props.children}
+				</View>
+			);
+		} else {
+			return (
+				<View
+					style={
+						this.props.message || this.props.campaignPage ? {
+							flex: 1,
+							flexDirection: 'column'
+						} : {}
+					}
+				>
+					<NavigationEvents
+						onDidFocus={this.mountComponent}
+						onWillBlur={this.unmountComponent}
+					/>
 
-				<ModalMenu
-					modalContainerzIndex={this.state.modalContainerzIndex}
-					width={this.state.width}
-					height={this.state.scrollEnable ? 0 : this.state.height}
-					modalFadeBackground={this.state.modalFadeBackground}
-					modalXValue={this.state.modalXValue}
-					menuButtonOnPress={this.menuButtonOnPress}
-					navigateToPage={this.navigateToPage}
-				/>
-			</View>
-		);
+					<AppBackground />
+					
+					<HeaderNav
+						menuButtonOnPress={this.menuButtonOnPress}
+						navigate={this.navigate}
+					/>
+
+					{this.props.children}
+
+					<ModalMenu
+						modalContainerzIndex={this.state.modalContainerzIndex}
+						width={this.state.width}
+						height={this.state.scrollEnable ? 0 : this.state.height}
+						modalFadeBackground={this.state.modalFadeBackground}
+						modalXValue={this.state.modalXValue}
+						menuButtonOnPress={this.menuButtonOnPress}
+						navigateToPage={this.navigateToPage}
+					/>
+				</View>
+			);
+		}
 	}
 }
+
+const mapStateToProps = (state) => ({
+	
+});
 
 const mapDispatchToProps = (dispatch) => ({
 	resetPropsValues: () => dispatch({ type: CAMPAIGN.RESET }),
 	resetSignupValues: () => dispatch({ type: SIGNUP.RESET }),
-	getProfile: () => dispatch(AuthAction.getProfile())
+	getProfile: () => dispatch(AuthAction.getProfile()),
 });
 
-export default connect(null, mapDispatchToProps)(Page);
+export default connect(mapStateToProps, mapDispatchToProps)(Page);

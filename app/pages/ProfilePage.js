@@ -39,7 +39,6 @@ import HistoryFilter from '../components/Modal/profile/HistoryFilter';
 import VehicleFilter from '../components/Modal/profile/VehicleFilter';
 
 import { UserController } from '../controllers/UserController';
-import { UserSchema } from '../database';
 
 import theme from '../styles/theme.style';
 import styles from '../styles/page.Home.style';
@@ -63,6 +62,11 @@ class ProfilePage extends Component {
 			// vehicle data
 			vehicleData: [],
 			vehicleModal: false,
+			vehicleCampaignColor: [
+				theme.COLOR_YELLOW,
+				theme.COLOR_GREEN,
+				theme.COLOR_RED
+			],
 
 			// vehicle card height
 			vehicleCardSize: [],
@@ -89,7 +93,7 @@ class ProfilePage extends Component {
 			}),
 			totalEarnings = earnings.length === 0 ? 0 : earnings.reduce((a, b) => a + b),
 			historyData = this.getHistoryData();
-
+		
 		this.setState({
 			vehicleData,
 			user,
@@ -100,15 +104,20 @@ class ProfilePage extends Component {
 	}
 
 	getVehicles = () => {
-		var { user } = this.props,
+		var { user, myList } = this.props,
 			{ vehicles } = user,
 			vehicleData = vehicles.map(v => {
+				const campaignData = myList.find(x => x.user_vehicle_id === v.id && x.end === 0 && x.request_status !== 2);
 				return {
 					carType: v.type,
 					carSize: v.vehicle.classification,
 					model: v.vehicle.model,
 					year: v.vehicle.year,
 					manufacturer: v.vehicle.manufacturer,
+					campaign: campaignData ? {
+						name: campaignData.campaignDetails.name,
+						request_status: campaignData.request_status
+					} : false,
 					vehicleImages: v.photo.map(vp => {
 						return {uri: `${URL.SERVER_MEDIA}/${vp.url}`}
 					})
@@ -180,17 +189,10 @@ class ProfilePage extends Component {
 		UserController.request.profile()
 		.then(res => {
 			this.props.dispatchUpdateProfile(res.data);
-			UserSchema.update(res.data,
-				() => {
-					this.modalToggle.bankDetails();
-					this.successFlashMessage(
-						'Saving success!',
-						'Bank details successfully saved'
-					);
-				},
-				e => {
-					console.log(error);
-				}
+			this.modalToggle.bankDetails();
+			this.successFlashMessage(
+				'Saving success!',
+				'Bank details successfully saved'
 			);
 		})
 		.catch(error => {
@@ -389,6 +391,7 @@ class ProfilePage extends Component {
 				>
 					<UserInfo />
 
+					{/* profile info button */}
 					<View
 						style={{
 							justifyContent: 'center',
@@ -810,7 +813,7 @@ class ProfilePage extends Component {
 												>
 													<Text
 														style={{
-															fontSize: 12,
+															fontSize: 14,
 															fontFamily: 'Montserrat-Bold',
 															color: theme.COLOR_NORMAL_FONT,
 														}}
@@ -833,7 +836,7 @@ class ProfilePage extends Component {
 														alignItems: 'flex-start'
 													}}
 												>
-													<View style={{width: 50}}>
+													<View style={{width: 80}}>
 														<Text
 															style={{
 																fontSize: 12,
@@ -865,7 +868,7 @@ class ProfilePage extends Component {
 														alignItems: 'center'
 													}}
 												>
-													<View style={{width: 50}}>
+													<View style={{width: 80}}>
 														<Text
 															style={{
 																fontSize: 12,
@@ -887,6 +890,42 @@ class ProfilePage extends Component {
 															}}
 														>
 															{vehicle.year}
+														</Text>
+													</View>
+												</View>
+												
+												{/* campaign */}
+												<View
+													style={{
+														flexDirection: 'row',
+														alignItems: 'center'
+													}}
+												>
+													<View style={{width: 80}}>
+														<Text
+															style={{
+																fontSize: 12,
+																fontFamily: 'Montserrat-Regular',
+																color: theme.COLOR_NORMAL_FONT
+															}}
+															numberOfLines={1}
+														>
+															Campaign
+														</Text>
+													</View>
+
+													<View style={{flex: 1, alignItems: 'flex-end'}}>
+														<Text
+															style={{
+																fontSize: 12,
+																fontFamily: 'Montserrat-Bold',
+																color: vehicle.campaign
+																	? this.state.vehicleCampaignColor[vehicle.campaign.request_status]
+																	: this.state.vehicleCampaignColor[2],
+															}}
+															numberOfLines={1}
+														>
+															{vehicle.campaign ? vehicle.campaign.name : 'none'}
 														</Text>
 													</View>
 												</View>

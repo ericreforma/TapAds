@@ -1,4 +1,3 @@
-import { CampaignTripSchema, CampaignTripMapSchema } from '../database';
 import Geocoder from 'react-native-geocoder';
 
 const rad = (x) => (x * Math.PI / 180);
@@ -121,17 +120,6 @@ export const MapController = {
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     const d = R * c;
     return (d / 1000).toFixed(2);
-  },
-
-  DBInsert: (campaignTrip, campaignTripMap) => {
-    const tripId = CampaignTripSchema.insert(campaignTrip);
-    campaignTripMap.forEach(trip => {
-      let ctrip = trip;
-      ctrip.campaign_id = campaignTrip.campaign_id;
-      ctrip.campaign_trip_id = tripId;
-
-      CampaignTripMapSchema.insert(ctrip);
-    });
   },
 
   getAddress: coords =>

@@ -1,7 +1,8 @@
 import PushNotification from 'react-native-push-notification';
+import theme from '../styles/theme.style';
 
 export const Notification = {
-  newMessage: ({subText, title, message}) => {
+  newMessage: ({subText, title, message, data}) => {
     PushNotification.localNotification({
       /* Android Only Properties */
       ticker: "My Notification Ticker", // (optional)
@@ -24,7 +25,11 @@ export const Notification = {
       title, // (optional)
       message, // (required)
       playSound: false, // (optional) default: true,
+      soundName: 'chat_sound.mp3',
       // actions: '["Yes", "No"]',  // (Android only) See the doc for notification actions to know more
+
+      // additional data
+      data,
     });
   }
 };

@@ -4,6 +4,7 @@ import ButtonBlue from '../components/ButtonBlue';
 import styles from '../styles/component.Card.style';
 import theme from '../styles/theme.style';
 import { VEHICLE } from '../config/variables';
+import { LabelText, CommonText } from '../components/Text';
 
 class Card extends Component {
     render() {
@@ -140,9 +141,7 @@ class CardColumnContent extends Component {
         if (type != null) {
             return (
                 <View style={styles.cardColumnContentCarInfo}>
-                    <View
-                        style={styles.cardColumnContentCarInfoImageView}
-                    >
+                    <View style={styles.cardColumnContentCarInfoImageView}>
                         <Image
                             style={styles.cardColumnContentCarInfoImage}
                             source={Object.values(VEHICLE.CLASS)[size].icon.white}
@@ -154,7 +153,7 @@ class CardColumnContent extends Component {
                 </View>
             );
         }
-    }
+		}
 
     render() {
         return (

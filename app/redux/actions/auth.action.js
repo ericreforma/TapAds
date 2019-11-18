@@ -1,7 +1,7 @@
 import { AUTH, USER } from './types.action';
 import { Alert } from 'react-native';
 import { AuthController, UserController } from '../../controllers';
-import { TokenSchema, UserSchema } from '../../database';
+import { TokenSchema } from '../../database';
 import NavigationService from '../../services/navigation';
 
 export const AuthAction = {
@@ -29,14 +29,7 @@ export const AuthAction = {
                   user: userResponse.data,
                 });
 
-                UserSchema.update(userResponse.data,
-                  () => {
-                    NavigationService.navigate('Loading');
-                  },
-                  e => {
-                    console.log(e);
-                  }
-                );
+                NavigationService.navigate('Loading');
               })
               .catch(error => {
                 dispatch({ type: USER.GET.PROFILE.FAILED });

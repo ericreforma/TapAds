@@ -24,7 +24,11 @@ import styles from '../styles/page.Home.style';
 import theme from '../styles/theme.style';
 import { VehicleType } from '../components/VehicleType';
 import { VEHICLE } from '../config/variables';
-import { numberWithCommas, timeStamp } from '../config/functions';
+import {
+	numberWithCommas,
+	getTotalEarnings,
+	timeStamp
+} from '../config/functions';
 
 class DashboardPage extends Component {
     constructor(props) {
@@ -198,7 +202,7 @@ class DashboardPage extends Component {
                                     >   
                                         <CommonText color="white">Total earnings:</CommonText>
                                         <View style={{width: 5}}></View>
-                                        <LabelText color="blue">P{this.totalEarnings(campaign)}</LabelText>
+                                        <LabelText color="blue">P{numberWithCommas(getTotalEarnings(campaign))}</LabelText>
                                     </View>
                                 </CardBody>
                                 

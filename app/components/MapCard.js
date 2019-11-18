@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import MapView, { PROVIDER_GOOGLE, Polygon } from 'react-native-maps';
 import { View, ActivityIndicator } from 'react-native';
 import mapStyle from '../styles/map.style';
-import { MAP } from '../map';
 import { MapController } from '../controllers/MapController';
 
 import { CAMPAIGN } from '../redux/actions/types.action';
