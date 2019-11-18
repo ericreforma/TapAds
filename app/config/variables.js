@@ -1,5 +1,5 @@
-const SERVER_MAIN = 'http://192.168.0.100/TapAdsServer/public';
-// const SERVER_MAIN = 'https://dev.bcdpinpoint.com/TapAdsServer/public';
+// const SERVER_MAIN = 'http://192.168.0.100/TapAdsServer/public';
+const SERVER_MAIN = 'https://dev.bcdpinpoint.com/TapAdsServer/public';
 
 const SERVER_API = `${SERVER_MAIN}/api`;
 const SERVER_MEDIA = `${SERVER_MAIN}/storage`;
