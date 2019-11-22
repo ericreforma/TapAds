@@ -207,73 +207,72 @@ class AddVehiclePage extends Component {
 	}
 
 	renderVehicles = ({item, index}) => {
-			return (
-					<View
+		return (
+			<View
+				style={{
+					height: this.state.width / 3.5,
+					width: this.state.width / 3.5,
+					marginLeft: index == 0 ? 0 : 3,
+					marginRight: index == (this.state.vehicles - 1) ? 0 : 3
+				}}
+			>
+				{index == 0 ? (
+					<TouchableOpacity
 							style={{
-									height: this.state.width / 3.5,
-									width: this.state.width / 3.5,
-									marginLeft: index == 0 ? 0 : 3,
-									marginRight: index == (this.state.vehicles - 1) ? 0 : 3
+									flex: 1,
+									justifyContent: 'center',
+									alignItems: 'center',
+									backgroundColor: theme.COLOR_LIGHT_BLUE + '90',
+									borderRadius: 10,
 							}}
+							activeOpacity={0.8}
+							onPress={this.addVehicleButtonOnPress}
 					>
-							{index == 0 ? (
-									<TouchableOpacity
-											style={{
-													flex: 1,
-													justifyContent: 'center',
-													alignItems: 'center',
-													backgroundColor: theme.COLOR_LIGHT_BLUE + '90',
-													borderRadius: 10,
-											}}
-											activeOpacity={0.8}
-											onPress={this.addVehicleButtonOnPress}
-									>
-											<Image
-													style={{
-															width: '33%',
-															height: '33%'
-													}}
-													resizeMode="contain"
-													source={item.url}
-											/>
-									</TouchableOpacity>
-							) : (
-									<View>
-											<Image
-													style={{
-															width: '100%',
-															height: '100%',
-															borderRadius: 10,
-															backgroundColor: theme.COLOR_BLUE,
-															borderRadius: 10,
-													}}
-													resizeMode="cover"
-													source={item.url}
-											/>
+							<Image
+									style={{
+											width: '33%',
+											height: '33%'
+									}}
+									resizeMode="contain"
+									source={item.url}
+							/>
+					</TouchableOpacity>
+				) : (
+					<View>
+						<Image
+							style={{
+									width: '100%',
+									height: '100%',
+									borderRadius: 10,
+									backgroundColor: theme.COLOR_BLUE,
+							}}
+							resizeMode="cover"
+							source={item.url}
+						/>
 
-											<TouchableOpacity
-													style={{
-															width: 15,
-															height: 15,
-															position: 'absolute',
-															top: 10,
-															right: 10
-													}}
-													onPress={this.removeCar(index)}
-											>
-													<Image
-															style={{
-																	width: 15,
-																	height: 15,
-															}}
-															resizeMode="contain"
-															source={IMAGES.ICONS.close_red}
-													/>
-											</TouchableOpacity>
-									</View>
-							)}
+						<TouchableOpacity
+							style={{
+								width: 15,
+								height: 15,
+								position: 'absolute',
+								top: 10,
+								right: 10
+							}}
+							onPress={this.removeCar(index)}
+						>
+							<Image
+								style={{
+									width: 15,
+									height: 15,
+								}}
+								resizeMode="contain"
+								source={IMAGES.ICONS.close_red}
+							/>
+						</TouchableOpacity>
 					</View>
-			);
+				)}
+			</View>
+		);
 	}
 
 	successFlashMessage = (message, description) => {

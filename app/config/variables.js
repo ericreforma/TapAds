@@ -1,16 +1,16 @@
-// const SERVER_MAIN = 'http://192.168.0.100/TapAdsServer/public';
+import DeviceInfo from 'react-native-device-info';
+
+// const SERVER_MAIN = 'http://192.168.0.50/TapAdsServer/public';
 const SERVER_MAIN = 'https://dev.bcdpinpoint.com/TapAdsServer/public';
 
 const SERVER_API = `${SERVER_MAIN}/api`;
 const SERVER_MEDIA = `${SERVER_MAIN}/storage`;
 const FIREBASE_API = 'https://fcm.googleapis.com';
-const FIREBASE_TOKEN = 'AAAApdV3IHA:APA91bECXNiEFnF3C2C3B7N3fYHUuITkodN13fIa8UF1qWky_93n6-3hN-39iT7-XypuuIh2Bw8mn3rWnIhWCZKf6-hI8AysiuMakAY7kf-7zTNB6oZSisPGMId0CMeRSJKwJtPAkTv0';
 
 export const URL = {
   SERVER_MAIN,
   SERVER_API,
   SERVER_MEDIA,
-  FIREBASE_TOKEN,
   FIREBASE_API,
   PAGE: {
     USER: '/user',
@@ -26,6 +26,10 @@ export const URL = {
       MAP: '/user/campaign/trip/map',
       END: '/user/campaign/trip/end',
     },
+    FIREBASE: {
+      UPDATE_TOKEN: '/user/firebase/update',
+      GET_TOKEN: '/user/firebase/getToken'
+    }
   },
   TERMS_AND_COND: {
     PRIVACY_POLICY: '/termsAndCondition/privacyPolicy',
@@ -139,6 +143,8 @@ export const IMAGES = {
     back_icon: require('../assets/image/icons/back_arrow_left_icon.png'),
     back_icon_white: require('../assets/image/icons/back_arrow_left_white_icon.png'),
     check_blue: require('../assets/image/icons/login_verify_icon_blue.png'),
+    approve_icon: require('../assets/image/icons/approve_icon.png'),
+    rejected_icon: require('../assets/image/icons/reject_icon.png'),
     flash_icon: {
       on: require('../assets/image/icons/flash_on_icon.png'),
       auto: require('../assets/image/icons/flash_auto_icon.png'),
@@ -148,6 +154,10 @@ export const IMAGES = {
     dropDown_icon: require('../assets/image/icons/dropdown_icon.png'),
     dropDown_icon: require('../assets/image/icons/dropdown_icon.png'),
     dragUp_icon: require('../assets/image/icons/dragup_icon.png'),
+    avatar: {
+      male: require('../assets/image/male_avatar.png'),
+      female: require('../assets/image/female_avatar.png')
+    }
   }
 };
 

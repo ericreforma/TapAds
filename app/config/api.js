@@ -1,4 +1,5 @@
 import { URL } from './variables';
+import { KEYS } from './keys';
 import { TokenSchema } from '../database';
 
 const baseURL = URL.SERVER_API;
@@ -9,7 +10,7 @@ const headers = {
 };
 const firebaseHeader = {
   'Content-Type': 'application/json',
-  'Authorization': `key=${URL.FIREBASE_TOKEN}`
+  'Authorization': `key=${KEYS.FIREBASE_TOKEN}`
 };
 
 export const API = {

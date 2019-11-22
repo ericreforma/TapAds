@@ -1,4 +1,5 @@
 import { RawHttpRequest, HttpRequest } from '../services/http';
+import { KEYS } from '../config/keys';
 
 export const AuthController = {
   login: (email, password) =>
@@ -6,7 +7,7 @@ export const AuthController = {
       email,
       password,
     }),
-  logout: () => HttpRequest.get('/user/logout'),
+  logout: () => HttpRequest.get(`/user/logout/${KEYS.DEVICE_UNIQUE_ID}`),
 
   register: form =>
     RawHttpRequest.post('/user/register', form),

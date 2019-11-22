@@ -5,6 +5,7 @@ const initialState = {
     isLoggedIn: false,
     attempt_email: '',
     attempt_password: '',
+
 };
 
 export function loginReducer(state = initialState, action) {

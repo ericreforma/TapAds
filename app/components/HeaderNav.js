@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 
 import styles from '../styles/component.HeaderNav.style';
 import themeStyle from '../styles/theme.style';
+import NavigationService from '../services/navigation';
 
 class HeaderNav extends Component {
     render() {
@@ -17,7 +18,7 @@ class HeaderNav extends Component {
                 style={[styles.headerNavRowDirection, styles.headerNavTopContainer]}
             >
                 <TouchableOpacity
-                    onPress={() => this.props.navigate('Home')}
+                    onPress={() => NavigationService.reset('Home')}
                 >
                     <Text
                         style={styles.headerNavTopAppName}

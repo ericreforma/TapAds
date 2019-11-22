@@ -163,13 +163,20 @@ class MyCampaignPage extends Component {
 											alignItems: 'center'
 										}}
 									>
-										<CommonText numberOfLines={1}>
-											{data.client.business_name}
-										</CommonText>
+										<View
+											style={{
+												flex: 1,
+												paddingRight: 10
+											}}
+										>
+											<CommonText numberOfLines={1}>
+												{data.client.business_name}
+											</CommonText>
+										</View>
 										
 										<View
 											style={{
-												paddingLeft: 10
+												width: 80
 											}}
 										>
 											<TouchableOpacity onPress={() => { this.props.campaignSelected(data.id); }}>

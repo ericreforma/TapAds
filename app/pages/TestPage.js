@@ -5,6 +5,11 @@ import {
 } from 'react-native';
 import firebase from 'react-native-firebase';
 
+import NavigationService from '../services/navigation';
+
+import { FirebaseController } from '../controllers/FirebaseController';
+import { ChatController } from '../controllers/ChatController';
+
 import theme from '../styles/theme.style';
 import {
   LabelText,
@@ -13,73 +18,66 @@ import {
 
 export default class TestPage extends Component {
   componentDidMount = () => {
-    this.checkPermission();
     this.messageListener();
+
+    setTimeout(() => {
+      console.log('Send message');
+      const message = 'this is a test message';
+      const cid = 1;
+      const messageType = 0;
+
+      ChatController.request.sendMessage({
+        message, cid,
+        type: messageType
+      })
+      .then(res => {
+        console.log(res.data);
+      })
+      .catch(error => {
+        console.log(error.response);
+      });
+    }, 8000);
   }
 
   componentWillUnmount = () => {
     this.notificationListener();
     this.notificationOpenedListener();
     this.messageListener();
-  }
-
-  checkPermission = async () => {
-    const enabled = await firebase.messaging().hasPermission();
-    if (enabled) {
-      this.getFcmToken();
-    } else {
-      this.requestPermission();
-    }
-  }
-
-  getFcmToken = async () => {
-    const fcmToken = await firebase.messaging().getToken();
-    if (fcmToken) {
-      console.log(fcmToken);
-      this.showAlert('Your Firebase Token is:', fcmToken);
-    } else {
-      this.showAlert('Failed', 'No token received');
-    }
-  }
-
-  requestPermission = async () => {
-    try {
-      await firebase.messaging().requestPermission();
-      // User has authorised
-    } catch (error) {
-      // User has rejected permissions
-    }
+    this.onTokenRefresh();
   }
 
   messageListener = async () => {
     this.notificationListener = firebase.notifications().onNotification((notification) => {
       console.log('Notification Listener');
-      const { title, body, data } = notification;
-      const res = JSON.parse(data.data);
-      console.log(res);
-
-      // this.showAlert(title, body);
+      const { data } = notification;
+      this.notificationOpened(JSON.parse(data.data));
     });
   
     this.notificationOpenedListener = firebase.notifications().onNotificationOpened((notificationOpen) => {
       console.log('Notification opened');
-      const { title, body } = notificationOpen.notification;
-      console.log('Notification open: ', notificationOpen);
-
-      // this.showAlert(title, body);
+      const { data } = notificationOpen.notification;
+      this.notificationOpened(JSON.parse(data.data));
     });
-  
-    const notificationOpen = await firebase.notifications().getInitialNotification();
-    if (notificationOpen) {
-      const { title, body } = notificationOpen.notification;
-      console.log('Notification open: ', notificationOpen);
-      
-      // this.showAlert(title, body);
-    }
   
     this.messageListener = firebase.messaging().onMessage((message) => {
       console.log(JSON.stringify(message));
     });
+
+    this.onTokenRefresh = firebase.messaging().onTokenRefresh((fcmToken) => {
+      FirebaseController.updateToken(fcmToken);
+    });
+  
+    const notificationOpen = await firebase.notifications().getInitialNotification();
+    if(notificationOpen) {
+      const { data } = notificationOpen.notification;
+      this.notificationOpened(JSON.parse(data.data));
+    }
+  }
+
+  notificationOpened = data => {
+    if(data.page) {
+      NavigationService.navigate(data.page);
+    }
   }
   
   showAlert = (title, message) => {

@@ -31,8 +31,6 @@ import {
 	MonthlyCarPhotoPage
 } from '../pages';
 
-import TestPage from '../pages/TestPage'; 
-
 export default class Route extends Component {
 	constructor(props) {
 		super(props);
@@ -57,6 +55,7 @@ const AuthStack = createStackNavigator({
 	SignUpAddVehicles: SignUpAddVehiclesPage,
 	ForgotPassword: ForgotPasswordPage
 	}, {
+		initialRouteName: 'Login',
 		headerMode: 'none',
 		navigationOptions: {
 			headerVisible: false,
@@ -80,6 +79,7 @@ const AppStack = createStackNavigator({
 		Recommended: RecommendedPage,
 		MonthlyCarPhoto: MonthlyCarPhotoPage,
 	}, {
+		initialRouteName: 'Home',
 		headerMode: 'none',
 		navigationOptions: {
 			headerVisible: false,
@@ -88,7 +88,6 @@ const AppStack = createStackNavigator({
 
 const AppRoute = createSwitchNavigator({
 	Loading: LoadingPage,
-	TestPage: TestPage,
 	Auth: AuthStack,
 	App: AppStack,
 	StartCampaign: StartCampaignPage

@@ -95,7 +95,7 @@ class ChatPage extends Component {
 			}
 		})
 		.catch(e => {
-			console.log(e);
+			console.log(e.response);
 			setTimeout(() => {
 				this.getMessages();
 			}, 1000);
@@ -104,13 +104,17 @@ class ChatPage extends Component {
 	
 	_keyboardDidShow = () => {
 		this._scrollView.scrollToEnd({animated: true});
-		var keyboardPress = true;
-		this.setState({ keyboardPress });
+		this.setState({ keyboardPress: true });
+	}
+
+	_keyboardDidHide = () => {
+		this.setState({ keyboardPress: false });
 	}
 
 	sendMessageOnPress = () => {
 		const { state, cid } = this,
 			{ message, messageType } = state;
+
 		ChatController.request.sendMessage({
 			message, cid,
 			type: messageType
@@ -133,10 +137,17 @@ class ChatPage extends Component {
 		});
 	}
 
+	messageNewPage = cid => {
+		this.cid = cid;
+		this.getMessages();
+	}
+
 	render() {
 		return (
 			<Page
 				message
+				reInitializePage={this.getMessages}
+				messageNewPage={this.messageNewPage}
 				clientId={this.cid}
 			>
 				<View

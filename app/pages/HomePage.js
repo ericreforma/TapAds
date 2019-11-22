@@ -62,6 +62,12 @@ class HomePage extends Component {
 				this.setState({ refreshing: false });
 			}
 		});
+		
+		const jumpTo = this.props.navigation.getParam('jumpTo', null);
+		if(jumpTo) {
+			const { page, args } = jumpTo;
+			NavigationService.reset(page, args);
+		}
 	}
 
 	defaultValues = () => {

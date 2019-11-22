@@ -5,3 +5,4 @@ export * from './CampaignLocationController';
 export * from './MapController';
 export * from './ChatController';
 export * from './NetworkController';
+export * from './FirebaseController';
