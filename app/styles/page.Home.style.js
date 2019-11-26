@@ -9,7 +9,7 @@ export default StyleSheet.create({
         position: 'absolute'
     },
     homePageScrollView: {
-        marginBottom: 60
+        marginBottom: 120
     },
     homePageSectionVerticalMargin: {
         marginVertical: 10
