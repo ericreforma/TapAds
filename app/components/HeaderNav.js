@@ -43,30 +43,28 @@ class HeaderNav extends Component {
                             source={require('../assets/image/icons/notification_icon.png')}
                         />
 
-                        {this.props.user ?
-                            this.props.user.notificationCount !== 0 ? (
-                                <View
+                        {this.props.notification !== 0 ? (
+                            <View
+                                style={{
+                                    position: 'absolute',
+                                    backgroundColor: themeStyle.COLOR_BLUE,
+                                    height: 20,
+                                    width: 20,
+                                    borderRadius: 20,
+                                    top: 0,
+                                    right: -10,
+                                    alignItems: 'center',
+                                    justifyContent: 'center'
+                                }}
+                            >
+                                <Text
                                     style={{
-                                        position: 'absolute',
-                                        backgroundColor: themeStyle.COLOR_BLUE,
-                                        height: 20,
-                                        width: 20,
-                                        borderRadius: 20,
-                                        top: 0,
-                                        right: -10,
-                                        alignItems: 'center',
-                                        justifyContent: 'center'
+                                        color: themeStyle.COLOR_WHITE,
+                                        fontSize: themeStyle.FONT_SIZE_XSMALL,
                                     }}
-                                >
-                                    <Text
-                                        style={{
-                                            color: themeStyle.COLOR_WHITE,
-                                            fontSize: themeStyle.FONT_SIZE_XSMALL,
-                                        }}
-                                    >{this.props.user.notificationCount > 99 ? '99+' : `${this.props.user.notificationCount}`}</Text>
-                                </View>
-                            ) : null
-                        : null}
+                                >{this.props.notification > 99 ? '99+' : `${this.props.notification}`}</Text>
+                            </View>
+                        ) : null}
                     </TouchableOpacity>
 
                     <TouchableOpacity
@@ -85,7 +83,7 @@ class HeaderNav extends Component {
 }
 
 const mapStateToProps = (state) => ({
-    user: state.userReducer.user,
+    notification: state.userReducer.notification
 });
 
 export default connect(mapStateToProps)(HeaderNav);

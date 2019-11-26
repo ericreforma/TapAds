@@ -1,20 +1,21 @@
 import React, { Component } from 'react';
 import {
-    View,
-    ScrollView,
-    TouchableOpacity,
-    Image,
-    ActivityIndicator
+	View,
+	ScrollView,
+	TouchableOpacity,
+	Image,
+	ActivityIndicator,
+	Alert
 } from 'react-native';
 import { NavigationEvents } from 'react-navigation';
 import { connect } from 'react-redux';
 
 import Page from './Page';
 import {
-    LabelText,
-    Common,
-    CommonOverflow,
-    LabelOverflow
+	LabelText,
+	Common,
+	CommonOverflow,
+	LabelOverflow
 } from '../components/Text';
 import { USER } from '../redux/actions/types.action';
 import UserInfo from '../components/UserInfo';
@@ -25,137 +26,157 @@ import NavigationService from '../services/navigation';
 import theme from '../styles/theme.style';
 
 class MessengerPage extends Component {
-    constructor(props){
-        super(props);
-        this.state = {
-            loader: true,
-            conversations: []
-        };
-    }
+	constructor(props){
+		super(props);
+		this.state = {
+			threeTriesRequest: 0,
+			loader: true,
+			conversations: []
+		};
+	}
 
-    getChatList = () => {
-        UserController.request.chatList()
-        .then(conversations => {
-            this.setState({
-                conversations: conversations.data,
-                loader: false
-            });
-        })
-        .catch(e => {
-            console.log(e);
-            setTimeout(() => this.getChatList(), 1000);
-        });
-    }
+	getChatList = () => {
+		UserController.request.chat.chatList()
+		.then(conversations => {
+			this.setState({
+				threeTriesRequest: 0,
+				conversations: conversations.data,
+				loader: false
+			});
+		})
+		.catch(e => {
+			console.log(e.response);
+			if(this.state.threeTriesRequest === 3) {
+				this.serverError();
+			} else {
+				this.setState({ threeTriesRequest: this.state.threeTriesRequest + 1 })
+				setTimeout(() => this.getChatList(), 2000);
+			}
+		});
+	}
 
-    addNewChat = (newClientChat) => {
-        var { conversations } = this.state,
-            { user } = this.props,
-            userKeys = Object.keys(user),
-            toDispatchUser = {};
+	addNewChat = (newClientChat) => {
+		var { conversations } = this.state,
+			{ user } = this.props,
+			userKeys = Object.keys(user),
+			toDispatchUser = {};
 
-        for(var x in userKeys) {
-            var key = userKeys[x];
-            if(key === 'notificationCount') {
-                toDispatchUser[key] = user[key] + 1;
-            } else {
-                toDispatchUser[key] = user[key];
-            }
-        }
+		for(var x in userKeys) {
+			var key = userKeys[x];
+			if(key === 'notificationCount') {
+				toDispatchUser[key] = user[key] + 1;
+			} else {
+				toDispatchUser[key] = user[key];
+			}
+		}
 
-        conversations.splice(0, 0, newClientChat);
-        this.props.dispatchUpdateNotification(toDispatchUser);
-        this.setState({ conversations });
-    }
+		conversations.splice(0, 0, newClientChat);
+		this.props.dispatchUpdateNotification(toDispatchUser);
+		this.setState({ conversations });
+	}
 
-    conversationContent = () => {
-        if(this.state.loader) {
-            return <ActivityIndicator color="#000" style={{ height: 75 }} />
-        } else if(this.state.conversations.length === 0) {
-            return (
-                <View
-                    style={{
-                        flex: 1,
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                    }}
-                >
-                    <CommonOverflow
-                        label="-- No message available --"
-                        nonActive={true}
-                    />
-                </View>
-            );
-        } else {
-            return this.state.conversations.map(c =>
-                <TouchableOpacity
-                    key={c.id}
-                    style={{
-                        marginVertical: 7,
-                        borderRadius: 15,
-                        paddingVertical: 10,
-                        paddingHorizontal: 20,
-                        backgroundColor: theme.COLOR_WHITE,
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        elevation: 3
-                    }}
-                    onPress={e => NavigationService.navigate('Chat', {id: c.id})}
-                >
-                    {/* client image */}
-                    <ClientImage c={c} />
-                    
-                    {/* client name and message and time*/}
-                    <ChatInfo c={c} />
-                </TouchableOpacity>
-            );
-        }
-    }
+	conversationContent = () => {
+		if(this.state.loader) {
+			return <ActivityIndicator color="#000" style={{ height: 75 }} />
+		} else if(this.state.conversations.length === 0) {
+			return (
+				<View
+					style={{
+						flex: 1,
+						alignItems: 'center',
+						justifyContent: 'center'
+					}}
+				>
+					<CommonOverflow
+						label="-- No message available --"
+						nonActive={true}
+					/>
+				</View>
+			);
+		} else {
+			return this.state.conversations.map(c =>
+				<TouchableOpacity
+					key={c.id}
+					style={{
+							marginVertical: 7,
+							borderRadius: 15,
+							paddingVertical: 10,
+							paddingHorizontal: 20,
+							backgroundColor: theme.COLOR_WHITE,
+							flexDirection: 'row',
+							alignItems: 'center',
+							elevation: 3
+					}}
+					onPress={e => NavigationService.navigate('Chat', {id: c.id})}
+				>
+					{/* client image */}
+					<ClientImage c={c} />
+					
+					{/* client name and message and time*/}
+					<ChatInfo c={c} />
+				</TouchableOpacity>
+			);
+		}
+	}
 
-    render() {
-        return (
-            <Page
-                messenger
-                reInitializePage={this.getChatList}
-            >
-                <NavigationEvents onWillFocus={this.getChatList} />
+	serverError = () => {
+		Alert.alert(
+			'Error',
+			'Server Error, please try again later.',
+			[
+				{text: 'OK', onPress: () => NavigationService.reset('Home')},
+			]
+		);
+	}
 
-                <ScrollView
-                    overScrollMode='never'
-                    showsVerticalScrollIndicator={false}
-                >
-                    <UserInfo />
+	render() {
+		return (
+			<Page
+				messenger
+				reInitializePage={this.getChatList}
+			>
+				<NavigationEvents
+					onDidFocus={this.getChatList}
+					onDidBlur={() => this.setState({ loader: true })}
+				/>
 
-                    <View
-                        style={{
-                            margin: 20,
-                            marginBottom: 70
-                        }}
-                    >
-                        <View
-                            style={{
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                marginBottom: 20,
-                            }}
-                        >
-                            <LabelText color="white">Messenger</LabelText>
-                        </View>
+				<ScrollView
+					overScrollMode='never'
+					showsVerticalScrollIndicator={false}
+				>
+					<UserInfo />
 
-                        <View
-                            style={{
-                                borderRadius: 15,
-                                paddingHorizontal: 10,
-                                paddingVertical: 20,
-                                backgroundColor: theme.COLOR_WHITE
-                            }}
-                        >
-                            {this.conversationContent()}
-                        </View>
-                    </View>
-                </ScrollView>
-            </Page>
-        );
-    }
+					<View
+						style={{
+							margin: 20,
+							marginBottom: 70
+						}}
+					>
+						<View
+							style={{
+								justifyContent: 'center',
+								alignItems: 'center',
+								marginBottom: 20,
+							}}
+						>
+							<LabelText color="white">Messenger</LabelText>
+						</View>
+
+						<View
+							style={{
+								borderRadius: 15,
+								paddingHorizontal: 10,
+								paddingVertical: 20,
+								backgroundColor: theme.COLOR_WHITE
+							}}
+						>
+							{this.conversationContent()}
+						</View>
+					</View>
+				</ScrollView>
+			</Page>
+		);
+	}
 }
 
 class ClientImage extends Component {

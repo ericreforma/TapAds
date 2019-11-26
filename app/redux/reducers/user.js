@@ -1,28 +1,39 @@
 import { USER } from '../actions/types.action';
 
  const initialState = {
-   user: null
+   user: null,
+   notification: 0
 };
 
 export function userReducer(state = initialState, action) {
   switch (action.type) {
-
     case USER.GET.PROFILE.REQUEST:
       return Object.assign({}, state, {
         user: initialState.user
       });
+
     case USER.GET.PROFILE.SUCCESS:
       return Object.assign({}, state, {
         user: action.user
       });
+      
     case USER.GET.PROFILE.FAILED:
       return Object.assign({}, state, {
         user: initialState.user
       });
-    case USER.UPDATE.NOTIFICATION:
+
+    case USER.NOTIFICATION.SUCCESS:
+    case USER.NOTIFICATION.FAILED:
       return Object.assign({}, state, {
-        user: action.user
+        notification: initialState.notification
       });
+
+    case USER.NOTIFICATION.GET:
+    case USER.NOTIFICATION.UPDATE:
+      return Object.assign({}, state, {
+        notification: action.notification
+      });
+
     default:
       return state;
   }

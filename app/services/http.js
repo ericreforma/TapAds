@@ -24,10 +24,3 @@ export const RawHttpRequest = {
     return httpRequest.post(url, args);
   }
 };
-
-export const FirebaseHttpRequest = {
-  post: (url = '/fcm/send', args = {}) => {
-    httpRequest = axios.create(FIREBASE_API);
-    return httpRequest.post(url, args);
-  }
-};

@@ -45,17 +45,7 @@ class NotificationPage extends Component {
 				loader: false
 			});
 			
-			const { user } = this.props;
-			const userKeys = Object.keys(user);
-			const newUserData = {};
-			for(const u of userKeys) {
-				if(u === 'notificationCount') {
-					newUserData[u] = 0;
-				} else {
-					newUserData[u] = user[u];
-				}
-			}
-			this.props.updateUserNotification(newUserData);
+			this.props.updateUserNotification(0);
 		})
 		.catch(error => console.log(error.response));
 	}
@@ -139,7 +129,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-	updateUserNotification: (user) => dispatch({ type: USER.GET.PROFILE.SUCCESS, user }),
+	updateUserNotification: notification => dispatch({ type: USER.NOTIFICATION.UPDATE, notification }),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(NotificationPage);

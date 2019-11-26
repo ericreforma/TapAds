@@ -165,8 +165,7 @@ class MyCampaignPage extends Component {
 									>
 										<View
 											style={{
-												flex: 1,
-												paddingRight: 10
+												flex: 1
 											}}
 										>
 											<CommonText numberOfLines={1}>
@@ -176,7 +175,8 @@ class MyCampaignPage extends Component {
 										
 										<View
 											style={{
-												width: 80
+												width: 90,
+												alignItems: 'flex-end'
 											}}
 										>
 											<TouchableOpacity onPress={() => { this.props.campaignSelected(data.id); }}>

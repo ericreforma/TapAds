@@ -1,5 +1,5 @@
 import firebase from 'react-native-firebase';
-import { HttpRequest, FirebaseHttpRequest } from '../services/http';
+import { HttpRequest } from '../services/http';
 import { URL } from '../config/variables';
 import { KEYS } from '../config/keys';
 
@@ -37,6 +37,10 @@ export const FirebaseController = {
       console.log(error.response);
       errorCallback();
     });
+  },
+  removeAllNotification: () => {
+    firebase.notifications().removeAllDeliveredNotifications();
+    firebase.notifications().cancelAllNotifications();
   }
 };
 

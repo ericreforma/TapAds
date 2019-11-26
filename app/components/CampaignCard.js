@@ -273,8 +273,7 @@ export class CampaignCardActive extends Component {
           >
             <View
               style={{
-                flex: 1,
-                paddingRight: 10
+                flex: 1
               }}
             >
               <CommonText numberOfLines={1}>
@@ -284,7 +283,8 @@ export class CampaignCardActive extends Component {
                                         
             <View
               style={{
-                width: 80
+                width: 90,
+                alignItems: 'flex-end'
               }}
             >
               <TouchableOpacity

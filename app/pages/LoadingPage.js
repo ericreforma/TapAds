@@ -10,10 +10,10 @@ import { AUTH, USER } from '../redux/actions/types.action';
 import { UserController, FirebaseController } from '../controllers';
 import theme from '../styles/theme.style';
 import { CampaignAction } from '../redux/actions/campaign.action';
+import { UserAction } from '../redux/actions/user.action';
 import NavigationService from '../services/navigation';
 
 class LoadingPage extends Component {
-
   constructor(props) {
     super(props);
   }
@@ -23,12 +23,14 @@ class LoadingPage extends Component {
   navigateToHome = (args = null) => NavigationService.navigate('Home', { jumpTo: args });
 
   authenticate = () => {
+    FirebaseController.removeAllNotification();
     this.props.dispatchLoginRequest();
     UserController.request.profile()
     .then((authResponse) => {
       this.props.dispatchLoginSuccess();
       this.props.dispatchGetProfile(authResponse.data);
       this.props.dispatchGetMyList();
+      this.props.disptachNotificationCount();
       this.firebaseInit();
     })
     .catch((error) => {
@@ -85,10 +87,11 @@ class LoadingPage extends Component {
 
 const mapDispatchToProps = (dispatch) => ({
   dispatchGetMyList: () => dispatch(CampaignAction.mylist()),
-  dispatchGetProfile: (user) => dispatch({ type: USER.GET.PROFILE.SUCCESS, user }),
+  dispatchGetProfile: user => dispatch({ type: USER.GET.PROFILE.SUCCESS, user }),
   dispatchLoginRequest: () => dispatch({ type: AUTH.LOGIN.REQUEST }),
   dispatchLoginSuccess: () => dispatch({ type: AUTH.LOGIN.SUCCESS }),
-  dispatchLoginFailed: () => dispatch({ type: AUTH.LOGIN.FAILED })
+  dispatchLoginFailed: () => dispatch({ type: AUTH.LOGIN.FAILED }),
+  disptachNotificationCount: () => dispatch(UserAction.getNotification())
 });
 
 export default connect(null, mapDispatchToProps)(LoadingPage);

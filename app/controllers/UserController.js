@@ -3,12 +3,16 @@ import { HttpRequest, RawHttpRequest } from '../services/http';
 export const UserController = {
   request: {
     profile: () => HttpRequest.get('/user'),
-    chatList: () => HttpRequest.get('/user/chat/list'),
-    messages: (cid) => HttpRequest.get(`/user/chat/${cid}`),
     vehicleDB: () => RawHttpRequest.get('/user/vehicle/all'),
     notificationContent: () => HttpRequest.get('/user/notif/content'),
     tripInfo: (tripID) => HttpRequest.get(`/user/campaign/trip/info/${tripID}`),
     submitPayment: (args = {}) => HttpRequest.post('/user/payment/withdraw', args),
+    chat: {
+      chatList: () => HttpRequest.get('/user/chat/list'),
+      initial: (args) => HttpRequest.get(`/user/chat/initial${args}`),
+      paginate: (args) => HttpRequest.get(`/user/chat/paginate${args}`),
+      latest: (args) => HttpRequest.get(`/user/chat/latest${args}`),
+    },
     update: {
       details: (args = {}) => HttpRequest.post('/user/update/details', args),
       photo: (args = {}) => HttpRequest.post('/user/update/photo', args),
@@ -16,6 +20,10 @@ export const UserController = {
       password: (args = {}) => HttpRequest.post('/user/update/password', args),
       bankDetails: (args = {}) => HttpRequest.post('/user/update/bank', args),
       carMonthlyUpdate: (args = {}) => HttpRequest.post('/user/update/cars/monthly', args),
+      notifications: (args = {}) => HttpRequest.post('/user/update/notifications', args)
+    },
+    get: {
+      notifications: () => HttpRequest.get('/user/get/notifications')
     },
     create: {
       vehicle: (args = {}) => HttpRequest.post('/user/create/vehicle', args),

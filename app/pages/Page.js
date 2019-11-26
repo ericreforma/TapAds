@@ -13,6 +13,7 @@ import { NavigationEvents } from 'react-navigation';
 
 import { CAMPAIGN, SIGNUP } from '../redux/actions/types.action';
 import { AuthAction } from '../redux/actions/auth.action';
+import { UserAction } from '../redux/actions/user.action';
 import NavigationService from '../services/navigation';
 import { AuthController } from '../controllers';
 import { getCurrentTime } from '../config/functions';
@@ -76,7 +77,7 @@ class Page extends Component {
 			const { popupNotif } = this.state;
 			popupNotif.title = title;
 			popupNotif.data = receivedData;
-			popupNotif.body = body.indexOf('<n>') === -1 ? [body] : body.split('<n>');
+			popupNotif.body = body;
 			this.setState({ popupNotif });
 
 			if(receivedData.page === 'Chat')
@@ -131,7 +132,7 @@ class Page extends Component {
 		}
 
 		if(!this.props.notif && !this.props.messenger) {
-			this.props.getProfile();
+			this.props.updateNotificationCount();
 		}
 	}
 
@@ -142,12 +143,10 @@ class Page extends Component {
 
   notificationOpened = data => {
 		const { sender_id, page, name, args, add_data } = data;
-		console.log(data);
 		if(page) {
 			if(name === 'Custom') {
 				if(add_data) {
 					const navigationName = add_data.reset ? 'reset' : 'navigate';
-					console.log(add_data);
 					NavigationService[navigationName](page, args);
 				} else {
 					NavigationService.navigate(page, args);
@@ -299,6 +298,7 @@ const mapDispatchToProps = (dispatch) => ({
 	resetPropsValues: () => dispatch({ type: CAMPAIGN.RESET }),
 	resetSignupValues: () => dispatch({ type: SIGNUP.RESET }),
 	getProfile: () => dispatch(AuthAction.getProfile()),
+  updateNotificationCount: () => dispatch(UserAction.getNotification())
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Page);
@@ -306,7 +306,8 @@ export default connect(mapStateToProps, mapDispatchToProps)(Page);
 class MessagePopupNotif extends Component {
 	chatBanner = () => {
 		const { title, body, data } = this.props.popupNotif;
-		const { name, image } = data;
+		const { name, image, second_body } = data;
+		const bodyContent = second_body !== '' ? [body, second_body] : [body];
 		if(name === 'Chat') {
 			return (
 				<View
@@ -353,7 +354,7 @@ class MessagePopupNotif extends Component {
 						}}
 					>
 						<LabelText numberOfLines={1}>{title}</LabelText>
-						{body.map((b, index) =>
+						{bodyContent.map((b, index) =>
 							<CommonText key={index}>{b}</CommonText>
 						)}
 					</View>
@@ -364,7 +365,8 @@ class MessagePopupNotif extends Component {
 
 	paymentBanner = () => {
 		const { title, body, data } = this.props.popupNotif;
-		const { name } = data;
+		const { name, second_body } = data;
+		const bodyContent = second_body !== '' ? [body, second_body] : [body];
 		if(name === 'Payment') {
 			return (
 				<View
@@ -381,7 +383,7 @@ class MessagePopupNotif extends Component {
 						}}
 					>
 						<LabelText numberOfLines={1}>{title}</LabelText>
-						{body.map((b, index) =>
+						{bodyContent.map((b, index) =>
 							<CommonText key={index}>{b}</CommonText>
 						)}
 					</View>
@@ -409,8 +411,9 @@ class MessagePopupNotif extends Component {
 
 	campaignBanner = () => {
 		const { title, body, data } = this.props.popupNotif;
-		const { name } = data;
+		const { name, second_body } = data;
 		const imageSource = [null, IMAGES.ICONS.approve_icon, IMAGES.ICONS.rejected_icon];
+		const bodyContent = second_body !== '' ? [body, second_body] : [body];
 		if(name === 'Campaign') {
 			return (
 				<View
@@ -426,7 +429,7 @@ class MessagePopupNotif extends Component {
 						}}
 					>
 						<LabelText numberOfLines={1}>{title}</LabelText>
-						{body.map((b, index) =>
+						{bodyContent.map((b, index) =>
 							<CommonText key={index}>{b}</CommonText>
 						)}
 					</View>
@@ -454,12 +457,13 @@ class MessagePopupNotif extends Component {
 
 	customBanner = () => {
 		const { title, body, data } = this.props.popupNotif;
-		const { name } = data;
+		const { name, second_body } = data;
+		const bodyContent = second_body !== '' ? [body, second_body] : [body];
 		if(name === 'Custom') {
 			return (
 				<View>
 					<LabelText numberOfLines={1}>{title}</LabelText>
-					{body.map((b, index) =>
+					{bodyContent.map((b, index) =>
 						<CommonText key={index}>{b}</CommonText>
 					)}
 				</View>

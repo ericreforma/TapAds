@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
 import {
-    View,
-    ScrollView,
-    Dimensions,
-    TouchableOpacity,
-    TextInput,
-    Image,
-    Keyboard,
-    ActivityIndicator
+	View,
+	ScrollView,
+	Dimensions,
+	TouchableOpacity,
+	TextInput,
+	Image,
+	Keyboard,
+	ActivityIndicator,
+	Alert
 } from 'react-native';
 import { connect } from 'react-redux';
 import DropdownAlert from 'react-native-dropdownalert';
@@ -19,6 +20,7 @@ import { UserController, ChatController } from '../controllers';
 import Page from './Page';
 
 import { USER } from '../redux/actions/types.action';
+import { UserAction } from '../redux/actions/user.action';
 
 import theme from '../styles/theme.style';
 
@@ -38,15 +40,17 @@ class ChatPage extends Component {
 			message: '',
 			messageType: 0,
 			keyboardPress: true,
-			loadMore: 15,
+			total_page: 0,
 			loader: true,
-			loderLoadMore: false,
+			loaderLoadMore: false,
 			messengerData: {
 				id: '',
 				brand: '',
 				online: false,
 			},
-			messengerMessages: []
+			messengerMessages: [],
+			lastId: 0,
+			threeTriesRequest: 0
 		};
 
 		this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow);
@@ -63,42 +67,36 @@ class ChatPage extends Component {
 	}
 	
 	getMessages = () => {
-		UserController.request.messages(this.cid)
+		UserController.request.chat.initial(`?cid=${this.cid}`)
 		.then(response => {
-			var { chat,
-				client,
-				updatedCount } = response.data,
-				{ messengerData } = this.state,
-				loader = false;
-			
+			this.props.updateNotificationCount();
+			const { chat, client, total_page } = response.data;
+			const { messengerData } = this.state;
+			const loader = false;
+			const threeTriesRequest = 0;
+			const lastId = chat[0].id;
 			messengerData.id = client.id;
 			messengerData.brand = client.business_name;
 
 			this.setState({
 				loader,
+				lastId,
+				total_page,
 				messengerData,
+				threeTriesRequest,
 				messengerMessages: chat
 			});
-
-			if(parseInt(updatedCount) > 0) {
-				const { user } = this.props;
-				const userKeys = Object.keys(user);
-				const newUserData = {};
-				for(const u of userKeys) {
-					if(u === 'notificationCount') {
-						newUserData[u] = parseInt(updatedCount);
-					} else {
-						newUserData[u] = user[u];
-					}
-				}
-				this.props.updateUserNotification(newUserData);
-			}
 		})
 		.catch(e => {
 			console.log(e.response);
-			setTimeout(() => {
-				this.getMessages();
-			}, 1000);
+			if(this.state.threeTriesRequest === 3) {
+				this.serverError();
+			} else {
+				setTimeout(() => {
+					this.setState({ threeTriesRequest: this.state.threeTriesRequest + 1 });
+					this.getMessages();
+				}, 2000);
+			}
 		});
 	}
 	
@@ -131,22 +129,91 @@ class ChatPage extends Component {
 
 	seeMoreOnPress = () => {
 		this.setState({
-			loadMore: this.state.loadMore + 15,
 			loaderLoadMore: true,
 			keyboardPress: false
+		});
+		
+		UserController.request.chat.paginate(`?cid=${this.cid}&last_id=${this.state.lastId}`)
+		.then(res => {
+			const threeTriesRequest = 0;
+			const loaderLoadMore = false;
+			const oldMessages = res.data;
+			const { messengerMessages } = this.state;
+			const mergedMessages = oldMessages.concat(messengerMessages);
+			const lastId = oldMessages[0].id;
+
+			this.setState({
+				total_page: this.state.total_page - 1,
+				threeTriesRequest,
+				loaderLoadMore,
+				lastId,
+				messengerMessages: mergedMessages
+			});
+		})
+		.catch(error => {
+			console.log(error.response);
+			if(this.state.threeTriesRequest === 3) {
+				this.serverError();
+			} else {
+				setTimeout(() => {
+					this.setState({ threeTriesRequest: this.state.threeTriesRequest + 1 });
+					this.seeMoreOnPress();
+				}, 2000);
+			}
 		});
 	}
 
 	messageNewPage = cid => {
 		this.cid = cid;
+		this.setState({ loader: true });
 		this.getMessages();
+	}
+
+	newMessage = async () => {
+		await UserController.request.chat.latest(`?cid=${this.cid}`)
+		.then(res => {
+			const newMessages = res.data;
+			const { messengerMessages } = this.state;
+			const mergedMessages = messengerMessages.concat(newMessages);
+			const threeTriesRequest = 0;
+			
+			mergedMessages.sort(function(a,b){
+				return new Date(a.created_at) - new Date(b.created_at);
+			});
+
+			this.setState({
+				threeTriesRequest,
+				messengerMessages: mergedMessages
+			});
+		})
+		.catch(error => {
+			console.log(error.response);
+			if(this.state.threeTriesRequest === 3) {
+				this.serverError();
+			} else {
+				setTimeout(() => {
+					this.setState({ threeTriesRequest: this.state.threeTriesRequest + 1 });
+					this.newMessage();
+				}, 2000);
+			}
+		});
+	}
+
+	serverError = () => {
+		Alert.alert(
+			'Error',
+			'Server Error, please try again later.',
+			[
+				{text: 'OK', onPress: () => NavigationService.reset('Home')},
+			]
+		);
 	}
 
 	render() {
 		return (
 			<Page
 				message
-				reInitializePage={this.getMessages}
+				reInitializePage={this.newMessage}
 				messageNewPage={this.messageNewPage}
 				clientId={this.cid}
 			>
@@ -163,8 +230,6 @@ class ChatPage extends Component {
 							var { keyboardPress } = this.state;
 							if(keyboardPress) {
 								this._scrollView.scrollToEnd({ animated: true });
-							} else {
-								this.setState({ loaderLoadMore: false });
 							}
 						}}
 					>
@@ -225,18 +290,18 @@ class ChatPage extends Component {
 										</View>
 									) : (
 										<View>
-											{this.state.messengerMessages.length > this.state.loadMore ? (
-												this.state.loaderLoadMore ? (
-													<View
-														style={{
-															justifyContent: 'center',
-															alignItems: 'center',
-															paddingVertical: 20
-														}}
-													>
-														<ActivityIndicator color="#000" />
-													</View>
-												) : (
+											{this.state.loaderLoadMore ? (
+												<View
+													style={{
+														justifyContent: 'center',
+														alignItems: 'center',
+														paddingVertical: 20
+													}}
+												>
+													<ActivityIndicator color="#000" />
+												</View>
+											) : (
+												this.state.total_page > 1 ? (
 													<TouchableOpacity
 														style={{
 															justifyContent: 'center',
@@ -249,65 +314,69 @@ class ChatPage extends Component {
 															-- See More --
 														</CommonText>
 													</TouchableOpacity>
+												) : (
+													<View
+														style={{
+															height: 15
+														}}
+													></View>
 												)
-											) : null}
+											)}
 											
 											{this.state.messengerMessages.map((message, index) =>
-												(this.state.messengerMessages.length - this.state.loadMore) <= index ? (
+												<View
+													key={index}
+													style={{
+														marginTop: 5,
+														marginBottom: index == (this.state.messengerMessages.length - 1) ? 20 : 5,
+														justifyContent: message.sender ? 'flex-start' : 'flex-end',
+														alignItems: message.sender ? 'flex-end' : 'flex-end',
+														flexDirection: 'row',
+													}}
+												>
 													<View
-														key={index}
 														style={{
-															marginTop: index == 0 ? 20 : 5,
-															marginBottom: index == (this.state.messengerMessages.length - 1) ? 20 : 5,
-															justifyContent: message.sender ? 'flex-start' : 'flex-end',
-															alignItems: message.sender ? 'flex-end' : 'flex-end',
-															flexDirection: 'row',
+															backgroundColor: message.sender ? theme.COLOR_GRAY_CHAT : theme.COLOR_LIGHT_BLUE,
+															position: 'absolute',
+															left: message.sender ? 0 : null,
+															right: message.sender ? null : 0,
+															bottom: 0
 														}}
 													>
 														<View
 															style={{
-																backgroundColor: message.sender ? theme.COLOR_GRAY_CHAT : theme.COLOR_LIGHT_BLUE,
-																position: 'absolute',
-																left: message.sender ? 0 : null,
-																right: message.sender ? null : 0,
-																bottom: 0
+																backgroundColor: theme.COLOR_WHITE,
+																borderBottomRightRadius: message.sender ? 12 : 0,
+																borderBottomLeftRadius: message.sender ? 0 : 12,
+																width: 21,
+																height: 20
 															}}
-														>
-															<View
-																style={{
-																	backgroundColor: theme.COLOR_WHITE,
-																	borderBottomRightRadius: message.sender ? 12 : 0,
-																	borderBottomLeftRadius: message.sender ? 0 : 12,
-																	width: 21,
-																	height: 20
-																}}
-															></View>
-														</View>
-
-														<View
-															style={{
-																backgroundColor: message.sender ? theme.COLOR_GRAY_CHAT : theme.COLOR_LIGHT_BLUE,
-																borderRadius: 20,
-																borderBottomLeftRadius: message.sender ? 0 : 20,
-																borderBottomRightRadius: message.sender ? 20 : 0,
-																paddingVertical: 10,
-																paddingHorizontal: 20,
-																maxWidth: '80%',
-																zIndex: 10,
-																marginLeft: message.sender ? 20 : 0,
-																marginRight: message.sender ? 0 : 20,
-																flexWrap: 'wrap',
-																flexDirection: 'row'
-															}}
-														>
-															<CommonText
-																color={message.sender ? 'black' : 'white'}
-															>
-																{message.message}
-															</CommonText>
-														</View>
+														></View>
 													</View>
-												) : null
+
+													<View
+														style={{
+															backgroundColor: message.sender ? theme.COLOR_GRAY_CHAT : theme.COLOR_LIGHT_BLUE,
+															borderRadius: 20,
+															borderBottomLeftRadius: message.sender ? 0 : 20,
+															borderBottomRightRadius: message.sender ? 20 : 0,
+															paddingVertical: 10,
+															paddingHorizontal: 20,
+															maxWidth: '80%',
+															zIndex: 10,
+															marginLeft: message.sender ? 20 : 0,
+															marginRight: message.sender ? 0 : 20,
+															flexWrap: 'wrap',
+															flexDirection: 'row'
+														}}
+													>
+														<CommonText
+															color={message.sender ? 'black' : 'white'}
+														>
+															{message.message}
+														</CommonText>
+													</View>
+												</View>
 											)}
 										</View>
 									)
@@ -432,7 +501,8 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-	updateUserNotification: (user) => dispatch({ type: USER.UPDATE.NOTIFICATION, user })
+	updateUserNotification: (notification) => dispatch({ type: USER.NOTIFICATION.UPDATE, notification }),
+  updateNotificationCount: () => dispatch(UserAction.getNotification())
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ChatPage);
