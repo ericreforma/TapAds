@@ -228,65 +228,80 @@ class Page extends Component {
 	render() {
 		if(this.props.logout)	this.navigate('logout');
 
-		return (
-			<View
-				style={
-					this.props.message || this.props.campaignPage || this.props.nonPage
-					? { flex: 1, flexDirection: 'column'}
-					: {}
-				}
-			>
-				<NavigationEvents
-					onDidFocus={this.mountComponent}
-					onWillBlur={this.unmountComponent}
-				/>
-
-				<Animated.View
-					style={{
-						position: 'absolute',
-						top: this.state.notificationBannerTop,
-						left: 0,
-						width: Dimensions.get('window').width
-					}}
-				>
-					<MessagePopupNotif
-						popupNotif={this.state.popupNotif}
-						notificationBannerOnPress={this.notificationBannerOnPress}
+		if(this.props.nonPage) {
+			return (
+				<View	style={{ flex: 1, flexDirection: 'column' }}>
+					<NavigationEvents
+						onDidFocus={this.mountComponent}
+						onWillBlur={this.unmountComponent}
 					/>
-				</Animated.View>
 
-				{this.props.nonPage
-				? this.props.children
-				: (
-					<View
-						style={
-							this.props.message || this.props.campaignPage
-							? { flex: 1, flexDirection: 'column'}
-							: {}
-						}
+					<Animated.View
+						style={{
+							position: 'absolute',
+							top: this.state.notificationBannerTop,
+							left: 0,
+							width: Dimensions.get('window').width
+						}}
 					>
-						<AppBackground />
-						
-						<HeaderNav
-							menuButtonOnPress={this.menuButtonOnPress}
-							navigate={this.navigate}
+						<MessagePopupNotif
+							popupNotif={this.state.popupNotif}
+							notificationBannerOnPress={this.notificationBannerOnPress}
 						/>
-	
-						{this.props.children}
-	
-						<ModalMenu
-							modalContainerzIndex={this.state.modalContainerzIndex}
-							width={this.state.width}
-							height={this.state.scrollEnable ? 0 : this.state.height}
-							modalFadeBackground={this.state.modalFadeBackground}
-							modalXValue={this.state.modalXValue}
-							menuButtonOnPress={this.menuButtonOnPress}
-							navigateToPage={this.navigateToPage}
+					</Animated.View>
+
+					{this.props.children}
+				</View>
+			);
+		} else {
+			return (
+				<View
+					style={
+						this.props.message || this.props.campaignPage
+						? { flex: 1, flexDirection: 'column' }
+						: {}
+					}
+				>
+					<NavigationEvents
+						onDidFocus={this.mountComponent}
+						onWillBlur={this.unmountComponent}
+					/>
+
+					<Animated.View
+						style={{
+							position: 'absolute',
+							top: this.state.notificationBannerTop,
+							left: 0,
+							width: Dimensions.get('window').width
+						}}
+					>
+						<MessagePopupNotif
+							popupNotif={this.state.popupNotif}
+							notificationBannerOnPress={this.notificationBannerOnPress}
 						/>
-					</View>
-				)}
-			</View>
-		);
+					</Animated.View>
+
+					<AppBackground />
+					
+					<HeaderNav
+						menuButtonOnPress={this.menuButtonOnPress}
+						navigate={this.navigate}
+					/>
+
+					{this.props.children}
+
+					<ModalMenu
+						modalContainerzIndex={this.state.modalContainerzIndex}
+						width={this.state.width}
+						height={this.state.scrollEnable ? 0 : this.state.height}
+						modalFadeBackground={this.state.modalFadeBackground}
+						modalXValue={this.state.modalXValue}
+						menuButtonOnPress={this.menuButtonOnPress}
+						navigateToPage={this.navigateToPage}
+					/>
+				</View>
+			);
+		}
 	}
 }
 
