@@ -115,91 +115,6 @@ class AddVehiclePage extends Component {
 
 	submitAddedCar = (e) => {
 		this.toggleAddCarLoading(true);
-		var { vehicleToUpload,
-			activeTypeVehicle,
-			vehicleClassification,
-			uploadManufacturer,
-			uploadModel,
-			uploadYear,
-			uploadColor,
-			plateNumber,
-			vehicleDatabase } = this.state,
-			alertMessage = '',
-			newVehicle = null,
-			vehicleId;
-
-		if(uploadManufacturer === '')
-			alertMessage += 'Pick car manufacturer\n';
-				
-		if(uploadModel === '')
-			alertMessage += 'Pick car model\n';
-				
-		if(uploadYear === '')
-			alertMessage += 'Pick car year\n';
-
-		if(vehicleToUpload.length === 0)
-			alertMessage += 'Upload Vehicle Photo\n';
-
-		if(plateNumber === '')
-			alertMessage += 'Input plate number';
-
-		if(alertMessage === '') {
-			vehicleId = vehicleDatabase.find(v =>
-				v.manufacturer.toString().toLowerCase() == uploadManufacturer.toString().toLowerCase()
-				&& v.model.toString().toLowerCase() == uploadModel.toString().toLowerCase()
-				&& v.year.toString() == uploadYear.toString()
-			);
-
-			if(vehicleId) {
-				vehicleId = vehicleId.id;
-			} else {
-				newVehicle = {
-					manufacturer: uploadManufacturer,
-					model: uploadModel,
-					year: uploadYear,
-					class: vehicleClassification
-				};
-			}
-
-			UserController.request.create.vehicle({
-				vehicleToUpload,
-				activeTypeVehicle,
-				vehicleId,
-				newVehicle,
-				uploadColor,
-				plateNumber
-			})
-			.then(res => {
-				UserController.request.profile()
-				.then(res => {
-					this.props.dispatchGetProfile(res.data);
-					this.resetInputFields();
-
-					const { popupModal } = this.state;
-					popupModal.visible = true;
-					popupModal.message = 'Great!';
-					popupModal.description = 'Vehicle added successfully!';
-					this.setState({popupModal});
-				})
-				.catch(error => {
-					console.log(error);
-				});
-			})
-			.catch(error => {
-				console.log(error);
-				this.failedFlashMessage(
-					'Error',
-					'Error connecting to the server, could you please try again later? Thanks!',
-				);
-				this.toggleAddCarLoading(false);
-			});
-		} else {
-			this.failedFlashMessage(
-				'Please fill in fields.',
-				alertMessage
-			);
-			this.toggleAddCarLoading(false);
-		}
 	}
 
 	toggleAddCarLoading = (addCarLoading) => {
@@ -824,35 +739,45 @@ class AddVehiclePage extends Component {
 							</View>
 
 							<View
-									style={{
-											marginTop: 10,
-											alignItems: 'center',
-											justifyContent: 'center'
-									}}
+								style={{
+									marginTop: 10,
+									alignItems: 'center',
+									justifyContent: 'center'
+								}}
 							>
-									<TouchableOpacity
-											style={{
-													backgroundColor: theme.COLOR_LIGHT_BLUE,
-													borderRadius: 15,
-													paddingHorizontal: 25,
-													alignItems: 'center',
-													paddingVertical: 13,
-											}}
-											onPress={this.submitAddedCar}
+								{this.state.addCarLoading ? (
+									<View
+										style={{
+											backgroundColor: theme.COLOR_LIGHT_BLUE,
+											borderRadius: 15,
+											paddingHorizontal: 40,
+											alignItems: 'center',
+											paddingVertical: 10,
+										}}
 									>
-											{this.state.addCarLoading ? (
-													<ActivityIndicator size="small" color="#ffffff" />
-											) : (
-													<Text
-															style={{
-																	textAlign: 'center',
-																	color: theme.COLOR_WHITE,
-																	fontFamily: 'Montserrat-Medium',
-																	fontSize: 12,
-															}}
-													>Add Car</Text>
-											)}
+										<ActivityIndicator size="small" color="#ffffff" />
+									</View>
+								) : (
+									<TouchableOpacity
+										style={{
+											backgroundColor: theme.COLOR_LIGHT_BLUE,
+											borderRadius: 15,
+											paddingHorizontal: 25,
+											alignItems: 'center',
+											paddingVertical: 13,
+										}}
+										onPress={this.submitAddedCar}
+									>
+										<Text
+											style={{
+												textAlign: 'center',
+												color: theme.COLOR_WHITE,
+												fontFamily: 'Montserrat-Medium',
+												fontSize: 12,
+											}}
+										>Add Car</Text>
 									</TouchableOpacity>
+								)}
 							</View>
 						</View>
 					</View>

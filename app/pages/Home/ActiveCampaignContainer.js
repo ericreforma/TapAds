@@ -18,8 +18,8 @@ import theme from '../../styles/theme.style';
 const testCampaignImage = require('../../assets/image/test_campaign_image.png');
 const activeCampaignGradient = require('../../assets/image/active_campaign_gradient.png');
 const startTripButton = require('../../assets/image/icons/start_trip_button.png');
-const cHeight = theme.SCREEN_HEIGHT * 0.18;
 const cWidth = theme.SCREEN_WIDTH / 1.9;
+const cHeight = cWidth - (cWidth / 3.5);
 
 const ActiveCampaignContainer = props => {
   const [campaign, setCampaign] = useState([]);

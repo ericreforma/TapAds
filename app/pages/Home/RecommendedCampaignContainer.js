@@ -61,7 +61,7 @@ const RecommendedCampaignContainer = props => {
               resizeMode="cover"
               style={{
                 width: cWidth,
-                height: cHeight
+                height: cWidth
               }}
             />
 
