@@ -1,7 +1,11 @@
-export const numberWithCommas = (x) => {
+export const numberWithCommas = (x, withoutDecimal = false) => {
 	var parts = x.toString().split(".");
 	parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-	return parts.join(".");
+	if(withoutDecimal) {
+		return parts[0];
+	} else {
+		return parts.join(".");
+	}
 };
 
 export const getCurrentTime = () => {
@@ -118,10 +122,10 @@ export const getHeading = (a, b) => {
 	return changeBasis(rotate);
 };
 
-export const earnUpTo = (c) => {
+export const earnUpTo = (c, decimal = false) => {
 	const payBasic = parseFloat(c.pay_basic);
 	const returnValue = payBasic * getMonthDiff(c.duration_from, c.duration_to);
-	return numberWithCommas(returnValue.toFixed(2));
+	return numberWithCommas(returnValue.toFixed(2), decimal);
 }
 
 export const totalKmDistance = (c) => {
@@ -275,4 +279,15 @@ export const getMonthlyVehiclePhoto = (campaignSelected) => {
 		});
 
 	return returnData;
+}
+
+export const getTotalPay = item => {
+	const payBasic = parseInt(item.pay_basic);
+	const mDiff = getMonthDiff(item.duration_from, item.duration_to);
+	return `P${numberWithCommas(payBasic * mDiff, true)}`;
+}
+
+export const getSlotAvailable = ({slots, slots_used}) => {
+	const slotsAvailable = parseInt(slots) - parseInt(slots_used);
+	return `${slotsAvailable} of ${slots}`;
 }

@@ -31,6 +31,8 @@ import {
 	MonthlyCarPhotoPage
 } from '../pages';
 
+import TestPage from '../pages/TestPage';
+
 export default class Route extends Component {
 	constructor(props) {
 		super(props);
@@ -90,9 +92,11 @@ const AppRoute = createSwitchNavigator({
 	Loading: LoadingPage,
 	Auth: AuthStack,
 	App: AppStack,
-	StartCampaign: StartCampaignPage
+	StartCampaign: StartCampaignPage,
+	TestPage: TestPage
 	}, {
 		initialRouteName: 'Loading',
+		// initialRouteName: 'TestPage'
 	}
 );
 

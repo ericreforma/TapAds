@@ -1,4 +1,4 @@
-import HomePage from './HomePage';
+// import HomePage from './HomePage';
 import LogInPage from './LoginPage';
 import NotificationPage from './NotificationPage';
 import ProfilePage from './ProfilePage';
@@ -20,9 +20,12 @@ import RecommendedPage from './RecommendedPage';
 import ForgotPasswordPage from './ForgotPasswordPage';
 import MonthlyCarPhotoPage from './MonthlyCarPhotoPage';
 
+// new directory
+export { HomePage } from './Home';
+
 export {
+	// HomePage
 	LogInPage,
-	HomePage,
 	NotificationPage,
 	SignUpPage,
 	SignUpAddImagePage,

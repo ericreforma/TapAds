@@ -41,8 +41,8 @@ export const VEHICLE = {
   CLASS: {
     regular: {
       id: 0,
-      name: 'regular',
-      description: ['Compact SUV to', 'Regular SUV,', 'Sedan or smaller'],
+      name: 'Regular',
+      description: ['Compact SUV', 'Regular SUV', 'Sedan or smaller'],
       icon: {
         large: require('../assets/image/category_car_small.png'),
         black: require('../assets/image/icons/car_small_black_icon.png'),
@@ -51,8 +51,8 @@ export const VEHICLE = {
     },
     premium: {
       id: 1,
-      name: 'premium',
-      description: 'Van to Truck',
+      name: 'Premium',
+      description: [''],
       icon: {
         large: require('../assets/image/category_car_large.png'),
         black: require('../assets/image/icons/car_large_black_icon.png'),
@@ -61,8 +61,8 @@ export const VEHICLE = {
     },
     motorcycle: {
       id: 2,
-      name: 'motorcycle',
-      description: 'Motorcycle',
+      name: 'Motorcycle',
+      description: ['Motorcycle'],
       icon: {
         large: require('../assets/image/category_motorcycle.png'),
         black: require('../assets/image/icons/motorcycle_black_icon.png'),
@@ -141,6 +141,7 @@ export const IMAGES = {
     payment_white_icon: require('../assets/image/icons/payment_white_icon.png'),
     bag_of_cash_icon: require('../assets/image/icons/bag_cash_icon.png'),
     back_icon: require('../assets/image/icons/back_arrow_left_icon.png'),
+    back_icon_black: require('../assets/image/icons/back_arrow_left_black_icon.png'),
     back_icon_white: require('../assets/image/icons/back_arrow_left_white_icon.png'),
     check_blue: require('../assets/image/icons/login_verify_icon_blue.png'),
     approve_icon: require('../assets/image/icons/approve_icon.png'),

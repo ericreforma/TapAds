@@ -26,20 +26,24 @@ export const CampaignAction = {
     dispatch({ type: CAMPAIGN.MYLIST.REQUEST });
     CampaignController.mylist()
       .then(response => {
-        dispatch({ type: CAMPAIGN.MYLIST.GET, mylist: response.data });
+        const activeCampaign = response.data.filter(l => l.request_status === 1 && !l.end);
+        const campaign = {
+          mylist: response.data, 
+          active: activeCampaign
+        };
+
+        dispatch({ type: CAMPAIGN.MYLIST.GET, campaign });
         if (successCallBack !== null) {
           successCallBack();
         }
       })
       .catch(e => {
         console.log('error');
-        console.log(e);
+        console.log(e.response);
       });
   },
 
   selected: id => (dispatch, getState) => {
-    NavigationService.navigate('Campaign');
-
     const state = getState();
     const campaignList = state.campaignReducer.list;
     const campaignRecList = state.campaignReducer.recommended;
@@ -82,12 +86,16 @@ export const CampaignAction = {
     const mylist = state.campaignReducer.mylist;
 
     if (mylist.find(x => x.campaign_id === selectedCampaign.id && x.request_status !== 2) === undefined) {
-      CampaignController.interested(userVehicleId, selectedCampaign.id)
+      CampaignController.interested(userVehicleId, selectedCampaign.id, selectedCampaign.client_id)
       .then((res) => {
         if(res.data.status === 'success') {
           CampaignController.mylist()
           .then(response => {
-            dispatch({ type: CAMPAIGN.MYLIST.GET, mylist: response.data });
+            const campaign = {
+              mylist: response.data
+            };
+
+            dispatch({ type: CAMPAIGN.MYLIST.UPDATE, campaign });
             successCallBack();
           })
           .catch(e => {

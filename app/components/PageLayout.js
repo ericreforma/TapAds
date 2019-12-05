@@ -30,7 +30,7 @@ import Sound from 'react-native-sound';
 
 const slideSpeed = 500;
 
-class Page extends Component {
+class PageLayout extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -321,7 +321,7 @@ const mapDispatchToProps = (dispatch) => ({
 	dispatchMyList: callback => dispatch(CampaignAction.mylist(callback))
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Page);
+export default connect(mapStateToProps, mapDispatchToProps)(PageLayout);
 
 class MessagePopupNotif extends Component {
 	chatBanner = () => {

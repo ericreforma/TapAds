@@ -1,3 +1,5 @@
+import { Dimensions } from 'react-native';
+
 export default {
 // COLORS
   COLOR_WHITE: '#fff',
@@ -38,4 +40,8 @@ export default {
 
 // CARD RADIUS
   PAGE_CARD_RADIUS: 15,
+
+// screen size
+  SCREEN_WIDTH: Dimensions.get('window').width,
+  SCREEN_HEIGHT: Dimensions.get('window').height
 };

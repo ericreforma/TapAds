@@ -7,10 +7,11 @@ export const CampaignController = {
       HttpRequest.get(`${URL.PAGE.CAMPAIGN.BROWSE}${filters}`),
   },
 
-  interested: (user_vehicle_id, campaign_id) =>
+  interested: (user_vehicle_id, campaign_id, client_id) =>
     HttpRequest.post(`${URL.PAGE.CAMPAIGN.ADD}`, {
       campaign_id,
       user_vehicle_id,
+      client_id
     }),
 
   mylist: () => HttpRequest.get(`${URL.PAGE.CAMPAIGN.LIST}`),

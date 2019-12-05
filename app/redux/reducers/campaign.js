@@ -15,7 +15,8 @@ const initialState = {
   mylist_selected: {},
   trip: {},
   campaign_location: [],
-  campaign_loc_isRequesting: false
+  campaign_loc_isRequesting: false,
+  activeCampaign: []
 };
 
 export function campaignReducer(state = initialState, action) {
@@ -67,11 +68,18 @@ export function campaignReducer(state = initialState, action) {
         selected: action.campaign
       });
 
+    // case CAMPAIGN.MYLIST.UPDATE:
+    //   return Object.assign({}, state, {
+    //     mylist: state.mylist === []
+    //       ? action.campaign
+    //       : [...state.mylist, ...action.campaign]
+    //   });
+    
     case CAMPAIGN.MYLIST.UPDATE:
       return Object.assign({}, state, {
-        mylist: state.mylist === []
-          ? action.campaign
-          : [...state.mylist, ...action.campaign]
+        mylist: action.campaign.mylist,
+        mylistRequesting: false,
+        mylistRequestDone: true
       });
 
     case CAMPAIGN.MYLIST.ADD:
@@ -88,7 +96,8 @@ export function campaignReducer(state = initialState, action) {
 
     case CAMPAIGN.MYLIST.GET:
       return Object.assign({}, state, {
-        mylist: action.mylist,
+        mylist: action.campaign.mylist,
+        activeCampaign: action.campaign.active,
         mylistRequesting: false,
         mylistRequestDone: true
       });
