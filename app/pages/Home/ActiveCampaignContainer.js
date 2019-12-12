@@ -12,6 +12,7 @@ import Carousel from 'react-native-snap-carousel';
 import { RFValue } from "react-native-responsive-fontsize";
 
 import { CampaignAction } from '../../redux/actions/campaign.action';
+import { URL } from '../../config/variables';
 
 import theme from '../../styles/theme.style';
 
@@ -70,18 +71,17 @@ const ActiveCampaignContainer = props => {
             elevation: 5
           }}
         >
-          <ActiveCampaignHeader
-            campaign={item.campaignDetails.name}
-            location={item.campaignDetails.location} />
-
-          <ActiveCampaignFooter
-            item={item} />
+          <ActiveCampaignHeader item={item} />
+          <ActiveCampaignFooter item={item} />
         </View>
       </View>
     );
   }
   
-  const ActiveCampaignHeader = props => {
+  const ActiveCampaignHeader = ({item}) => {
+    const imageSource = item.campaignDetails.photo
+      ? {uri: `${URL.SERVER_MEDIA}/${item.campaignDetails.photo}`}
+      : testCampaignImage;
     return (
       <View
         style={{
@@ -92,7 +92,7 @@ const ActiveCampaignContainer = props => {
         }}
       >
         <Image
-          source={testCampaignImage}
+          source={imageSource}
           resizeMode="cover"
           style={{
             height: cHeight,
@@ -128,8 +128,8 @@ const ActiveCampaignContainer = props => {
               paddingHorizontal: 15
             }}
           >
-            <ActiveCampaignText.Label text={props.campaign} />
-            <ActiveCampaignText.Common text={props.location} />
+            <ActiveCampaignText.Label text={item.campaignDetails.name} />
+            <ActiveCampaignText.Common text={item.campaignDetails.location} />
           </View>
         </View>
       </View>

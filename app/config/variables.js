@@ -42,7 +42,7 @@ export const VEHICLE = {
     regular: {
       id: 0,
       name: 'Regular',
-      description: ['Compact SUV', 'Regular SUV', 'Sedan or smaller'],
+      description: 'Compact to light SUVs',
       icon: {
         large: require('../assets/image/category_car_small.png'),
         black: require('../assets/image/icons/car_small_black_icon.png'),
@@ -52,23 +52,43 @@ export const VEHICLE = {
     premium: {
       id: 1,
       name: 'Premium',
-      description: [''],
+      description: 'Large SUVs',
       icon: {
-        large: require('../assets/image/category_car_large.png'),
-        black: require('../assets/image/icons/car_large_black_icon.png'),
-        white: require('../assets/image/icons/car_large_white_icon.png'),
+        large: require('../assets/image/category_car_mid.png'),
+        black: require('../assets/image/icons/car_mid_black_icon.png'),
+        white: require('../assets/image/icons/car_mid_white_icon.png'),
       },
     },
     motorcycle: {
       id: 2,
       name: 'Motorcycle',
-      description: ['Motorcycle'],
+      description: null,
       icon: {
         large: require('../assets/image/category_motorcycle.png'),
         black: require('../assets/image/icons/motorcycle_black_icon.png'),
         white: require('../assets/image/icons/motorcycle_white_icon.png'),
       },
     },
+    vans: {
+      id: 3,
+      name: 'Vans',
+      description: null,
+      icon: {
+        large: require('../assets/image/category_car_large.png'),
+        black: require('../assets/image/icons/car_large_black_icon.png'),
+        white: require('../assets/image/icons/car_large_white_icon.png'),
+      }
+    },
+    truck: {
+      id: 4,
+      name: 'Truck',
+      description: null,
+      icon: {
+        large: require('../assets/image/category_truck.png'),
+        black: require('../assets/image/icons/truck_black_icon.png'),
+        white: require('../assets/image/icons/truck_white_icon.png'),
+      }
+    }
   },
   TYPE: {
     private: {
@@ -158,7 +178,9 @@ export const IMAGES = {
     avatar: {
       male: require('../assets/image/male_avatar.png'),
       female: require('../assets/image/female_avatar.png')
-    }
+    },
+    favorite_icon: require('../assets/image/icons/completed_favorite_icon.png'),
+    mail_icon: require('../assets/image/icons/mail_icon.png')
   }
 };
 

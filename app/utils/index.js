@@ -10,7 +10,8 @@ const timeConverter = (timestamp) => {
   const ampm = a.getHours() > 11 ? 'PM' : 'AM';
   const min = a.getMinutes() < 10 ? `0${a.getMinutes()}` : a.getMinutes();
   const sec = a.getSeconds() < 10 ? `0${a.getSeconds()}` : a.getSeconds();
-  const time = `${date} ${month} ${year} ${hour}:${min}:${sec} ${ampm}`;
+  // const time = `${date} ${month} ${year}-${hour}:${min}:${sec}${ampm}`;
+  const time = `${hour}:${min}:${sec}${ampm}`;
   return time;
 };
 

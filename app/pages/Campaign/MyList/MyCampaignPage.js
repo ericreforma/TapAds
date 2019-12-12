@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import {
     View,
     Text,
-    Image,
     ScrollView,
     TouchableOpacity,
     ActivityIndicator,
@@ -11,28 +10,29 @@ import {
     Dimensions
 } from 'react-native';
 import { NavigationEvents } from 'react-navigation';
+import { RFPercentage } from 'react-native-responsive-fontsize';
 
 import {
     Card,
     CardHeader,
     CardBody,
     CardFooter
-} from '../components/Card';
-import Page from '../pages/Page';
-import { VehicleType } from '../components/VehicleType';
-import UserInfo from '../components/UserInfo';
-import { LabelText, CommonText } from '../components/Text';
-import ButtonBlue from '../components/ButtonBlue';
-import { VEHICLE, IMAGES } from '../config/variables';
-import { CampaignAction } from '../redux/actions/campaign.action';
-import theme from '../styles/theme.style';
-import styles from '../styles/page.Home.style';
+} from '../../../components/Card';
+import Page from '../../../pages/Page';
+import { VehicleType } from '../../../components/VehicleType';
+import UserInfo from '../../../components/UserInfo';
+import { LabelText, CommonText } from '../../../components/Text';
+import { VEHICLE, IMAGES } from '../../../config/variables';
+import { CampaignAction } from '../../../redux/actions/campaign.action';
+import theme from '../../../styles/theme.style';
+import styles from '../../../styles/page.Home.style';
 import {
     numberWithCommas,
     getTotalEarnings,
-    timestamp,
 		earnUpTo
-} from '../config/functions';
+} from '../../../config/functions';
+
+import CampaignCompleted from './CampaignCompleted';
 
 class MyCampaignPage extends Component {
 	constructor(props) {
@@ -144,7 +144,11 @@ class MyCampaignPage extends Component {
 		const campaignDisplay = this.state.activeCampaigns;
 
 		return (
-			<View>
+			<View
+        style={{
+          padding: RFPercentage(2),
+        }}
+      >
 				{campaignDisplay.length !== 0 ?
 					campaignDisplay.map((data, index) =>
 						this.state.maxContentCount > (index + 1) ? (
@@ -310,7 +314,11 @@ class MyCampaignPage extends Component {
 		const campaignDisplay = this.state.myList;
 
 		return (
-			<View>
+			<View
+        style={{
+          padding: RFPercentage(2),
+        }}
+      >
 				{campaignDisplay.length !== 0 ?
 					campaignDisplay.map((data, index) =>
 						this.state.maxContentCount > (index + 1) ? (
@@ -476,140 +484,15 @@ class MyCampaignPage extends Component {
 		const campaignDisplay = this.state.completedCampaigns;
 
 		return (
-			<View>
+			<View
+        style={{
+          padding: RFPercentage(2),
+        }}
+      >
 				{campaignDisplay.length !== 0 ?
 					campaignDisplay.map((data, index) =>
 						this.state.maxContentCount > (index + 1) ? (
-							<View
-								key={index}
-								style={{
-									marginVertical: 7
-								}}
-							>
-								<Card shadow>
-									<CardHeader active>
-										<LabelText numberOfLines={1}>{data.campaignDetails.name}</LabelText>
-										
-										<View
-											style={{
-												flexDirection: 'row',
-												justifyContent: 'space-between',
-												alignItems: 'center'
-											}}
-										>
-											<View
-												style={{
-													flex: 1
-												}}
-											>
-												<CommonText numberOfLines={1}>
-													{data.client.business_name}
-												</CommonText>
-											</View>
-											
-											<View
-												style={{
-													width: 90,
-													alignItems: 'flex-end'
-												}}
-											>
-												<TouchableOpacity onPress={() => { this.props.campaignSelected(data.id); }}>
-													<Text style={styles.homePageViewAll}>
-														Full details
-													</Text>
-												</TouchableOpacity>
-											</View>
-										</View>
-									</CardHeader>
-
-									<CardBody>
-										<View style={styles.homePageRecommendedCampaignBody}>
-											<View style={styles.homePageRecommendedCampaignFirstCol}>
-												<LabelText>{data.campaignDetails.location}</LabelText>
-												<CommonText>Location</CommonText>
-											</View>
-
-											<View style={styles.homePageAlignCenter}>
-												<VehicleType
-													vehicleType={data.campaignDetails.vehicle_classification}
-													vehicleColor="black"
-												/>
-
-												<CommonText>{ this.state.vehicleType[data.campaignDetails.vehicle_type].name }</CommonText>
-											</View>
-
-											<View style={styles.homePageAlignRight}>
-												<LabelText>P {earnUpTo(data.campaignDetails)}</LabelText>
-												<CommonText>Earn up to</CommonText>
-											</View>
-										</View>
-
-										<View
-											style={{
-												flexDirection: 'row',
-												alignItems: 'center',
-												marginTop: 15
-											}}
-										>
-											<TouchableOpacity
-												style={{
-													flex: 1,
-													marginRight: 10,
-												}}
-												onPress={() => { this.props.campaignSelected(data.id, 'MonthlyCarPhoto') }}
-											>
-												<Text style={styles.homePageViewAll}>
-													Upload
-												</Text>
-											</TouchableOpacity>
-
-											<TouchableOpacity
-												style={{
-													flex: 1,
-													marginLeft: 10,
-													justifyContent: 'center',
-													alignItems: 'center',
-													backgroundColor: theme.COLOR_BLUE,
-													borderRadius: 15,
-													paddingVertical: 10,
-												}}
-												onPress={this.activeCampaignStartTrip(data.id, data.campaignDetails.location_id, index)}
-												disabled={this.state.startTripLoader[index]}
-											>
-												{this.state.startTripLoader[index] ? (
-													<ActivityIndicator color="#fff" />
-												) : (
-													<LabelText color="white">
-														Start trip
-													</LabelText>
-												)}
-											</TouchableOpacity>
-										</View>
-									</CardBody>
-
-									<CardFooter active>
-										<View
-											style={{
-												flexDirection: 'row',
-												justifyContent: 'space-between'
-											}}
-										>
-											<LabelText color="blue" large>{data.campaign_traveled}km</LabelText>
-											<LabelText color="blue" large>P {numberWithCommas(getTotalEarnings(data))}</LabelText>
-										</View>
-
-										<View
-											style={{
-												flexDirection: 'row',
-												justifyContent: 'space-between'
-											}}
-										>
-											<CommonText color="white">Traveled Counter</CommonText>
-											<CommonText color="white">Earnings</CommonText>
-										</View>
-									</CardFooter>
-								</Card>
-							</View>
+							<CampaignCompleted key={index} campaign={data} />
 						) : null
 				) : (
 					<View
@@ -660,7 +543,7 @@ class MyCampaignPage extends Component {
 					<View
 						style={{
 							marginVertical: 20,
-							marginHorizontal: theme.PAGE_PADDING_HORIZONTAL
+							// marginHorizontal: theme.PAGE_PADDING_HORIZONTAL
 						}}
 					>
 						<View
@@ -676,31 +559,11 @@ class MyCampaignPage extends Component {
 						{this.state.loader ? (
 							<ActivityIndicator color="#fff" />
 						) : (
-							<View>
-								{/* <View
-									style={{
-										backgroundColor: theme.COLOR_GRAY_HEAVY,
-										borderRadius: theme.PAGE_CARD_RADIUS,
-										paddingVertical: 15,
-										justifyContent: 'center',
-										alignItems: 'center',
-									}}
-								>
-									<Text
-										style={{
-											fontSize: theme.FONT_SIZE_MEDIUM,
-											fontFamily: 'Montserrat-Bold',
-											color: theme.COLOR_WHITE
-										}}
-									>{this.state.nav}</Text>
-								</View> */}
-
-								{this.state.navLoader ? (
-									<View>
-										<ActivityIndicator color="#fff" />
-									</View>
-								) : this.campaignContent()}
-							</View>
+							this.state.navLoader ? (
+                <View>
+                  <ActivityIndicator color="#fff" />
+                </View>
+              ) : this.campaignContent()
 						)}
 					</View>
 				</ScrollView>

@@ -19,7 +19,7 @@ import styles from '../styles/page.Home.style';
 import MapCard from '../components/MapCard';
 import NavigationService from '../services/navigation';
 import { CampaignAction } from '../redux/actions/campaign.action';
-import { numberWithCommas } from '../config/functions';
+import { numberWithCommas, earnUpTo } from '../config/functions';
 
 class CampaignCardActive extends Component {
 	constructor(props) {
@@ -196,7 +196,7 @@ class CampaignCardActive extends Component {
 									}}
 								>
 									<LabelText color="white">
-											P{numberWithCommas(this.props.campaign.campaignDetails.pay_basic)}
+											P{earnUpTo(this.props.campaign.campaignDetails)}
 									</LabelText>
 
 									<CommonText color="white">Earn up to</CommonText>

@@ -20,7 +20,7 @@ export const getCurrentTime = () => {
   return `${month}-${day}-${year} ${hour}:${min}:${sec}`;
 };
 
-export const timeStamp = (d) => {
+export const timeStamp = (d, alphabetic = false) => {
 	if(d) {
 		var date = d.split(' ')[0],
 			time = d.split(' ')[1],
@@ -35,7 +35,9 @@ export const timeStamp = (d) => {
 			day = parseInt(date.split('-')[2]),
 			hour = parseInt(time.split(':')[0]),
 			min = parseInt(time.split(':')[1]),
-			date = `${months[month - 1]}. ${day}, ${year}`,
+			date = alphabetic
+				? `${months[month - 1].toUpperCase()}. ${day}, ${year}`
+				: `${months[month - 1]}. ${day}, ${year}`,
 			time = `${hour <= 12 ? (hour === 0 ? '12' : hour) : (hour - 12)}:${min} ${hour < 12 ? 'AM' : 'PM'}`;
 		return {date, time};
 	} else {

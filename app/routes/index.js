@@ -50,21 +50,22 @@ export default class Route extends Component {
 	}
 }
 
-const AuthStack = createStackNavigator({
-	Login: LogInPage,
-	SignUp: SignUpPage,
-	SignUpAddImage: SignUpAddImagePage,
-	SignUpAddVehicles: SignUpAddVehiclesPage,
-	ForgotPassword: ForgotPasswordPage
+const AuthStack = createStackNavigator(
+	{
+		Login: LogInPage,
+		SignUp: SignUpPage,
+		SignUpAddImage: SignUpAddImagePage,
+		SignUpAddVehicles: SignUpAddVehiclesPage,
+		ForgotPassword: ForgotPasswordPage
 	}, {
 		initialRouteName: 'Login',
 		headerMode: 'none',
-		navigationOptions: {
-			headerVisible: false,
-		}
-});
+		navigationOptions: { headerVisible: false }
+	}
+);
 
-const AppStack = createStackNavigator({
+const AppStack = createStackNavigator(
+	{
 		Home: HomePage,
 		Notification: NotificationPage,
 		Profile: ProfilePage,
@@ -83,17 +84,17 @@ const AppStack = createStackNavigator({
 	}, {
 		initialRouteName: 'Home',
 		headerMode: 'none',
-		navigationOptions: {
-			headerVisible: false,
-		}
-});
+		navigationOptions: { headerVisible: false }
+	}
+);
 
-const AppRoute = createSwitchNavigator({
-	Loading: LoadingPage,
-	Auth: AuthStack,
-	App: AppStack,
-	StartCampaign: StartCampaignPage,
-	TestPage: TestPage
+const AppRoute = createSwitchNavigator(
+	{
+		Loading: LoadingPage,
+		Auth: AuthStack,
+		App: AppStack,
+		StartCampaign: StartCampaignPage,
+		TestPage: TestPage
 	}, {
 		initialRouteName: 'Loading',
 		// initialRouteName: 'TestPage'

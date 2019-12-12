@@ -115,6 +115,82 @@ class AddVehiclePage extends Component {
 
 	submitAddedCar = (e) => {
 		this.toggleAddCarLoading(true);
+		var { vehicleToUpload,
+			activeTypeVehicle,
+			vehicleClassification,
+			uploadManufacturer,
+			uploadModel,
+			uploadYear,
+			uploadColor,
+			plateNumber,
+			vehicleDatabase } = this.state,
+			alertMessage = '',
+			newVehicle = null,
+			vehicleId;
+
+		if(uploadManufacturer === '')
+			alertMessage += 'Pick car manufacturer\n';
+				
+		if(uploadModel === '')
+			alertMessage += 'Pick car model\n';
+				
+		if(uploadYear === '')
+			alertMessage += 'Pick car year\n';
+
+		if(vehicleToUpload.length === 0)
+			alertMessage += 'Upload Vehicle Photo\n';
+
+		if(plateNumber === '')
+			alertMessage += 'Input plate number';
+
+		if(alertMessage === '') {
+			vehicleId = vehicleDatabase.find(v =>
+				v.manufacturer.toString().toLowerCase() == uploadManufacturer.toString().toLowerCase()
+				&& v.model.toString().toLowerCase() == uploadModel.toString().toLowerCase()
+				&& v.year.toString() == uploadYear.toString()
+			);
+
+			if(vehicleId) {
+				vehicleId = vehicleId.id;
+			} else {
+				newVehicle = {
+					manufacturer: uploadManufacturer,
+					model: uploadModel,
+					year: uploadYear,
+					class: vehicleClassification
+				};
+			}
+
+			UserController.request.create.vehicle({
+				vehicleToUpload,
+				activeTypeVehicle,
+				vehicleId,
+				newVehicle,
+				uploadColor,
+				plateNumber
+			})
+			.then(res => {
+				this.props.userAddVehicle(res.data);
+				this.resetInputFields();
+
+				const { popupModal } = this.state;
+				popupModal.visible = true;
+				popupModal.message = 'Great!';
+				popupModal.description = 'Vehicle added successfully!';
+				this.setState({popupModal});
+			})
+			.catch(error => {
+				console.log(error);
+				console.log(error.response);
+				this.toggleAddCarLoading(false);
+			});
+		} else {
+			this.failedFlashMessage(
+				'Please fill in fields.',
+				alertMessage
+			);
+			this.toggleAddCarLoading(false);
+		}
 	}
 
 	toggleAddCarLoading = (addCarLoading) => {
@@ -791,6 +867,7 @@ class AddVehiclePage extends Component {
 
 const mapDispatchToProps = (dispatch) => ({
 	dispatchGetProfile: (user) => dispatch({ type: USER.GET.PROFILE.SUCCESS, user }),
+	userAddVehicle: vehicle => dispatch({ type: USER.VEHICLE.NEW, vehicle })
 });
   
 export default connect(null, mapDispatchToProps)(AddVehiclePage);

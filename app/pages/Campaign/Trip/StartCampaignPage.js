@@ -12,17 +12,20 @@ import Geolocation from 'react-native-geolocation-service';
 import Modal from 'react-native-modal';
 import { connect } from 'react-redux';
 import MapView, { Marker, Polygon, PROVIDER_GOOGLE, Polyline } from 'react-native-maps';
-import { MapController } from '../controllers';
-import NavigationService from '../services/navigation';
-import { CampaignController } from '../controllers';
-import { CampaignAction } from '../redux/actions/campaign.action';
-import { timeConverter } from '../utils';
-import style from '../styles/page.StartCampaign.style';
-import mapStyle from '../styles/map.style';
-import buttonStyle from '../styles/component.ButtonBlue.style';
-import theme from '../styles/theme.style';
-import { LabelText, CommonText } from '../components/Text';
-import Page from './Page';
+
+import { MapController } from '../../../controllers';
+import NavigationService from '../../../services/navigation';
+import { CampaignController } from '../../../controllers';
+import { CampaignAction } from '../../../redux/actions/campaign.action';
+import { timeConverter } from '../../../utils';
+import style from '../../../styles/page.StartCampaign.style';
+import mapStyle from '../../../styles/map.style';
+import buttonStyle from '../../../styles/component.ButtonBlue.style';
+import theme from '../../../styles/theme.style';
+import { LabelText, CommonText } from '../../../components/Text';
+import Page from './../../Page';
+import { totalKmDistance } from '../../../config/functions';
+import CampaignSummaryModal from './Modal/CampaignSummaryModal';
 
 class StartCampaignPage extends Component {
   constructor(props) {
@@ -81,7 +84,7 @@ class StartCampaignPage extends Component {
       watchId: null,
       savingModalVisible: false,
       summaryModalVisible: false,
-      markerImage: require('../assets/image/car_blue_marker.png'),
+      markerImage: require('../../../assets/image/car_blue_marker.png'),
       unsentLocations: []
     };
 
@@ -434,109 +437,44 @@ class StartCampaignPage extends Component {
       </View>
     </Modal>
 
-  summaryModal = () =>
-    <Modal
-      isVisible={this.state.summaryModalVisible}
-    >
-      <View style={style.modalSummaryContainer}>
-        <Text style={style.modalSummaryTitle}>Trip Summary</Text>
+  summaryModal = () => {
+    const totalDistance = parseFloat(totalKmDistance(this.state.campaign.campaignDetails));
+    const traveledDistance = parseFloat((this.state.totalCampaignTraveled).toFixed(2)); 
+    const campaignDistance = [
+      {
+        textAlign: 'left',
+        label: 'Required',
+        value: `${parseInt(totalDistance)}km`
+      }, {
+        textAlign: 'center',
+        label: 'Traveled',
+        value: `${traveledDistance}km`
+      }, {
+        textAlign: 'right',
+        label: 'Remaining',
+        value: `${parseInt(totalDistance - traveledDistance)}km`
+      }
+    ];
+    const campaignContent = [
+      {
+        left: 'Time Started',
+        right: timeConverter(this.state.startTime)
+      }, {
+        left: 'Time Ended',
+        right: timeConverter(this.state.endTime)
+      }, {
+        left: 'Total Trip Duration',
+        right: `${this.state.spanTime}min`
+      }
+    ];
 
-        <ScrollView>
-          <View style={style.modalSummaryRow}>
-            <Text style={style.modalSummaryTextKey}>Campaign</Text>
-            <Text style={style.modalSummaryTextValue}>
-              {this.state.campaign.campaignDetails.name}
-            </Text>
-          </View>
-
-          <View style={style.modalSummaryRow}>
-            <Text style={style.modalSummaryTextKey}>Brand</Text>
-            <Text style={style.modalSummaryTextValue}>
-              {this.state.campaign.client.business_name}
-            </Text>
-          </View>
-
-          <View style={style.modalSummaryRow}>
-            <Text style={style.modalSummaryTextKey}>Location</Text>
-            <Text style={style.modalSummaryTextValue}>
-              {this.state.campaign.campaignDetails.location}
-            </Text>
-          </View>
-
-          <View style={style.modalSummaryRow}>
-            <Text style={style.modalSummaryTextKey}>Required Travel Distance</Text>
-            <Text style={style.modalSummaryTextValue}>
-              200km
-            </Text>
-          </View>
-
-          <View style={style.modalSummaryRow}>
-            <Text style={style.modalSummaryTextKey}>Total Travel Distance</Text>
-            <Text style={style.modalSummaryTextValue}>
-              143.75km
-            </Text>
-          </View>
-
-          <View style={style.modalSummaryRow}>
-            <Text style={style.modalSummaryTextKey}>Acquired Travel Distance</Text>
-            <Text style={style.modalSummaryTextValue}>
-              {(this.state.totalCampaignTraveled).toFixed(2)}km
-            </Text>
-          </View>
-
-          <View style={style.modalSummaryRow}>
-            <Text style={style.modalSummaryTextKey}>Remaining Travel Distance</Text>
-            <Text style={style.modalSummaryTextValue}>
-              24km
-            </Text>
-          </View>
-
-          <View style={style.modalSummaryRow}>
-            <Text style={style.modalSummaryTextKey}>Distance Traveled</Text>
-            <Text style={style.modalSummaryTextValue}>
-              {(this.state.totalCarTraveled).toFixed(2)}km
-            </Text>
-          </View>
-
-          <View style={style.modalSummaryRow}>
-            <Text style={style.modalSummaryTextKey}>Time Started</Text>
-            <Text style={style.modalSummaryTextValue}>
-              {timeConverter(this.state.startTime)}
-            </Text>
-          </View>
-
-          <View style={style.modalSummaryRow}>
-            <Text style={style.modalSummaryTextKey}>Time Ended</Text>
-            <Text style={style.modalSummaryTextValue}>
-              {timeConverter(this.state.endTime)}
-            </Text>
-          </View>
-
-          <View style={style.modalSummaryRow}>
-            <Text style={style.modalSummaryTextKey}>Total Trip Span</Text>
-            <Text style={style.modalSummaryTextValue}>
-              {this.state.spanTime}min
-            </Text>
-          </View>
-
-        </ScrollView>
-
-        <View style={style.viewButtonRow}>
-            <TouchableOpacity
-              style={[buttonStyle.buttonStyle]}
-              onPress={this.closeTrip}
-            >
-              <Text style={[buttonStyle.buttonLabel, style.button]}>
-                Exit
-              </Text>
-            </TouchableOpacity>
-          </View>
-      </View>
-    </Modal>
-
-  closeTrip = () => {
-    this.setState({summaryModalVisible: false});
-    NavigationService.back();
+    return (
+      <CampaignSummaryModal
+        isVisible={this.state.summaryModalVisible}
+        campaignDistance={campaignDistance}
+        campaignContent={campaignContent}
+      />
+    );
   }
 
   render() {

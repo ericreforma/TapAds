@@ -129,7 +129,7 @@ export default class BankDetails extends Component {
 								alignSelf: 'center'
 							}}
 						>
-							<LabelText large>Bank Details</LabelText>
+							<LabelText large>GCash Info</LabelText>
 						</View>
 
 						<View
@@ -154,7 +154,7 @@ export default class BankDetails extends Component {
 									}}
 								>
 									<CommonText color="white">
-										Account number:
+										GCash number:
 									</CommonText>
 								</View>
 								
@@ -173,7 +173,7 @@ export default class BankDetails extends Component {
 							>
 								{this.props.accountNumber ? (
 									<CommonText>
-										{'If you wish to change your current account number.\nPlease proceed and fill up the field below:'}
+										{'If you wish to change your current GCash number.\nPlease proceed and fill up the field below:'}
 									</CommonText>
 								) : (
 									<CommonText>

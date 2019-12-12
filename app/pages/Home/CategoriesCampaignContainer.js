@@ -15,7 +15,7 @@ import CampaignContainer from './Modal/CampaignContainer';
 import { CampaignAction } from '../../redux/actions/campaign.action';
 
 import { getTotalPay, getSlotAvailable } from '../../config/functions';
-import { VEHICLE } from '../../config/variables';
+import { VEHICLE, URL } from '../../config/variables';
 import theme from '../../styles/theme.style';
 
 const carClassification = id => Object.values(VEHICLE.CLASS).find(i => i.id === id);
@@ -106,10 +106,7 @@ const CategoriesCampaignContainer = props => {
                 backgroundColor: theme.COLOR_WHITE,
               }}
             />
-
-            {item.description.map((d, dIdx) =>
-              <CategoryFont.Selection.Common key={dIdx} text={d} />
-            )}
+              <CategoryFont.Selection.Common text={item.description} />
           </View>
         </View>
       </TouchableOpacity>
@@ -242,6 +239,9 @@ const CategoriesCampaignContainer = props => {
 
   const CategoryCampaignContentImage = ({c}) => {
     const contentWidth = cWidth + 5;
+    const imageSource = c.photo
+      ? {uri: `${URL.SERVER_MEDIA}/${c.photo}`}
+      : campaignImage;
     return (
       <View
         style={{
@@ -253,8 +253,8 @@ const CategoriesCampaignContainer = props => {
         }}
       >
         <Image
-          source={campaignImage}
-          resizeMode="center"
+          source={imageSource}
+          resizeMode="cover"
           style={{
             width: contentWidth,
             height: contentWidth,
@@ -329,12 +329,12 @@ const CategoriesCampaignContainer = props => {
       <View
         style={{
           flexDirection: 'row',
-          justifyContent: 'space-between'
         }}
       >
         <View
           style={{
-            paddingRight: 5
+            paddingRight: 5,
+            alignItems: 'flex-start'
           }}
         >
           <CategoryFont.Content.Common text={label} />
@@ -342,7 +342,9 @@ const CategoriesCampaignContainer = props => {
 
         <View
           style={{
-            paddingLeft: 5
+            paddingLeft: 5,
+            flex: 1,
+            alignItems: 'flex-end'
           }}
         >
           <CategoryFont.Content.Value text={value} />
@@ -370,9 +372,10 @@ const CategoriesCampaignContainer = props => {
             fontFamily: 'Montserrat-Medium',
             fontSize: RFValue(8),
             color: theme.COLOR_WHITE,
-            lineHeight: RFValue(10)
+            lineHeight: RFValue(10),
+            textAlign: 'center',
+            paddingHorizontal: 20
           }}
-          numberOfLines={1}
         >{text}</Text>
       )
     },

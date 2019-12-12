@@ -7,6 +7,7 @@ import {
     ScrollView,
     TouchableOpacity,
 		Dimensions,
+		RefreshControl,
     ActivityIndicator
 } from 'react-native';
 import { NavigationEvents } from 'react-navigation';
@@ -19,7 +20,6 @@ import { URL } from '../config/variables';
 import { USER } from '../redux/actions/types.action';
 import UserInfo from '../components/UserInfo';
 import { LabelText, CommonText } from '../components/Text';
-import ButtonBlue from '../components/ButtonBlue';
 import {
     Card,
     CardBody,
@@ -75,6 +75,8 @@ class ProfilePage extends Component {
 			totalEarnings: 0,
 			bankDetailsModal: false,
 			withdrawsModal: false,
+			
+			refreshing: false,
 		};
 	}
 
@@ -100,6 +102,20 @@ class ProfilePage extends Component {
 			loader,
 			totalEarnings,
 			historyData
+		});
+	}
+
+	updateUserProfile = () => {
+		this.setState({refreshing: true});
+		UserController.request.profile()
+		.then(res => {
+			this.props.dispatchUpdateProfile(res.data);
+			this.setState({refreshing: false});
+		})
+		.catch(error => {
+			console.log(error);
+			console.log(error.response);
+			this.setState({refreshing: false});
 		});
 	}
 
@@ -385,9 +401,15 @@ class ProfilePage extends Component {
 
 				<ScrollView
 					style={styles.homePageScrollView}
-					overScrollMode='never'
 					showsVerticalScrollIndicator={false}
 					scrollEnabled={this.state.scrollEnable}
+					refreshControl={
+						<RefreshControl
+							tintColor={theme.COLOR_GRAY_LIGHT}
+							refreshing={this.state.refreshing}
+							onRefresh={this.updateUserProfile}
+						/>
+					}
 				>
 					<UserInfo />
 
@@ -434,7 +456,7 @@ class ProfilePage extends Component {
 										disabled={this.state.loader}
 									>
 										<Text style={styles.homePageViewAll}>
-											Edit Bank Details
+											Edit GCash Details
 										</Text>
 									</TouchableOpacity>
 								</View>
@@ -452,7 +474,8 @@ class ProfilePage extends Component {
 										<View>
 											<View
 												style={{
-													marginTop: 15
+													marginTop: 15,
+													marginBottom: 5
 												}}
 											>
 												<Text
@@ -466,7 +489,7 @@ class ProfilePage extends Component {
 												</Text>
 											</View>
 
-											<View
+											{/* <View
 												style={{
 													marginTop: 15,
 													marginBottom: 5,
@@ -477,7 +500,7 @@ class ProfilePage extends Component {
 													label="Withdraw"
 													onPress={this.withdrawButtonOnPress}
 												/>
-											</View>
+											</View> */}
 										</View>
 									)}
 								</View>

@@ -34,6 +34,13 @@ export function userReducer(state = initialState, action) {
         notification: action.notification
       });
 
+    case USER.VEHICLE.NEW:
+      return Object.assign({}, state, {
+        user: Object.assign({}, state.user, {
+          vehicles: [...state.user.vehicles, action.vehicle]
+        })
+      });
+
     default:
       return state;
   }

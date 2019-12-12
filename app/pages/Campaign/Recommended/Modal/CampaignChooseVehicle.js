@@ -13,9 +13,9 @@ import Carousel from 'react-native-snap-carousel';
 import { connect } from 'react-redux';
 import { RFValue, RFPercentage } from "react-native-responsive-fontsize";
 
-import { CampaignAction } from '../../../redux/actions/campaign.action';
-import { URL } from '../../../config/variables';
-import theme from '../../../styles/theme.style';
+import { CampaignAction } from '../../../../redux/actions/campaign.action';
+import { URL } from '../../../../config/variables';
+import theme from '../../../../styles/theme.style';
 
 const vcWidth = ((theme.SCREEN_WIDTH * 0.85) / 2) - 60;
 
@@ -389,7 +389,7 @@ const ChooseVehicleModalBody = props => {
 
 const ChooseVehicleModalFooter = props => {
   const [vehicles, setVehicles] = useState([]);
-  const [vehicleProceed, setVehicleProceed] = useState(false);
+  const [vehicleProceed, setVehicleProceed] = useState(false)
 
   useEffect(() => {
     if(props.user) {
@@ -401,10 +401,12 @@ const ChooseVehicleModalFooter = props => {
 
       setVehicles(
         props.user.vehicles.filter(item => {
-          const { vehicle_classification } = props.campaign;
+          const { vehicle_classification, vehicle_type } = props.campaign;
           const { classification } = item.vehicle;
           const checkVIDs = vehicleIDs.indexOf(item.id);
-          if(classification === vehicle_classification && checkVIDs === -1)
+          if(classification === vehicle_classification
+            && vehicle_type === item.type
+            && checkVIDs === -1)
             return true;
           return false;
         })

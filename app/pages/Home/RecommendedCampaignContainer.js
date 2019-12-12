@@ -13,7 +13,7 @@ import { RFValue, RFPercentage } from "react-native-responsive-fontsize";
 import { CampaignAction } from '../../redux/actions/campaign.action';
 
 import CampaignContainer from './Modal/CampaignContainer';
-import { VEHICLE } from '../../config/variables';
+import { VEHICLE, URL } from '../../config/variables';
 import theme from '../../styles/theme.style';
 import { getTotalPay } from '../../config/functions';
 
@@ -32,6 +32,9 @@ const RecommendedCampaignContainer = props => {
   }, [props.activeCampaign, props.loading]);
 
   const RecommendedCampaignBody = ({item}) => {
+    const imageSource = item.photo
+      ? {uri: `${URL.SERVER_MEDIA}/${item.photo}`}
+      : recCampaignImage;
     return (
       <CampaignContainer
         style={{
@@ -57,7 +60,7 @@ const RecommendedCampaignContainer = props => {
             }}
           >
             <Image
-              source={recCampaignImage}
+              source={imageSource}
               resizeMode="cover"
               style={{
                 width: cWidth,

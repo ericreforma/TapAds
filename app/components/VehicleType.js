@@ -1,56 +1,26 @@
 import React, { Component } from 'react';
 import { Dimensions } from 'react-native';
 import { Image } from 'react-native';
+import { VEHICLE } from '../config/variables';
 
 class VehicleType extends Component {
 	render() {
-        var vehicleUrl = [
-            { 
-                vehicle: 'regular',
-                number: 0,
-                color: 'black',
-                url: require('../assets/image/icons/car_small_black_icon.png')
-            },{
-                vehicle: 'premium',
-                number: 1,
-                color: 'black',
-                url: require('../assets/image/icons/car_large_black_icon.png')
-            },{ 
-                vehicle: 'motorcycle',
-                number: 2,
-                color: 'black',
-                url: require('../assets/image/icons/motorcycle_black_icon.png')
-            },{ 
-                vehicle: 'regular',
-                number: 0,
-                color: 'white',
-                url: require('../assets/image/icons/car_small_white_icon.png')
-            },{
-                vehicle: 'premium',
-                number: 1,
-                color: 'white',
-                url: require('../assets/image/icons/car_large_white_icon.png')
-            },{ 
-                vehicle: 'motorcycle',
-                number: 2,
-                color: 'white',
-                url: require('../assets/image/icons/motorcycle_white_icon.png')
-            }
-        ];
-        
+        const vehicleSource = Object.values(VEHICLE.CLASS).find(v => v.id === this.props.vehicleType);
+
 		return (
             <Image
                 style={{
                     width: 40
                 }}
                 resizeMode="contain"
-                source={vehicleUrl
-                    .filter(vu =>
-                        vu.color == this.props.vehicleColor &&
-                        (vu.vehicle == this.props.vehicleType
-                         || vu.number == this.props.vehicleType)
-                    )[0].url
-                }
+                // source={vehicleUrl
+                //     .filter(vu =>
+                //         vu.color == this.props.vehicleColor &&
+                //         (vu.vehicle == this.props.vehicleType
+                //          || vu.number == this.props.vehicleType)
+                //     )[0].url
+                // }
+                source={vehicleSource.icon[this.props.vehicleColor]}
             />
 		);
     }

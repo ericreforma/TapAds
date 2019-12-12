@@ -7,47 +7,36 @@ import {
 } from 'react-native';
 import { RFValue, RFPercentage } from 'react-native-responsive-fontsize';
 
-import theme from '../styles/theme.style';
-import { IMAGES } from '../config/variables';
+import theme from '../../../styles/theme.style';
+import { IMAGES } from '../../../config/variables';
+import { getTotalEarnings, timeStamp } from '../../../config/functions';
 
-const TestPage = props => {
+const CampaignCompleted = ({campaign}) => {
   return (
-    <View
-      style={{
-        backgroundColor: theme.COLOR_BLUE,
-        flex: 1,
-        justifyContent: 'center'
-      }}
-    >
-      <CampaignCompletedContainer>
-        <CampaignCompletedCard>
-          <CampaignCompletedRow icon={IMAGES.ICONS.mail_icon} notif={2} button>
-            <CampaignCompletedText.Campaign text="Campaign Name" />
-            <CampaignCompletedText.Date text="MAR.30.2019" />
-          </CampaignCompletedRow>
+    <CampaignCompletedContainer>
+      <CampaignCompletedCard>
+        <CampaignCompletedRow icon={IMAGES.ICONS.mail_icon} notif={2} button>
+          <CampaignCompletedText.Campaign text={campaign.campaignDetails.name} />
+          <CampaignCompletedText.Date text={timeStamp(campaign.created_at, true).date} />
+        </CampaignCompletedRow>
 
-          <CampaignCompletedRow icon={IMAGES.ICONS.favorite_icon}>
-            <CampaignCompletedText.StatusDate text="MAR.30, 2019" />
-            <CampaignCompletedText.Status text="Completed" />
-          </CampaignCompletedRow>
+        <CampaignCompletedRow icon={IMAGES.ICONS.favorite_icon}>
+          <CampaignCompletedText.StatusDate text={timeStamp(campaign.end_timestamp, true).date} />
+          <CampaignCompletedText.Status text="Completed" />
+        </CampaignCompletedRow>
 
-          <CampaignCompletedFooter>
-            <CampaignCompletedText.FooterLabel text="P7,000" />
-            <CampaignCompletedText.FooterCommon text="Total Earnings" />
-          </CampaignCompletedFooter>
-        </CampaignCompletedCard>
-      </CampaignCompletedContainer>
-    </View>
+        <CampaignCompletedFooter>
+          <CampaignCompletedText.FooterLabel text={`P${getTotalEarnings(campaign).split('.')[0]}`} />
+          <CampaignCompletedText.FooterCommon text="Total Earnings" />
+        </CampaignCompletedFooter>
+      </CampaignCompletedCard>
+    </CampaignCompletedContainer>
   );
 }
 
 const CampaignCompletedContainer = ({children}) => {
   return (
-    <View
-      style={{
-        padding: RFPercentage(2),
-      }}
-    >{children}</View>
+    <View>{children}</View>
   )
 }
 
@@ -312,4 +301,4 @@ const CampaignCompletedText = {
   }
 }
 
-export default TestPage;
+export default CampaignCompleted;
