@@ -10,7 +10,7 @@ import {
 import { RFValue, RFPercentage } from "react-native-responsive-fontsize";
 
 import CampaignChooseVehicle from './CampaignChooseVehicle';
-import { IMAGES, VEHICLE } from '../../../config/variables';
+import { IMAGES, VEHICLE, URL } from '../../../config/variables';
 import {
   getSlotAvailable,
   totalKmDistance,
@@ -72,6 +72,9 @@ const CampaignContainer = props => {
   }
 
   const CampaignImage = () => {
+    const imageSource = campaign.photo
+      ? {uri: `${URL.SERVER_MEDIA}/${campaign.photo}`}
+      : recCampaignImage;
     return (
       <View
         style={{
@@ -81,7 +84,7 @@ const CampaignContainer = props => {
         }}
       >
         <Image
-          source={recCampaignImage}
+          source={imageSource}
           resizeMode="cover"
           style={{
             width: '100%',

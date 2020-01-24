@@ -3,23 +3,23 @@ import {
   Text,
   View,
   Image,
-  FlatList,
-  TouchableOpacity,
-  ActivityIndicator
+  FlatList
 } from 'react-native';
 import { connect } from 'react-redux';
 import { RFValue, RFPercentage } from "react-native-responsive-fontsize";
 
-import { CampaignAction } from '../../redux/actions/campaign.action';
-
 import CampaignContainer from './Modal/CampaignContainer';
+import Loader from '../../components/Loader';
+import IfElse from '../../components/IfElse';
+import AsyncImage from '../../components/AsyncImage';
+
+import { CampaignAction } from '../../redux/actions/campaign.action';
 import { VEHICLE, URL } from '../../config/variables';
 import theme from '../../styles/theme.style';
 import { getTotalPay } from '../../config/functions';
 
 const carClassification = id => Object.values(VEHICLE.CLASS).find(i => i.id === id);
 const recCampaignImage = require('../../assets/image/recommended_campaign_image.png');
-const cHeight = theme.SCREEN_HEIGHT * 0.18;
 const cWidth = theme.SCREEN_WIDTH / 2.5;
 
 const RecommendedCampaignContainer = props => {
@@ -27,14 +27,24 @@ const RecommendedCampaignContainer = props => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    if(props.refresh) {
+      setLoading(true);
+      props.CampaignRecRequest(() => {
+        setLoading(false);
+        props.loadingDone('loadingRecommended');
+      });
+    }
+  }, [props.refresh]);
+
+  useEffect(() => {
     setCampaign(props.recommendedCampaign);
-    setLoading(props.loading);
-  }, [props.activeCampaign, props.loading]);
+  }, [props.recommendedCampaign]);
 
   const RecommendedCampaignBody = ({item}) => {
     const imageSource = item.photo
       ? {uri: `${URL.SERVER_MEDIA}/${item.photo}`}
       : recCampaignImage;
+
     return (
       <CampaignContainer
         style={{
@@ -59,7 +69,7 @@ const RecommendedCampaignContainer = props => {
               backgroundColor: theme.COLOR_GRAY_HEAVY
             }}
           >
-            <Image
+            <AsyncImage
               source={imageSource}
               resizeMode="cover"
               style={{
@@ -154,48 +164,52 @@ const RecommendedCampaignContainer = props => {
     )
   };
 
+  const ThenComponent = () => {
+    return (
+      <FlatList
+        data={campaign}
+        renderItem={data =>
+          <RecommendedCampaignBody {...data} />
+        }
+        keyExtractor={(item, index) => index.toString()}
+        horizontal={true}
+        overScrollMode="never"
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingHorizontal: RFPercentage(2) - 8
+        }}
+      />
+    )
+  }
+
+  const ElseComponent = () => {
+    return (
+      <View
+        style={{
+          justifyContent: 'center',
+          alignItems: 'center',
+          paddingVertical: 20
+        }}
+      >
+        <FontText.NoCampaigns
+          text="-- no recommended campaigns --"
+        />
+      </View>
+    )
+  }
+
   return (
-    <View>
-      {loading ? (
-        campaign.length !== 0 ? (
-          <FlatList
-            data={campaign}
-            renderItem={data =>
-              <RecommendedCampaignBody {...data} />
-            }
-            keyExtractor={(item, index) => index.toString()}
-            horizontal={true}
-            overScrollMode="never"
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{
-              paddingHorizontal: RFPercentage(2) - 8
-            }}
-          />
-        ) : (
-          <View
-            style={{
-              justifyContent: 'center',
-              alignItems: 'center',
-              paddingVertical: 20
-            }}
-          >
-            <FontText.NoCampaigns
-              text="-- no recommended campaigns --"
-            />
-          </View>
-        )
-      ) : (
-        <View
-          style={{
-            justifyContent: 'center',
-            alignItems: 'center',
-            paddingVertical: 20
-          }}
-        >
-          <ActivityIndicator color="#fff" />
-        </View>
-      )}
-    </View>
+    <Loader
+      loading={loading}
+      spinnerStyle={{
+        paddingVertical: 20
+      }} >
+      <IfElse
+        condition={campaign.length !== 0}
+        then={<ThenComponent />}
+        else={<ElseComponent />}
+      />
+    </Loader>
   );
 };
 
@@ -204,6 +218,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
+  CampaignRecRequest: callback => dispatch(CampaignAction.recommended(callback)),
   viewDetails: (id) => dispatch(CampaignAction.selected(id))
 });
 

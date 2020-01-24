@@ -107,7 +107,7 @@ export const CampaignAction = {
         } else {
           errorCallback({
             existingCampaign: true,
-            message: 'Campaign already on the list'
+            message: res.data.message
           });
         }
       })
@@ -135,9 +135,8 @@ export const CampaignAction = {
     CampaignController.home.list('?rec=1')
       .then(response => {
         dispatch({ type: CAMPAIGN.RECOMMENDED.SUCCESS, data: response.data });
-        if(successCallBack) {
+        if(successCallBack)
           successCallBack();
-        }
       })
       .catch(error => {
         console.log(error);

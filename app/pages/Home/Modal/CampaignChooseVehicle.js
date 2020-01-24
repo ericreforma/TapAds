@@ -41,7 +41,7 @@ const CampaignChooseVehicle = props => {
       if(this.state.vehicleSelect === false) {
         this.ddAlertError('Choose Vehicle for this Campaign');
       } else {
-        toggleLoader();
+        toggleLoader(true);
         props.interestedCampaign(
           this.state.vehicleSelect,
           () => {
@@ -50,7 +50,7 @@ const CampaignChooseVehicle = props => {
             setPopupDesc('You will be notified once the\nrequest status has been updated.\n\nThank you!');
             setPopupVisible(true);
           }, error => {
-            toggleLoader();
+            toggleLoader(false);
             if(error.existingCampaign) {
               this.ddAlertError(error.message);
             } else {
@@ -444,7 +444,7 @@ const ChooseVehicleModalFooter = props => {
               paddingVertical: 12,
               width: '30%'
             }}
-            onPress={() => props.proceed(() => setVehicleProceed(!vehicleProceed))}
+            onPress={() => props.proceed(value => setVehicleProceed(value))}
           >
             <CampaignVehicleText.Button text="Proceed" />
           </TouchableOpacity>

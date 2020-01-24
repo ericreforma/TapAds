@@ -1,7 +1,6 @@
 import { StyleSheet, Dimensions } from 'react-native';
 import theme from './theme.style';
 
-
 export default StyleSheet.create({
     homePageBackgroundImage: {
         width: '100%',

@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import {
     View,
-    ScrollView,
     Dimensions,
     Animated,
     RefreshControl,
@@ -13,21 +12,21 @@ import DropdownAlert from 'react-native-dropdownalert';
 import { NavigationEvents } from 'react-navigation';
 import fileType from 'react-native-file-type';
 
-import { LabelText } from '../components/Text';
-import Page from '../pages/Page';
-import UserInfo from '../components/UserInfo';
-import { USER } from '../redux/actions/types.action';
-import { UserController } from '../controllers';
+import { LabelText } from '../../components/Text';
+import PageLayout from '../../components/PageLayout';
+import PageContainer from '../../components/PageContainer';
+import { USER } from '../../redux/actions/types.action';
+import { UserController } from '../../controllers';
 
-import theme from '../styles/theme.style';
-import styles from '../styles/page.Home.style';
-import { URL, VEHICLE } from '../config/variables';
+import theme from '../../styles/theme.style';
+import styles from '../../styles/page.Home.style';
+import { URL, VEHICLE } from '../../config/variables';
 
-import PersonalDetails from '../components/profile/profileInfo/PersonalDetails';
-import DriverLicense from '../components/profile/profileInfo/DriverLicense';
-import OwnedCars from '../components/profile/profileInfo/OwnedCars';
-import ActionButton from '../components/profile/profileInfo/ActionButton';
-import CheckPasswordModal from '../components/Modal/CheckPasswordModal'; 
+import PersonalDetails from '../../components/profile/profileInfo/PersonalDetails';
+import DriverLicense from '../../components/profile/profileInfo/DriverLicense';
+import OwnedCars from '../../components/profile/profileInfo/OwnedCars';
+import ActionButton from '../../components/profile/profileInfo/ActionButton';
+import CheckPasswordModal from '../../components/Modal/CheckPasswordModal'; 
 
 class ProfileInfoPage extends Component {
 	constructor(props) {
@@ -362,68 +361,68 @@ class ProfileInfoPage extends Component {
 	}
 
 	editModeToggle = () => {
-			this.setState({editMode: !this.state.editMode});
+    this.setState({editMode: !this.state.editMode});
 	}
 
 	dispatchUserProfile = (ppUpdate = false, lpUpdate = false) => {
-			var { user } = this.props,
-					{ userData } = this.state,
-					created_at = ppUpdate ? ppUpdate.created_at : (lpUpdate ? lpUpdate.created_at : user.updated_at),
-					userKeys = Object.keys(user),
-					toDispatchUser = {};
+    var { user } = this.props,
+      { userData } = this.state,
+      created_at = ppUpdate ? ppUpdate.created_at : (lpUpdate ? lpUpdate.created_at : user.updated_at),
+      userKeys = Object.keys(user),
+      toDispatchUser = {};
 
-			for(var x in userKeys) {
-					var key = userKeys[x];
-					if(key === 'name'
-							|| key === 'username'
-							|| key === 'birthdate'
-							|| key === 'contact_number'
-							|| key === 'location'
-							|| key === 'email') {
-							toDispatchUser[key] = userData[key];
-					} else if(key === 'profilePicture') {
-							toDispatchUser[key] = ppUpdate ? ppUpdate.url : user[key];
-					} else if(key === 'licenseImage') {
-							toDispatchUser[key] = lpUpdate ? lpUpdate.url : user[key];
-					} else if(key === 'updated_at') {
-							toDispatchUser[key] = created_at ? created_at : user[key];
-					} else {
-							toDispatchUser[key] = user[key];
-					}
-			}
+    for(var x in userKeys) {
+      var key = userKeys[x];
+      if(key === 'name'
+        || key === 'username'
+        || key === 'birthdate'
+        || key === 'contact_number'
+        || key === 'location'
+        || key === 'email') {
+        toDispatchUser[key] = userData[key];
+      } else if(key === 'profilePicture') {
+        toDispatchUser[key] = ppUpdate ? ppUpdate.url : user[key];
+      } else if(key === 'licenseImage') {
+        toDispatchUser[key] = lpUpdate ? lpUpdate.url : user[key];
+      } else if(key === 'updated_at') {
+        toDispatchUser[key] = created_at ? created_at : user[key];
+      } else {
+        toDispatchUser[key] = user[key];
+      }
+    }
 
-			this.props.dispatchUpdateProfile(toDispatchUser);
+    this.props.dispatchUpdateProfile(toDispatchUser);
 	}
 
 	mainSetState = (data) => {
-			var dataKeys = Object.keys(data),
-					dataValues = Object.values(data);
-			
-			for(var x in dataKeys) {
-					var key = dataKeys[x], val = dataValues[x];
-					this.setState({ [key]: val });
-			}
+    var dataKeys = Object.keys(data),
+      dataValues = Object.values(data);
+    
+    for(var x in dataKeys) {
+      var key = dataKeys[x], val = dataValues[x];
+      this.setState({ [key]: val });
+    }
 	}
 
 	successFlashMessage = (description) => {
-			this.dropDownMainAlertRef.alertWithType(
-					'success',
-					'Great!',
-					description
-			);
+    this.dropDownMainAlertRef.alertWithType(
+      'success',
+      'Great!',
+      description
+    );
 	}
 
 	failedFlashMessage = (description) => {
-			this.dropDownMainAlertRef.alertWithType(
-					'error',
-					'Error!',
-					description
-			);
+    this.dropDownMainAlertRef.alertWithType(
+      'error',
+      'Error!',
+      description
+    );
 	}
 
 	render() {
 		return (
-			<Page logout={this.state.logout}>
+			<PageLayout logout={this.state.logout}>
 				<NavigationEvents onWillFocus={this.getUserInfo} />
 
 				<CheckPasswordModal
@@ -432,47 +431,46 @@ class ProfileInfoPage extends Component {
 					proceed={this[this.state.checkPasswordModalType]}
 				/>
 
-				<ScrollView
-						style={styles.homePageScrollView}
-						showsVerticalScrollIndicator={false}
-                        refreshControl={
-                            <RefreshControl
-                                tintColor={theme.COLOR_GRAY_LIGHT}
-                                refreshing={this.state.refreshing}
-                                onRefresh={this.updateUserProfile}
-                            />
-                        }
+				<PageContainer
+          style={styles.homePageScrollView}
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              tintColor={theme.COLOR_GRAY_LIGHT}
+              refreshing={this.state.refreshing}
+              onRefresh={this.updateUserProfile}
+            />
+          }
 				>
-						<UserInfo />
+          <View
+            style={{
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginVertical: 15, 
+            }}
+          >
+            <LabelText color="white">Profile</LabelText>
+          </View>
 
-						<View
-								style={{
-										justifyContent: 'center',
-										alignItems: 'center',
-										marginVertical: 15, 
-								}}
-						>
-								<LabelText color="white">Profile</LabelText>
-						</View>
-
-						<View
-								style={{
-										marginBottom: 20,
-										marginHorizontal: theme.PAGE_PADDING_HORIZONTAL
-								}}
-						>
-								{/* <PersonalDetails {...this} /> */}
-								<DriverLicense {...this} />
-								<OwnedCars {...this} />
-								<ActionButton {...this} />
-						</View>
-				</ScrollView>
+          <View
+            style={{
+              marginBottom: 20,
+              marginHorizontal: theme.PAGE_PADDING_HORIZONTAL
+            }}
+          >
+            <PersonalDetails {...this} />
+            <DriverLicense {...this} />
+            <OwnedCars {...this} />
+            <ActionButton {...this} />
+          </View>
+				</PageContainer>
 
 				<DropdownAlert ref={ref => this.dropDownMainAlertRef = ref} />
-			</Page>
+			</PageLayout>
 		);
 	}
 }
+
 const mapStateToProps = (state) => ({
 	user: state.userReducer.user
 });

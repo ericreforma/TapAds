@@ -1,314 +1,90 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
+  Button,
   View,
-  Text,
   Image,
-  TouchableOpacity
+  ActivityIndicator
 } from 'react-native';
-import { RFValue, RFPercentage } from 'react-native-responsive-fontsize';
 
 import theme from '../styles/theme.style';
-import { IMAGES } from '../config/variables';
 
-const TestPage = props => {
+const AsyncImage = props => {
+  const {
+    style,
+    source
+  } = props;
+  const [loaded, setLoaded] = useState(false);
+
+  const onLoad = () => {
+    // This only exists so the transition can be seen
+    // if loaded too quickly.
+    setTimeout(() => {
+      setLoaded(true);
+    }, 1000)
+  }
+
+  return (
+    <View style={style}>
+      <Image
+        source={source}
+        resizeMode="cover"
+        style={imageStyle(style)}
+        onLoad={onLoad}
+      />
+        {!loaded &&
+          <View style={imageBeforeOnLoad(style)}>
+            <ActivityIndicator color="#fff" />
+          </View>
+        }
+    </View>
+  )
+}
+
+const TestPage = () => {
   return (
     <View
       style={{
-        backgroundColor: theme.COLOR_BLUE,
         flex: 1,
-        justifyContent: 'center'
-      }}
-    >
-      <CampaignCompletedContainer>
-        <CampaignCompletedCard>
-          <CampaignCompletedRow icon={IMAGES.ICONS.mail_icon} notif={2} button>
-            <CampaignCompletedText.Campaign text="Campaign Name" />
-            <CampaignCompletedText.Date text="MAR.30.2019" />
-          </CampaignCompletedRow>
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'white',
+      }}>
 
-          <CampaignCompletedRow icon={IMAGES.ICONS.favorite_icon}>
-            <CampaignCompletedText.StatusDate text="MAR.30, 2019" />
-            <CampaignCompletedText.Status text="Completed" />
-          </CampaignCompletedRow>
+      <Button
+        title="Click me"
+        onPress={() => alert('test clicked')}
+      />
 
-          <CampaignCompletedFooter>
-            <CampaignCompletedText.FooterLabel text="P7,000" />
-            <CampaignCompletedText.FooterCommon text="Total Earnings" />
-          </CampaignCompletedFooter>
-        </CampaignCompletedCard>
-      </CampaignCompletedContainer>
+      <AsyncImage
+        style={{
+          height: 100,
+          width: 100,
+          borderRadius: 25
+        }}
+        source={{
+          uri: 'https://dev.bcdpinpoint.com/TapAdsServer/public/storage/images/campaigns/a540abed969dffda01980b9a71a2f197.jpeg'
+        }}
+      />
+
     </View>
   );
 }
 
-const CampaignCompletedContainer = ({children}) => {
-  return (
-    <View
-      style={{
-        padding: RFPercentage(2),
-      }}
-    >{children}</View>
-  )
-}
-
-const CampaignCompletedCard = ({children}) => {
-  return (
-    <View
-      style={{
-        borderRadius: theme.PAGE_CARD_RADIUS,
-        overflow: 'hidden',
-        backgroundColor: theme.COLOR_WHITE,
-        elevation: 5
-      }}
-    >{children}</View>
-  )
-}
-
-const CampaignCompletedRow = props => {
-  return (
-    <View
-      style={{
-        flexDirection: 'row'
-      }}
-    >
-      <CampaignCompletedRowInfo {...props} />
-      <CampaignCompletedRowIcon {...props} />
-    </View>
-  )
-}
-
-const CampaignCompletedRowInfo = ({children}) => {
-  return (
-    <View
-      style={{
-        flex: 1,
-        borderBottomColor: theme.COLOR_DIRTY_WHITE,
-        borderBottomWidth: 1,
-        paddingHorizontal: 20,
-        justifyContent: 'center'
-      }}
-    >{children}</View>
-  )
-}
-
-const CampaignCompletedRowIcon = ({icon, notif, button = false}) => {
-  const cWidth = theme.SCREEN_WIDTH / 6.5;
-  const imageWidth = theme.SCREEN_WIDTH / 16;
-  const notifWidth = RFValue(14);
-
-  return (
-    <View
-      style={{
-        width: cWidth,
-        height: cWidth,
-        borderBottomWidth: 1,
-        borderBottomColor: theme.COLOR_WHITE,
-        backgroundColor: theme.COLOR_DIRTY_WHITE,
-        justifyContent: 'center',
-        alignItems: 'center'
-      }}
-    >
-      <CampaignCompletedRowIconIsButton
-        button={button}
-        style={{
-          width: imageWidth,
-          height: imageWidth,
-        }}
-      >
-        <Image
-          source={icon}
-          style={{
-            width: imageWidth,
-            height: imageWidth,
-          }}
-          resizeMode="contain"
-        />
-
-        {notif ? (
-          <View
-            style={{
-              position: 'absolute',
-              top: -(notifWidth / 6),
-              right: -(notifWidth / 2),
-              backgroundColor: theme.COLOR_BLUE,
-              height: notifWidth,
-              width: notifWidth,
-              borderRadius: notifWidth,
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}
-          >
-            <CampaignCompletedText.Notif text={notif > 9 ? '9+' : notif} />
-          </View>
-        ) : null}
-      </CampaignCompletedRowIconIsButton>
-    </View>
-  )
-}
-
-const CampaignCompletedRowIconIsButton = props => {
-  if(props.button) {
-    return <TouchableOpacity {...props}>{props.children}</TouchableOpacity>
-  } else {
-    return <View {...props}>{props.children}</View>
+const imageStyle = style => {
+  return {
+    ...style,
+    position: 'absolute',
+    resizeMode: 'cover'
   }
 }
 
-const CampaignCompletedFooter = ({children}) => {
-  const cWidth = theme.SCREEN_WIDTH / 6.5;
-  const imageWidth = theme.SCREEN_WIDTH / 16;
-
-  return (
-    <View
-      style={{
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingVertical: 10,
-        backgroundColor: theme.COLOR_GRAY_HEAVY
-      }}
-    >
-      <View
-        style={{
-          flex: 1,
-          paddingLeft: 20,
-        }}
-      >
-        <CampaignCompletedDashboardButton
-          text="View dashboard" />
-      </View>
-      
-      <View
-        style={{
-          flex: 1,
-          paddingHorizontal: (cWidth - imageWidth) / 2,
-          alignItems: 'flex-end'
-        }}
-      >{children}</View>
-    </View>
-  )
-}
-
-const CampaignCompletedDashboardButton = ({text}) => {
-  return (
-    <TouchableOpacity
-      style={{
-        backgroundColor: theme.COLOR_BLUE,
-        borderRadius: theme.PAGE_CARD_RADIUS,
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingVertical: 15
-      }}
-    >
-      <CampaignCompletedText.FooterButton text={text} />
-    </TouchableOpacity>
-  )
-}
-
-const CampaignCompletedText = {
-  Campaign: ({text}) => {
-    return (
-      <Text
-        style={{
-          fontFamily: 'Montserrat-Medium',
-          fontSize: RFValue(14),
-          color: theme.COLOR_BLACK,
-          lineHeight: RFValue(16)
-        }}
-        numberOfLines={1}
-      >{text}</Text>
-    )
-  },
-  Date: ({text}) => {
-    return (
-      <Text
-        style={{
-          fontFamily: 'Montserrat-Medium',
-          fontSize: RFValue(10),
-          color: theme.COLOR_GRAY_HEAVY,
-          lineHeight: RFValue(12)
-        }}
-        numberOfLines={1}
-      >{text}</Text>
-    )
-  },
-  Status: ({text}) => {
-    return (
-      <Text
-        style={{
-          fontFamily: 'Montserrat-Bold',
-          fontSize: RFValue(10),
-          color: theme.COLOR_GRAY_HEAVY,
-          lineHeight: RFValue(12)
-        }}
-        numberOfLines={1}
-      >{text}</Text>
-    )
-  },
-  StatusDate: ({text}) => {
-    return (
-      <Text
-        style={{
-          fontFamily: 'Montserrat-Bold',
-          fontSize: RFValue(14),
-          color: theme.COLOR_BLACK,
-          lineHeight: RFValue(16)
-        }}
-        numberOfLines={1}
-      >{text}</Text>
-    )
-  },
-  FooterLabel: ({text}) => {
-    return (
-      <Text
-        style={{
-          fontFamily: 'Montserrat-Bold',
-          fontSize: RFValue(19),
-          color: theme.COLOR_LIGHT_BLUE,
-          lineHeight: RFValue(19),
-          textAlign: 'right'
-        }}
-        numberOfLines={1}
-      >{text}</Text>
-    )
-  },
-  FooterCommon: ({text}) => {
-    return (
-      <Text
-        style={{
-          fontFamily: 'Montserrat-Bold',
-          fontSize: RFValue(10),
-          color: theme.COLOR_WHITE,
-          lineHeight: RFValue(12),
-          textAlign: 'right'
-        }}
-        numberOfLines={1}
-      >{text}</Text>
-    )
-  },
-  FooterButton: ({text}) => {
-    return (
-      <Text
-        style={{
-          fontFamily: 'Montserrat-Medium',
-          fontSize: RFValue(12),
-          color: theme.COLOR_WHITE,
-          lineHeight: RFValue(14)
-        }}
-        numberOfLines={1}
-      >{text}</Text>
-    )
-  },
-  Notif: ({text}) => {
-    return (
-      <Text
-        style={{
-          fontFamily: 'Montserrat-Medium',
-          fontSize: RFValue(10),
-          color: theme.COLOR_WHITE,
-          lineHeight: RFValue(11)
-        }}
-      >{text}</Text>
-    )
+const imageBeforeOnLoad = style => {
+  return {
+    ...style,
+    backgroundColor: theme.COLOR_GRAY_HEAVY,
+    position: 'absolute',
+    alignItems: 'center',
+    justifyContent: 'center'
   }
 }
 

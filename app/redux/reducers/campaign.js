@@ -29,9 +29,12 @@ export function campaignReducer(state = initialState, action) {
 
     case CAMPAIGN.LIST.SUCCESS:
       return Object.assign({}, state, {
-        list: state.list === [] ? action.data.data :
-          ( action.newBatch ? action.data.data :
-            [...state.list, ...action.data.data] ),
+        // list: state.list === [] ? action.data.data :
+        //   ( action.newBatch ? action.data.data :
+        //     [...state.list, ...action.data.data] ),
+        list: action.newBatch
+          ? action.data.data
+          : [...state.list, ...action.data.data],
         current_page: action.data.current_page,
         total_page: action.data.last_page,
         isRequesting: false,
@@ -49,7 +52,7 @@ export function campaignReducer(state = initialState, action) {
         current_page: 0,
         vehicle_classification: action.classification,
         total_page: 0,
-        list: [],
+        // list: [],
         isRequesting: true,
         isRequestDone: false,
       });

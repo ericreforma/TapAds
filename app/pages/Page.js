@@ -180,11 +180,11 @@ class Page extends Component {
 	}
 	
 	appStateActive = () => {
-		this.props.getProfile();
+		// this.props.getProfile();
 	}
 
 	appStateInactive = () => {
-		console.log(`App State: ${this.state.appState}, ${getCurrentTime()}`);
+		// console.log(`App State: ${this.state.appState}, ${getCurrentTime()}`);
 	}
 
 	menuButtonOnPress = () => {

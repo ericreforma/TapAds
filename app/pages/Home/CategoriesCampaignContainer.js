@@ -2,239 +2,230 @@ import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Image,
-  FlatList,
   TouchableOpacity,
-  Text,
-  ActivityIndicator
+  Text
 } from 'react-native';
 import { connect } from 'react-redux';
 import { RFValue, RFPercentage } from "react-native-responsive-fontsize";
 
 import { HomePageRowContainer } from './HomePageRowContainer';
 import CampaignContainer from './Modal/CampaignContainer';
-import { CampaignAction } from '../../redux/actions/campaign.action';
+import Loader from '../../components/Loader';
+import IfElse from '../../components/IfElse';
+import AsyncImage from '../../components/AsyncImage';
 
+import { CampaignAction } from '../../redux/actions/campaign.action';
 import { getTotalPay, getSlotAvailable } from '../../config/functions';
 import { VEHICLE, URL } from '../../config/variables';
 import theme from '../../styles/theme.style';
 
 const carClassification = id => Object.values(VEHICLE.CLASS).find(i => i.id === id);
 const carType = Object.values(VEHICLE.TYPE);
-const vehicleCategories = Object.values(VEHICLE.CLASS);
-const defaultSelectedCategory = vehicleCategories.map(v => v.id === 0 ? true : false);
-const cHeight = theme.SCREEN_HEIGHT * 0.18;
 const cWidth = theme.SCREEN_WIDTH / 3.5;
 const activeCampaignGradient = require('../../assets/image/active_campaign_gradient2.png');
 const campaignImage = require('../../assets/image/test_campaign_category.png');
 
+const CategoryFont = {
+  Selection: {
+    Label: ({text}) => (
+      <Text
+        style={{
+          fontFamily: 'Montserrat-Bold',
+          fontSize: RFValue(11),
+          color: theme.COLOR_WHITE,
+          marginBottom: 5
+        }}
+        numberOfLines={1}
+      >{text}</Text>
+    ),
+    Common: ({text}) => (
+      <Text
+        style={{
+          fontFamily: 'Montserrat-Medium',
+          fontSize: RFValue(8),
+          color: theme.COLOR_WHITE,
+          lineHeight: RFValue(10),
+          textAlign: 'center',
+          paddingHorizontal: 20
+        }}
+      >{text}</Text>
+    )
+  },
+  Content: {
+    Label: ({text}) => (
+      <Text
+        style={{
+          fontFamily: 'Montserrat-Bold',
+          fontSize: RFValue(13.5),
+          color: theme.COLOR_BLACK
+        }}
+        numberOfLines={1}
+      >{text}</Text>
+    ),
+    Common: ({text}) => (
+      <Text
+        style={{
+          fontFamily: 'Montserrat-Medium',
+          fontSize: RFValue(11),
+          color: theme.COLOR_NORMAL_FONT,
+          lineHeight: RFValue(14)
+        }}
+        numberOfLines={1}
+      >{text}</Text>
+    ),
+    Value: ({text}) => (
+      <Text
+        style={{
+          fontFamily: 'Montserrat-Bold',
+          fontSize: RFValue(11),
+          color: theme.COLOR_NORMAL_FONT,
+          lineHeight: RFValue(14)
+        }}
+        numberOfLines={1}
+      >{text}</Text>
+    ),
+    CarType: ({text}) => (
+      <Text
+        style={{
+          fontFamily: 'Montserrat-Bold',
+          fontSize: RFValue(11),
+          color: theme.COLOR_WHITE,
+          lineHeight: RFValue(13)
+        }}
+        numberOfLines={1}
+      >{text}</Text>
+    )
+  }
+};
+
 const CategoriesCampaignContainer = props => {
-  const categorySelectionRef = useRef();
-  const [descHeight, setDescHeight] = useState(false);
-  const [catPressLoading, setCatPressLoading] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState(defaultSelectedCategory);
+  const [campaigns, setCampaign] = useState([]);
+  const [seeMoreLoading, setSeeMoreLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if(props.refresh) {
+      props.CampaignListRequest(true, () => {
+        props.loadingDone('loadingCategories');
+      });
+    }
+  }, [props.refresh]);
 
   useEffect(() => {
     if(!props.isRequesting) {
-      setCatPressLoading(false);
+      setSeeMoreLoading(false);
+      setCampaign(props.campaigns);
+      setTimeout(() => setLoading(false));
     }
-  }, [props.isRequesting])
+  }, [props.campaigns]);
+  
+  useEffect(() => {
+    if(props.isRequesting && !seeMoreLoading)
+      setLoading(true);
+  }, [props.isRequesting]);
 
-  const CategoryCampaignBody = ({item, index}) => {
+  const ThenComponent = () => {
     return (
-      <TouchableOpacity
-        activeOpacity={0.9}
-        style={{
-          paddingHorizontal: 5,
-          paddingVertical: 10
-        }}
-        onPress={e => {
-          setCatPressLoading(!catPressLoading);
-          props.CampaignChangeCategory(index);
-          props.CampaignListRequest();
-          setSelectedCategory(selectedCategory.map((s, sInd) => sInd === index ? true : false));
-        }}
-      >
-        <View
-          style={{
-            borderRadius: 10,
-            overflow: 'hidden',
-            width: cWidth,
-            backgroundColor: theme.COLOR_WHITE,
-            elevation: selectedCategory[index] ? 5 : 0
-          }}
-        >
-          <View
-            style={{
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <Image
-              source={item.icon.large}
-              resizeMode="contain"
-              style={{
-                width: cWidth - 20
-              }}
-            />
-          </View>
+      <View>
+        <CampaignContent />
 
-          <View
-            style={{
-              height: !descHeight ? 'auto' : descHeight,
-              paddingVertical: 15,
-              paddingHorizontal: 7,
-              alignItems: 'center',
-              backgroundColor: selectedCategory[index] ? theme.COLOR_GRAY_HEAVY : theme.COLOR_GRAY_MEDIUM,
-            }}
-            onLayout={e => {
-              const { height } = e.nativeEvent.layout;
-              if(!descHeight) {
-                setDescHeight(height);
-              } else if(height > descHeight) {
-                setDescHeight(height);
-              }
-            }}
-          >
-            <CategoryFont.Selection.Label text={item.name} />
-
-            <View
-              style={{
-                height: 3,
-                width: 30,
-                marginBottom: 7,
-                marginTop: 2,
-                backgroundColor: theme.COLOR_WHITE,
-              }}
-            />
-              <CategoryFont.Selection.Common text={item.description} />
-          </View>
-        </View>
-      </TouchableOpacity>
-    );
-  }
-
-  const CategoryCampaignSelection = () => {
-    return (
-      <FlatList
-        ref={categorySelectionRef}
-        data={vehicleCategories}
-        renderItem={({item, index}) =>
-          <CategoryCampaignBody
-            item={item}
-            index={index}
-          />
-        }
-        keyExtractor={(item, index) => index.toString()}
-        horizontal={true}
-        overScrollMode="never"
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{
-          paddingHorizontal: RFPercentage(2) - 5
-        }}
-      />
-    );
-  }
-
-  const CategoryCampaignContent = () => {
-    if(catPressLoading) {
-      return (
-        <View
-          style={{
-            marginTop: 15,
-          }}
-        >
-          <ActivityIndicator color="#fff" />
-        </View>
-      );
-    } else if(props.campaigns.length === 0) {
-      return (
-        <View
-          style={{
-            paddingVertical: 20,
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}
-        >
-          <CategoryFont.Selection.Label text="-- no campaigns available --" />
-        </View>
-      );
-    } else {
-      return (
-        <View>
-          {props.campaigns.map(c =>
-            <CampaignContainer
-              key={c.id}
-              style={{
-                paddingVertical: 8,
-                paddingHorizontal: RFPercentage(2) - 2
-              }}
-              activeOpacity={0.9}
-              onPress={e => props.viewDetails(c.id)}
-              campaign={c}
-              homePageInit={props.homePageInit}
-            >
-              <View
-                style={{
-                  borderRadius: theme.PAGE_CARD_RADIUS,
-                  backgroundColor: theme.COLOR_WHITE,
-                  padding: 10,
-                  flexDirection: 'row',
-                  alignItems: 'center'
-                }}
-              >
-                <CategoryCampaignContentImage c={c} />
-                
-                <View
-                  style={{
-                    flex: 1,
-                    flexGrow: 1,
-                    paddingLeft: 10,
-                    paddingRight: 5,
-                  }}
-                >
-                  <CategoryFont.Content.Label text={c.name} />
-                  <CategoryFont.Content.Common text={c.client.business_name} />
-
-                  <View
-                    style={{
-                      height: 2,
-                      marginVertical: 7,
-                      backgroundColor: theme.COLOR_LIGHT_BLUE
-                    }}
-                  ></View>
-
-                  <CategoryCampaignContentInfo label={'Location'} value={c.location} />
-                  <CategoryCampaignContentInfo label={'Basic Pay'} value={getTotalPay(c)} />
-                  <CategoryCampaignContentInfo label={'Slots Available'} value={getSlotAvailable(c)} />
-                </View>
-              </View>
-            </CampaignContainer>
-          )}
-
-          {!props.isRequesting ?
-            props.current_page < props.total_page ?
+        <Loader
+          loading={seeMoreLoading}
+          contentStyle={{
+            marginTop: 10
+          }} >
+          <IfElse
+            condition={props.current_page < props.total_page}
+            then={
               <TouchableOpacity
                 style={{
-                  marginTop: 15,
                   alignSelf: 'center'
                 }}
-                onPress={() => { props.CampaignListRequest(); }}
+                onPress={() => {
+                  setSeeMoreLoading(true);
+                  props.CampaignListRequest();
+                }}
               >
                 <CategoryFont.Content.CarType text="load more" />
               </TouchableOpacity>
-            : false
-          : (
+            }
+            else={null}
+          />
+        </Loader>
+      </View>
+    )
+  }
+
+  const CampaignContent = () => {
+    return campaigns.map(c =>
+      <CampaignContainer
+        key={c.id}
+        style={{
+          paddingVertical: 8,
+          paddingHorizontal: RFPercentage(2) - 2
+        }}
+        activeOpacity={0.9}
+        onPress={e => props.viewDetails(c.id)}
+        campaign={c}
+        homePageInit={props.homePageInit}
+      >
+        <View
+          style={{
+            borderRadius: theme.PAGE_CARD_RADIUS,
+            backgroundColor: theme.COLOR_WHITE,
+            padding: 10,
+            flexDirection: 'row',
+            alignItems: 'center'
+          }}
+        >
+          <CategoryCampaignContentImage c={c} />
+          
+          <View
+            style={{
+              flex: 1,
+              flexGrow: 1,
+              paddingLeft: 10,
+              paddingRight: 5,
+            }}
+          >
+            <CategoryFont.Content.Label text={c.name} />
+            <CategoryFont.Content.Common text={c.client.business_name} />
+
             <View
               style={{
-                marginTop: 15,
+                height: 2,
+                marginVertical: 7,
+                backgroundColor: theme.COLOR_LIGHT_BLUE
               }}
-            >
-              <ActivityIndicator color="#fff" />
-            </View>
-          )}
+            ></View>
+
+            <CategoryCampaignContentInfo
+              label={'Location'}
+              value={c.location} />
+            <CategoryCampaignContentInfo
+              label={'Basic Pay'}
+              value={getTotalPay(c)} />
+            <CategoryCampaignContentInfo
+              label={'Slots Available'}
+              value={getSlotAvailable(c)} />
+          </View>
         </View>
-      );
-    }
+      </CampaignContainer>
+    )
+  }
+
+  const ElseComponent = () => {
+    return (
+      <View
+        style={{
+          paddingVertical: 20,
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+      >
+        <CategoryFont.Selection.Label text="-- no campaigns available --" />
+      </View>
+    )
   }
 
   const CategoryCampaignContentImage = ({c}) => {
@@ -242,6 +233,7 @@ const CategoriesCampaignContainer = props => {
     const imageSource = c.photo
       ? {uri: `${URL.SERVER_MEDIA}/${c.photo}`}
       : campaignImage;
+      
     return (
       <View
         style={{
@@ -353,95 +345,18 @@ const CategoriesCampaignContainer = props => {
     );
   }
 
-  const CategoryFont = {
-    Selection: {
-      Label: ({text}) => (
-        <Text
-          style={{
-            fontFamily: 'Montserrat-Bold',
-            fontSize: RFValue(11),
-            color: theme.COLOR_WHITE,
-            marginBottom: 5
-          }}
-          numberOfLines={1}
-        >{text}</Text>
-      ),
-      Common: ({text}) => (
-        <Text
-          style={{
-            fontFamily: 'Montserrat-Medium',
-            fontSize: RFValue(8),
-            color: theme.COLOR_WHITE,
-            lineHeight: RFValue(10),
-            textAlign: 'center',
-            paddingHorizontal: 20
-          }}
-        >{text}</Text>
-      )
-    },
-    Content: {
-      Label: ({text}) => (
-        <Text
-          style={{
-            fontFamily: 'Montserrat-Bold',
-            fontSize: RFValue(13.5),
-            color: theme.COLOR_BLACK
-          }}
-          numberOfLines={1}
-        >{text}</Text>
-      ),
-      Common: ({text}) => (
-        <Text
-          style={{
-            fontFamily: 'Montserrat-Medium',
-            fontSize: RFValue(11),
-            color: theme.COLOR_NORMAL_FONT,
-            lineHeight: RFValue(14)
-          }}
-          numberOfLines={1}
-        >{text}</Text>
-      ),
-      Value: ({text}) => (
-        <Text
-          style={{
-            fontFamily: 'Montserrat-Bold',
-            fontSize: RFValue(11),
-            color: theme.COLOR_NORMAL_FONT,
-            lineHeight: RFValue(14)
-          }}
-          numberOfLines={1}
-        >{text}</Text>
-      ),
-      CarType: ({text}) => (
-        <Text
-          style={{
-            fontFamily: 'Montserrat-Bold',
-            fontSize: RFValue(11),
-            color: theme.COLOR_WHITE,
-            lineHeight: RFValue(13)
-          }}
-          numberOfLines={1}
-        >{text}</Text>
-      )
-    }
-  }
-
   return (
-    <View>
-      {/* categories section */}
-      <HomePageRowContainer
-        headerCenterText="Categories"
-      >
-        <CategoryCampaignSelection />
-      </HomePageRowContainer>
-
-      <HomePageRowContainer
-        headerLeftText="Campaigns"
-        headerRightText="Latest"
-      >
-        <CategoryCampaignContent />
-      </HomePageRowContainer>
-    </View>
+    <HomePageRowContainer
+      headerLeftText="Campaigns"
+      headerRightText="Latest" >
+      <Loader loading={loading}>
+        <IfElse
+          condition={campaigns.length !== 0}
+          then={<ThenComponent />}
+          else={<ElseComponent />}
+        />
+      </Loader>
+    </HomePageRowContainer>
   );
 };
 
@@ -449,7 +364,8 @@ const mapStateToProps = state => ({
   campaigns: state.campaignReducer.list,
   isRequesting: state.campaignReducer.isRequesting,
 	total_page: state.campaignReducer.total_page,
-	current_page: state.campaignReducer.current_page,
+  current_page: state.campaignReducer.current_page,
+  vehicle_classification: state.campaignReducer.vehicle_classification
 });
 
 const mapDispatchToProps = dispatch => ({

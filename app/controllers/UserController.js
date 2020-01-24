@@ -20,7 +20,9 @@ export const UserController = {
       password: (args = {}) => HttpRequest.post('/user/update/password', args),
       bankDetails: (args = {}) => HttpRequest.post('/user/update/bank', args),
       carMonthlyUpdate: (args = {}) => HttpRequest.post('/user/update/cars/monthly', args),
-      notifications: (args = {}) => HttpRequest.post('/user/update/notifications', args)
+      notifications: (args = {}) => HttpRequest.post('/user/update/notifications', args),
+      pNumber: form => HttpRequest.post('/user/update/request/pnumber', form),
+      vehiclePhoto: form => HttpRequest.post('/user/update/vehicle_photo', form)
     },
     get: {
       notifications: () => HttpRequest.get('/user/get/notifications')
