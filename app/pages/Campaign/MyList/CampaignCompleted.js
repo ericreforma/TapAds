@@ -36,7 +36,7 @@ const CampaignCompleted = ({campaign}) => {
 
 const CampaignCompletedContainer = ({children}) => {
   return (
-    <View>{children}</View>
+    <View style={{marginVertical: 7}}>{children}</View>
   )
 }
 

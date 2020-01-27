@@ -293,3 +293,12 @@ export const getSlotAvailable = ({slots, slots_used}) => {
 	const slotsAvailable = parseInt(slots) - parseInt(slots_used);
 	return `${slotsAvailable} of ${slots}`;
 }
+
+export const checkIfCampaignActive = ({dateFrom, dateTo}) => {
+	const dNow = new Date().getTime();
+	const dFrom = new Date(dateFrom).getTime();
+	const dTo = new Date(dateTo).getTime();
+
+	if(dFrom <= dNow && dNow <= dTo) return true;
+	return false;
+}

@@ -1,6 +1,7 @@
 import { CAMPAIGN } from './types.action';
 import { CampaignController, CampaignLocationController } from '../../controllers';
 import NavigationService from '../../services/navigation';
+import {checkIfCampaignActive} from '../../config/functions';
 
 export const CampaignAction = {
   list: (newBatch, successCallBack = false) => (dispatch, getState) => {
@@ -26,7 +27,17 @@ export const CampaignAction = {
     dispatch({ type: CAMPAIGN.MYLIST.REQUEST });
     CampaignController.mylist()
       .then(response => {
-        const activeCampaign = response.data.filter(l => l.request_status === 1 && !l.end);
+        const activeCampaign = response.data.filter(l => {
+          const {duration_from, duration_to} = l.campaignDetails;
+          const checkData = {
+            dateFrom: duration_from,
+            dateTo: duration_to
+          };
+
+          if(l.request_status === 1 && !l.end && checkIfCampaignActive(checkData))
+            return true;
+          return false;
+        });
         const campaign = {
           mylist: response.data, 
           active: activeCampaign

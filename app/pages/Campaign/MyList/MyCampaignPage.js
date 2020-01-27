@@ -27,9 +27,10 @@ import { CampaignAction } from '../../../redux/actions/campaign.action';
 import theme from '../../../styles/theme.style';
 import styles from '../../../styles/page.Home.style';
 import {
-    numberWithCommas,
-    getTotalEarnings,
-		earnUpTo
+	numberWithCommas,
+	getTotalEarnings,
+	earnUpTo,
+	checkIfCampaignActive
 } from '../../../config/functions';
 
 import CampaignCompleted from './CampaignCompleted';
@@ -68,8 +69,29 @@ class MyCampaignPage extends Component {
 			}
 		}
 		
-		const activeCampaigns = myList.filter(d => !d.end && d.request_status === 1);
-		const completedCampaigns = myList.filter(d => d.end && d.request_status === 1);
+		const activeCampaigns = myList.filter(l => {
+			const {duration_from, duration_to} = l.campaignDetails;
+			const checkData = {
+				dateFrom: duration_from,
+				dateTo: duration_to
+			};
+
+			if(l.request_status === 1 && !l.end && checkIfCampaignActive(checkData))
+				return true;
+			return false;
+		});
+		const completedCampaigns = myList.filter(d => {
+			const {duration_from, duration_to} = d.campaignDetails;
+			const checkData = {
+				dateFrom: duration_from,
+				dateTo: duration_to
+			};
+
+			if((d.end || !checkIfCampaignActive(checkData)) &&
+				d.request_status === 1)
+				return true;
+			return false;
+		});
 		const startTripLoader = Array(activeCampaigns.length).fill(false);
 		
 		this.setState({
