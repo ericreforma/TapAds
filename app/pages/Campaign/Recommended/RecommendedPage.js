@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import {
   View,
-  TouchableOpacity,
-  ActivityIndicator
+  Text,
+  TouchableOpacity
 } from 'react-native';
 import { NavigationEvents } from 'react-navigation';
 import { connect } from 'react-redux';
+import { RFValue } from 'react-native-responsive-fontsize';
 
 import NavigationService from '../../../services/navigation';
 import { CampaignController } from '../../../controllers/CampaignController';
@@ -17,8 +18,29 @@ import {
 
 import PageLayout from '../../../components/PageLayout';
 import PageContainer from '../../../components/PageContainer';
+import Loader from '../../../components/Loader';
+import IfElse from '../../../components/IfElse';
 import RecommendedCampaignContainer from './RecommendedCampaignContainer';
 import styles from '../Styles/RecPage.style';
+import theme from '../../../styles/theme.style';
+
+const RecText = {
+  ViewMore: ({text}) => {
+    return (
+      <Text
+        style={{
+          fontFamily: 'Montserrat-Bold',
+          fontSize: RFValue(11),
+          color: theme.COLOR_WHITE,
+          lineHeight: RFValue(13)
+        }}
+        numberOfLines={1}
+      >{text}</Text>
+    );
+  }
+};
+
+const RecPageContainer = ({children}) => <View style={styles.container}>{children}</View>
 
 class RecommendedPage extends Component {
   constructor(props) {
@@ -83,11 +105,28 @@ class RecommendedPage extends Component {
   }
 
   render() {
+    const ThenComponent = () => {
+      return (
+        <View
+          style={{
+            marginVertical: 20,
+          }}
+        >
+          <TouchableOpacity
+            style={{
+              alignSelf: 'center'
+            }}
+            onPress={this.viewMore}
+          >
+            <RecText.ViewMore text="view more" />
+          </TouchableOpacity>
+        </View>
+      )
+    }
+
     return (
       <PageLayout>
-        <NavigationEvents
-          onWillFocus={this.init}
-        />
+        <NavigationEvents onWillFocus={this.init} />
 
         <PageContainer
           style={styles.scrollView}
@@ -101,35 +140,18 @@ class RecommendedPage extends Component {
               homePageInit={this.init}
               campaigns={this.state.campaigns}
               loading={this.state.loading} />
-
-            {this.state.loading ? (
-              this.state.loader ? (
-                <View
-                  style={{
-                    marginVertical: 20,
-                  }}
-                >
-                  <ActivityIndicator color="#fff" />
-                </View>
-              ) : (
-                !this.state.maxPage ? (
-                  <View
-                    style={{
-                      marginVertical: 20,
-                    }}
-                  >
-                    <TouchableOpacity
-                      style={{
-                        alignSelf: 'center'
-                      }}
-                      onPress={this.viewMore}
-                    >
-                      <LabelText color="white">view more</LabelText>
-                    </TouchableOpacity>
-                  </View>
-                ) : null
-              )
-            ) : null}
+              
+            <IfElse
+              condition={this.state.loading}
+              then={
+                <Loader
+                  loading={!this.state.loader}
+                  spinnerStyle={{ marginVertical: 20 }} >
+                  <IfElse
+                    condition={!this.state.maxPage}
+                    then={<ThenComponent />} />
+                </Loader>
+              } />
           </RecPageContainer>
         </PageContainer>
       </PageLayout>
@@ -137,7 +159,6 @@ class RecommendedPage extends Component {
   }
 }
 
-const RecPageContainer = ({children}) => <View style={styles.container}>{children}</View>
 const RecPageTitle = ({text}) => {
   return (
     <View style={styles.pageTitle}>

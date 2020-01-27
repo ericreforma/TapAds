@@ -6,7 +6,8 @@ import {
   Modal,
   FlatList,
   TouchableOpacity,
-  ActivityIndicator
+  ActivityIndicator,
+  Alert
 } from 'react-native';
 import DropdownAlert from 'react-native-dropdownalert';
 import Carousel from 'react-native-snap-carousel';
@@ -24,7 +25,21 @@ const CampaignChooseVehicle = props => {
   const [popupVisible, setPopupVisible] = useState(false);
   const [popupMessage, setPopupMessage] = useState('');
   const [popupDesc, setPopupDesc] = useState('');
-  const modalVisibleToggle = () => setModalVisible(!modalVisible);
+
+  const modalVisibleToggle = () => {
+    if(!modalVisible) {
+      if(props.user.licenseImage) {
+        setModalVisible(!modalVisible);
+      } else {
+        Alert.alert(
+          'License Image does not exist',
+          'You must present a license in order to proceed with this campaign.\n\nYou can edit this info in profile page.\n\nThank you!'
+        );
+      }
+    } else {
+      setModalVisible(!modalVisible);
+    }
+  }
 
   class ChooseVehicleModal extends Component {
     state = {
