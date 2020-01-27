@@ -316,7 +316,7 @@ const EditVehicleModal = ({d, update}) => {
       <TouchableOpacity
         style={{
           position: 'absolute',
-          top: -130,
+          top: -141,
           left: 0,
           paddingTop: 3,
           paddingLeft: 3,
@@ -475,7 +475,7 @@ const EditVehicleModal = ({d, update}) => {
 
             {/* plate number */}
             <Row>
-              <VehicleText.Common text="Plate Number" />
+              <VehicleText.Common text="Plate Number / Conduction Sticker" />
               <VehicleText.Label
                 text={vehicleData.plate_number
                   ? vehicleData.plate_number
@@ -493,7 +493,7 @@ const EditVehicleModal = ({d, update}) => {
                       fontSize: 12,
                     }}
                     value={plateNumber}
-                    placeholder="new plate number"
+                    placeholder="new plate number/conduction sticker"
                     onSubmitEditing={editPlateNumberButtonOnPress}
                     onChangeText={value => setPlateNumber(value)} />
                 </PlateNumberInfo>

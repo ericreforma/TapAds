@@ -18,6 +18,8 @@ import AsyncImage from '../../components/AsyncImage';
 import EditVehicleModal from './Modal/EditVehicleModal';
 import theme from '../../styles/theme.style';
 
+const dim = 140;
+
 const vehicleFormat = [
   {name: 'model', label: 'Model'},
   {name: 'year', label: 'Year'},
@@ -43,13 +45,13 @@ const VehicleText = {
       >{text}</Text>
     )
   },
-  Label: ({text}) => {
+  Label: ({text, color, small}) => {
     return (
       <Text
         style={{
-          fontSize: 12,
+          fontSize: small ? 9 : 12,
           fontFamily: 'Montserrat-Regular',
-          color: theme.COLOR_NORMAL_FONT
+          color: color ? color : theme.COLOR_NORMAL_FONT
         }}
         numberOfLines={1}
       >{text}</Text>
@@ -252,7 +254,6 @@ const VehicleContainer = ({user, loader, update}) => {
 
   const ImageSection = ({d}) => {
     const {photo} = d;
-    const dimension = 130;
 
     const getActiveDot = index => {
       return photo.map((p, pIdx) => {
@@ -264,16 +265,16 @@ const VehicleContainer = ({user, loader, update}) => {
     const [navDots, setNavDots] = useState(getActiveDot(0));
 
     return (
-      <View style={{width: dimension}}>
+      <View style={{width: dim}}>
         <Carousel
           data={photo}
           renderItem={renderVehicleImage}
           layout={'default'}
           inactiveSlideScale={1}
           inactiveSlideOpacity={1}
-          sliderWidth={dimension}
-          itemHeight={dimension}
-          itemWidth={dimension}
+          sliderWidth={dim}
+          itemHeight={dim}
+          itemWidth={dim}
           onBeforeSnapToItem={sIdx => setNavDots(getActiveDot(sIdx))}
         />
 
@@ -284,11 +285,10 @@ const VehicleContainer = ({user, loader, update}) => {
   }
 
   const renderVehicleImage = ({item}) => {
-    const dimension = 130;
     return <AsyncImage
       style={{
-        height: dimension,
-        width: dimension
+        height: dim,
+        width: dim
       }}
       source={{uri: `${URL.SERVER_MEDIA}/${item.url}`}}
     />
@@ -346,8 +346,7 @@ const VehicleContainer = ({user, loader, update}) => {
   }
   
   const CardVehicleHeader = ({d}) => {
-    const plateNumber = d.plate_number ? d.plate_number : '----';
-    const textToDisplay = `Plate Number: ${plateNumber}`;
+    const plateNumber = d.plate_number ? d.plate_number : '--no plate number--';
 
     return (
       <View
@@ -364,7 +363,19 @@ const VehicleContainer = ({user, loader, update}) => {
           }}
         >
           <VehicleText.Manufacturer text={d.vehicle.manufacturer} />
-          <VehicleText.Label text={textToDisplay} />
+          <View
+            style={{
+              padding: 5,
+              marginTop: 3,
+              borderRadius: 5,
+              alignSelf: 'flex-start',
+              backgroundColor: d.plate_number ? theme.COLOR_GREEN : theme.COLOR_RED,
+            }} >
+            <VehicleText.Label
+              small
+              text={plateNumber}
+              color={theme.COLOR_WHITE} />
+          </View>
         </View>
       </View>
     )

@@ -716,7 +716,7 @@ class SignUpAddVehiclesPage extends Component {
 									}}
 								>
 									<LabelText>
-										Plate Number
+										Plate Number / Conduction Sticker
 									</LabelText>
 
 									<View
@@ -736,7 +736,7 @@ class SignUpAddVehiclesPage extends Component {
 										}}
 									>
 										<TextInput
-											placeholder="Plate Number.."
+											placeholder="Plate Number/Conduction Sticker.."
 											placeholderTextColor={theme.NEW_COLOR.COLOR_GRAY}
 											style={{
 												fontFamily: 'Montserrat-Medium',
