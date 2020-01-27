@@ -115,6 +115,7 @@ class LogInPage extends Component {
 								returnKeyType="next"
 								onChangeText={(email) => this.setState({ email })}
 							/>
+							
 							<Input
 								loginPage
 								type="password"
