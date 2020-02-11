@@ -24,7 +24,7 @@ import {
 import {UserController} from '../../../controllers';
 
 import Loader from '../../../components/Loader';
-import IfElse from '../../../components/IfElse';
+import { IfElse, Then, Else } from '../../../components/IfElse';
 import theme from '../../../styles/theme.style';
 import AsyncImage from '../../../components/AsyncImage';
 
@@ -367,9 +367,8 @@ const EditVehicleModal = ({d, update}) => {
 					marginRight: index == (vehiclePhotos.length - 1) ? 0 : 3
 				}}
 			>
-        <IfElse
-          condition={index === 0}
-          then={
+        <IfElse condition={index === 0}>
+          <Then>
             <TouchableOpacity
               style={{
                 flex: 1,
@@ -390,8 +389,9 @@ const EditVehicleModal = ({d, update}) => {
                 source={item.url}
               />
             </TouchableOpacity>
-          }
-          else={
+          </Then>
+
+          <Else>
             <View>
               <AsyncImage
                 style={{
@@ -424,8 +424,8 @@ const EditVehicleModal = ({d, update}) => {
                 />
               </TouchableOpacity>
             </View>
-          }
-        />
+          </Else>
+        </IfElse>
       </View>
     )
   }
@@ -457,13 +457,13 @@ const EditVehicleModal = ({d, update}) => {
         <ModalContainer>
           <Card>
             {/* alert */}
-            <IfElse
-              condition={PNAlertVisible}
-              then={
+            <IfElse condition={PNAlertVisible}>
+              <Then>
                 <AlertContainer>
                   <VehicleText.Common text={PNAlertText} white />
                 </AlertContainer>
-              } />
+              </Then>
+            </IfElse>
 
             {/* vehicle data */}
             <Row>
@@ -526,9 +526,8 @@ const EditVehicleModal = ({d, update}) => {
                   }}
                 />
 
-                <IfElse
-                  condition={submitLoadingVP}
-                  then={
+                <IfElse condition={submitLoadingVP}>
+                  <Then>
                     <View
                       style={{
                         alignSelf: 'center',
@@ -540,8 +539,9 @@ const EditVehicleModal = ({d, update}) => {
                       }} >
                       <Loader loading={true} />
                     </View>
-                  }
-                  else={
+                  </Then>
+
+                  <Else>
                     <TouchableOpacity
                       style={{
                         alignSelf: 'center',
@@ -554,8 +554,8 @@ const EditVehicleModal = ({d, update}) => {
                       onPress={uploadVehiclePhotos} >
                       <VehicleText.Label text="Save Changes" white />
                     </TouchableOpacity>
-                  }
-                />
+                  </Else>
+                </IfElse>
               </View>
 
               <TouchableOpacity

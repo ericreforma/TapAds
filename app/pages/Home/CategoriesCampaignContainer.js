@@ -11,7 +11,7 @@ import { RFValue, RFPercentage } from "react-native-responsive-fontsize";
 import { HomePageRowContainer } from './HomePageRowContainer';
 import CampaignContainer from './Modal/CampaignContainer';
 import Loader from '../../components/Loader';
-import IfElse from '../../components/IfElse';
+import {IfElse, Then, Else} from '../../components/IfElse';
 import AsyncImage from '../../components/AsyncImage';
 
 import { CampaignAction } from '../../redux/actions/campaign.action';
@@ -124,38 +124,6 @@ const CategoriesCampaignContainer = props => {
       setLoading(true);
   }, [props.isRequesting]);
 
-  const ThenComponent = () => {
-    return (
-      <View>
-        <CampaignContent />
-
-        <Loader
-          loading={seeMoreLoading}
-          contentStyle={{
-            marginTop: 10
-          }} >
-          <IfElse
-            condition={props.current_page < props.total_page}
-            then={
-              <TouchableOpacity
-                style={{
-                  alignSelf: 'center'
-                }}
-                onPress={() => {
-                  setSeeMoreLoading(true);
-                  props.CampaignListRequest();
-                }}
-              >
-                <CategoryFont.Content.CarType text="load more" />
-              </TouchableOpacity>
-            }
-            else={null}
-          />
-        </Loader>
-      </View>
-    )
-  }
-
   const CampaignContent = () => {
     return campaigns.map(c =>
       <CampaignContainer
@@ -211,20 +179,6 @@ const CategoriesCampaignContainer = props => {
           </View>
         </View>
       </CampaignContainer>
-    )
-  }
-
-  const ElseComponent = () => {
-    return (
-      <View
-        style={{
-          paddingVertical: 20,
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}
-      >
-        <CategoryFont.Selection.Label text="-- no campaigns available --" />
-      </View>
     )
   }
 
@@ -350,11 +304,47 @@ const CategoriesCampaignContainer = props => {
       headerLeftText="Campaigns"
       headerRightText="Latest" >
       <Loader loading={loading}>
-        <IfElse
-          condition={campaigns.length !== 0}
-          then={<ThenComponent />}
-          else={<ElseComponent />}
-        />
+        <IfElse condition={campaigns.length !== 0}>
+          <Then>
+            <View>
+              <CampaignContent />
+
+              <Loader
+                loading={seeMoreLoading}
+                contentStyle={{
+                  marginTop: 10
+                }} >
+                <IfElse condition={props.current_page < props.total_page}>
+                  <Then>
+                    <TouchableOpacity
+                      style={{
+                        alignSelf: 'center'
+                      }}
+                      onPress={() => {
+                        setSeeMoreLoading(true);
+                        props.CampaignListRequest();
+                      }}
+                    >
+                      <CategoryFont.Content.CarType text="load more" />
+                    </TouchableOpacity>
+                  </Then>
+                </IfElse>
+              </Loader>
+            </View>
+          </Then>
+
+          <Else>
+            <View
+              style={{
+                paddingVertical: 20,
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              <CategoryFont.Selection.Label text="-- no campaigns available --" />
+            </View>
+          </Else>
+        </IfElse>
       </Loader>
     </HomePageRowContainer>
   );

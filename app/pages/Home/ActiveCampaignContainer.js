@@ -17,7 +17,7 @@ import {URL} from '../../config/variables';
 
 import AsyncImage from '../../components/AsyncImage';
 import Loader from '../../components/Loader';
-import IfElse from '../../components/IfElse';
+import { IfElse, Then, Else } from '../../components/IfElse';
 
 import theme from '../../styles/theme.style';
 
@@ -38,6 +38,7 @@ const ActiveCampaignContainer = props => {
         setLoading(false);
         props.loadingDone('loadingActive');
       });
+      console.log('loading active');
     }
   }, [props.refresh]);
 
@@ -251,36 +252,6 @@ const ActiveCampaignContainer = props => {
     }
   }
 
-  const ThenComponent = () => {
-    return (
-      <Carousel
-        data={campaign}
-        renderItem={({item}) =>
-          <ActiveCampaignBody item={item} />
-        }
-        layout={'default'}
-        sliderWidth={theme.SCREEN_WIDTH}
-        itemWidth={cWidth}
-        firstItem={campaign.length > 2 ? 1 : 0}
-      />
-    )
-  }
-
-  const ElseComponent = () => {
-    return (
-      <View
-        style={{
-          justifyContent: 'center',
-          alignItems: 'center'
-        }}
-      >
-        <ActiveCampaignText.Common
-          text="-- no active campaigns --"
-        />
-      </View>
-    )
-  }
-
   return (
     <Loader
       loading={loading}
@@ -288,13 +259,33 @@ const ActiveCampaignContainer = props => {
         backgroundColor: theme.COLOR_GRAY_MEDIUM,
         paddingVertical: 20,
         marginTop: 5
-      }}
-    >
-      <IfElse
-        condition={campaign.length !== 0}
-        then={<ThenComponent />}
-        else={<ElseComponent />}
-      />
+      }}>
+      <IfElse condition={campaign.length !== 0}>
+        <Then>
+          <Carousel
+            data={campaign}
+            renderItem={({item}) =>
+              <ActiveCampaignBody item={item} />
+            }
+            layout={'default'}
+            sliderWidth={theme.SCREEN_WIDTH}
+            itemWidth={cWidth}
+            firstItem={campaign.length > 2 ? 1 : 0} />
+        </Then>
+
+        <Else>
+          <View
+            style={{
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}
+          >
+            <ActiveCampaignText.Common
+              text="-- no active campaigns --"
+            />
+          </View>
+        </Else>
+      </IfElse>
     </Loader>
   );
 };

@@ -34,6 +34,7 @@ class LoadingPage extends Component {
       this.firebaseInit();
     })
     .catch((error) => {
+      this.props.dispatchLoginFailed();
       NavigationService.navigate('Login');
       console.log(error.response);
       console.log(error);

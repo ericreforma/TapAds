@@ -140,8 +140,8 @@ class AddVehiclePage extends Component {
 		if(vehicleToUpload.length === 0)
 			alertMessage += 'Upload Vehicle Photo\n';
 
-		if(plateNumber === '')
-			alertMessage += 'Input plate number';
+		// if(plateNumber === '')
+		// 	alertMessage += 'Input plate number';
 
 		if(alertMessage === '') {
 			vehicleId = vehicleDatabase.find(v =>

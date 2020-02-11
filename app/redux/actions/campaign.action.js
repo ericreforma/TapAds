@@ -9,18 +9,19 @@ export const CampaignAction = {
     const state = getState();
     const page = newBatch ? 1 : state.campaignReducer.current_page + 1;
     CampaignController.home.list(
-        `?cl=${state.campaignReducer.vehicle_classification}&page=${page}`)
-      .then(response => {
-        dispatch({ type: CAMPAIGN.LIST.SUCCESS, data: response.data, newBatch });
-        if(successCallBack) {
-          successCallBack();
-        }
-      })
-      .catch(error => {
-        console.log(error);
-        console.log(error.response);
-        dispatch({ type: CAMPAIGN.LIST.FAILED });
-      });
+      `?cl=${state.campaignReducer.vehicle_classification}&page=${page}`
+    )
+    .then(response => {
+      dispatch({ type: CAMPAIGN.LIST.SUCCESS, data: response.data, newBatch });
+      if(successCallBack) {
+        successCallBack();
+      }
+    })
+    .catch(error => {
+      console.log(error);
+      console.log(error.response);
+      dispatch({ type: CAMPAIGN.LIST.FAILED });
+    });
   },
 
   mylist: (successCallBack = null) => dispatch => {

@@ -2,7 +2,7 @@ import { Dimensions } from 'react-native';
 
 export default {
 // COLORS
-  COLOR_WHITE: '#fff',
+  COLOR_WHITE: '#ffffff',
   COLOR_DIRTY_WHITE: '#f4f4f4',
   COLOR_LIGHT_BLUE: '#00cfff',
   COLOR_MEDIUM_BLUE: '#008bff',

@@ -10,7 +10,7 @@ import { RFValue, RFPercentage } from "react-native-responsive-fontsize";
 
 import CampaignContainer from './Modal/CampaignContainer';
 import Loader from '../../components/Loader';
-import IfElse from '../../components/IfElse';
+import { IfElse, Then, Else } from '../../components/IfElse';
 import AsyncImage from '../../components/AsyncImage';
 
 import { CampaignAction } from '../../redux/actions/campaign.action';
@@ -162,40 +162,6 @@ const RecommendedCampaignContainer = props => {
         numberOfLines={1}
       >{text}</Text>
     )
-  };
-
-  const ThenComponent = () => {
-    return (
-      <FlatList
-        data={campaign}
-        renderItem={data =>
-          <RecommendedCampaignBody {...data} />
-        }
-        keyExtractor={(item, index) => index.toString()}
-        horizontal={true}
-        overScrollMode="never"
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{
-          paddingHorizontal: RFPercentage(2) - 8
-        }}
-      />
-    )
-  }
-
-  const ElseComponent = () => {
-    return (
-      <View
-        style={{
-          justifyContent: 'center',
-          alignItems: 'center',
-          paddingVertical: 20
-        }}
-      >
-        <FontText.NoCampaigns
-          text="-- no recommended campaigns --"
-        />
-      </View>
-    )
   }
 
   return (
@@ -203,12 +169,36 @@ const RecommendedCampaignContainer = props => {
       loading={loading}
       spinnerStyle={{
         paddingVertical: 20
-      }} >
-      <IfElse
-        condition={campaign.length !== 0}
-        then={<ThenComponent />}
-        else={<ElseComponent />}
-      />
+      }}>
+      <IfElse condition={campaign.length !==0}>
+        <Then>
+          <FlatList
+            data={campaign}
+            renderItem={data =>
+              <RecommendedCampaignBody {...data} />
+            }
+            keyExtractor={(item, index) => index.toString()}
+            horizontal={true}
+            overScrollMode="never"
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{
+              paddingHorizontal: RFPercentage(2) - 8
+            }} />
+        </Then>
+
+        <Else>
+          <View
+            style={{
+              justifyContent: 'center',
+              alignItems: 'center',
+              paddingVertical: 20
+            }}
+          >
+            <FontText.NoCampaigns
+              text="-- no recommended campaigns --" />
+          </View>
+        </Else>
+      </IfElse>
     </Loader>
   );
 };

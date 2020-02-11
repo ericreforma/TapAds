@@ -19,7 +19,7 @@ import {
 import PageLayout from '../../../components/PageLayout';
 import PageContainer from '../../../components/PageContainer';
 import Loader from '../../../components/Loader';
-import IfElse from '../../../components/IfElse';
+import { IfElse, Then } from '../../../components/IfElse';
 import RecommendedCampaignContainer from './RecommendedCampaignContainer';
 import styles from '../Styles/RecPage.style';
 import theme from '../../../styles/theme.style';
@@ -105,25 +105,6 @@ class RecommendedPage extends Component {
   }
 
   render() {
-    const ThenComponent = () => {
-      return (
-        <View
-          style={{
-            marginVertical: 20,
-          }}
-        >
-          <TouchableOpacity
-            style={{
-              alignSelf: 'center'
-            }}
-            onPress={this.viewMore}
-          >
-            <RecText.ViewMore text="view more" />
-          </TouchableOpacity>
-        </View>
-      )
-    }
-
     return (
       <PageLayout>
         <NavigationEvents onWillFocus={this.init} />
@@ -140,18 +121,33 @@ class RecommendedPage extends Component {
               homePageInit={this.init}
               campaigns={this.state.campaigns}
               loading={this.state.loading} />
-              
-            <IfElse
-              condition={this.state.loading}
-              then={
+
+            <IfElse condition={this.state.loading}>
+              <Then>
                 <Loader
                   loading={!this.state.loader}
                   spinnerStyle={{ marginVertical: 20 }} >
-                  <IfElse
-                    condition={!this.state.maxPage}
-                    then={<ThenComponent />} />
+                  <IfElse condition={!this.state.maxPage}>
+                    <Then>
+                      <View
+                        style={{
+                          marginVertical: 20,
+                        }}
+                      >
+                        <TouchableOpacity
+                          style={{
+                            alignSelf: 'center'
+                          }}
+                          onPress={this.viewMore}
+                        >
+                          <RecText.ViewMore text="view more" />
+                        </TouchableOpacity>
+                      </View>
+                    </Then>
+                  </IfElse>
                 </Loader>
-              } />
+              </Then>
+            </IfElse>
           </RecPageContainer>
         </PageContainer>
       </PageLayout>

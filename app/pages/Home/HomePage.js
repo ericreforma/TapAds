@@ -34,7 +34,7 @@ class HomePage extends Component {
 	init = () => {
 		this.setState({
 			refresh: new Date().getTime(),
-			loadingActive: true,
+			loadingActive: this.props.activeCampaign.length !== 0 ? true : false,
 			loadingRecommended: true,
 			loadingCategories: true
 		});

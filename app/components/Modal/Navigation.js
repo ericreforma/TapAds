@@ -12,34 +12,11 @@ import {
   CommonText
 } from '../Text';
 import styles from '../../styles/component.Navigation.style';
-
-const navContent = [
-	'Campaign Monitoring',
-	'My Profile',
-	'Messenger',
-	'Terms and Conditions'
-];
+import { navigationContent } from '../../lang/en';
 
 export default class ModalMenu extends Component {
 	logout = () => {
 		this.props.navigateToPage('logout');
-	}
-
-	menuNavOnPress = (index) => (e) => {
-		switch(index){
-			case 0:
-				this.props.navigateToPage('MyCampaign')
-				break;
-			case 1:
-				this.props.navigateToPage('Profile')
-				break;
-			case 2:
-				this.props.navigateToPage('Messenger')
-				break;
-			case 3:
-				this.props.navigateToPage('TermsAndCondition')
-				break;
-		}
 	}
 
 	render() {
@@ -77,22 +54,22 @@ export default class ModalMenu extends Component {
 
 					<View style={styles.navigationContentBody}>
 						<View style={styles.navigationContentBodyTop}>
-							{navContent.map((value, index) =>
+							{navigationContent.map((nav, key) =>
 								<View
-									key={index}
+									key={key}
 									style={[
 										styles.navigationContentBodyTopWrapper,
-										( index == 0
+										( key == 0
 										? styles.navigationContentBodyTopWrapperFirstChild
 										: {} )
 									]}
 								>
 									<TouchableOpacity
 										style={styles.navigationContentBodyTopSpaceBetween}
-										onPress={this.menuNavOnPress(index)}
+										onPress={() => this.props.navigateToPage(nav.route)}
 									>
 										<CommonText color="white">{'<'}</CommonText>
-										<LabelText color="white">{value}</LabelText>
+										<LabelText color="white">{nav.label}</LabelText>
 									</TouchableOpacity>
 								</View>
 							)}

@@ -1,38 +1,66 @@
 import React, { Component } from 'react';
 import {
-    View,
-    Text,
-    PermissionsAndroid,
-    Alert,
-    TouchableOpacity,
-    ActivityIndicator,
-    ScrollView
+  View,
+  ActivityIndicator,
+  BackHandler,
+  Platform,
+  Animated
 } from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
+import KeepAwake from 'react-native-keep-awake';
 import Modal from 'react-native-modal';
 import { connect } from 'react-redux';
-import MapView, { Marker, Polygon, PROVIDER_GOOGLE, Polyline } from 'react-native-maps';
+import MapView, {
+  Marker,
+  Polygon,
+  Polyline,
+  PROVIDER_GOOGLE,
+  AnimatedRegion
+} from 'react-native-maps';
 
 import { MapController } from '../../../controllers';
-import NavigationService from '../../../services/navigation';
 import { CampaignController } from '../../../controllers';
 import { CampaignAction } from '../../../redux/actions/campaign.action';
 import { timeConverter } from '../../../utils';
 import style from '../../../styles/page.StartCampaign.style';
 import mapStyle from '../../../styles/map.style';
-import buttonStyle from '../../../styles/component.ButtonBlue.style';
-import theme from '../../../styles/theme.style';
 import { LabelText, CommonText } from '../../../components/Text';
 import Page from './../../Page';
 import { totalKmDistance } from '../../../config/functions';
 import CampaignSummaryModal from './Modal/CampaignSummaryModal';
+import {
+  Container,
+  CampaignRow,
+  BottomPanel,
+  RowContentWrapper,
+  LeftColumnWrapper,
+  RightColumnWrapper,
+  CampaignRowWithPadding,
+  CampaignRowContent,
+  ContentRow,
+  RedCircle,
+  GreenCricle,
+  TimeContentWrapper,
+  ButtonWrapper,
+  LabelButton,
+  SavingModalWrapper,
+  LabelSaving,
+  CampaignLabelWrapper,
+  MinMaxWrapper,
+  MinMaxIcon,
+  LoaderWrapper,
+  LoaderContainer
+} from './StartCampaignStyledComponents';
+import { IMAGES } from '../../../config/variables';
+import theme from '../../../styles/theme.style';
+
+const animationDuration = 2000;
 
 class StartCampaignPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
       campaign: this.props.campaign,
-      // map: Object.values(MAP)[this.props.campaign.campaignDetails.location_id],
       map: MapController.getPoints(this.props.campaign_location),
       mapView: null,
       myPosition: {
@@ -40,6 +68,12 @@ class StartCampaignPage extends Component {
           latitude: 14.6307252,
           longitude: 121.0436033
         },
+        animatedCoords: new AnimatedRegion({
+          latitude: 14.6307252,
+          longitude: 121.0436033,
+          latitudeDelta: 0.02,
+          longitudeDelta: 0.01
+        }),
         distance: 0,
       timestamp: null,
         heading: 0,
@@ -57,10 +91,6 @@ class StartCampaignPage extends Component {
       counted: 0,
       prevCounted: 0,
       polygons: [],
-      styleAlarm: {
-        backgroundColor: theme.COLOR_GRAY_LIGHT,
-        color: theme.COLOR_BLACK
-      },
       polygonFill: 'rgba(255, 17, 44, 0.4)',
       campaignTripMap: [],
       locationData: [],
@@ -85,7 +115,11 @@ class StartCampaignPage extends Component {
       savingModalVisible: false,
       summaryModalVisible: false,
       markerImage: require('../../../assets/image/car_blue_marker.png'),
-      unsentLocations: []
+      unsentLocations: [],
+      initLoading: true,
+      animatedHeight: new Animated.Value(1000),
+      cardHeight: 1000,
+      imageRotate: 90
     };
 
     console.disableYellowBox = true;
@@ -139,57 +173,84 @@ class StartCampaignPage extends Component {
     this.setState({
       timeInterval: tInterval
     });
+
+    KeepAwake.activate();
+    this.backHandler = BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);
+  }
+
+  componentWillUnmount() {
+    this.backHandler.remove();
+  }
+
+  handleBackPress = () => {
+    console.log('Back button press');
+    return true;
   }
 
   watchPosition() {
-    const watchId = Geolocation.watchPosition(
-      (position) => {
-        console.log(position);
+    const watchId = Geolocation.watchPosition(position => {
+      const newPosition = Object.assign({}, this.state.myPosition, {
+        coords: {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude
+        },
+        heading: position.coords.heading,
+        timestamp: position.timestamp,
+        speed: position.coords.speed
+      });
+      
+      this.setState({
+        prevPosition: this.state.myPosition,
+        myPosition: newPosition
+      });
 
-        this.setState({
-          prevPosition: this.state.myPosition,
-          myPosition: {
-            coords: {
-              latitude: position.coords.latitude,
-              longitude: position.coords.longitude
-            },
-            heading: position.coords.heading,
-            timestamp: position.timestamp,
-            speed: position.coords.speed
-          }
-        });
-
-        this.zoomToMe(this.state.myPosition.coords);
-        this.checkIfWithinLocation(position);
-      },
-      (error) => {
-        console.log(error);
-      },
-      {
-        enableHighAccuracy: true,
-        fastestInterval: 3000,
-        interval: 5000,
-        distanceFilter: 100
-      }
-    );
+      this.goAnimate(this.state.myPosition.coords);
+      this.zoomToMe(this.state.myPosition.coords);
+      this.checkIfWithinLocation(position);
+    }, error => {
+      console.log(error);
+    }, {
+      enableHighAccuracy: true,
+      fastestInterval: 3000,
+      interval: 5000,
+      distanceFilter: 100
+    });
 
     this.setState({ watchId });
+  }
+  
+  goAnimate = newCoordinate => {
+    if(Platform.OS === 'android') {
+      if(this.marker) {
+        this.marker._component
+        .animateMarkerToCoordinate(
+          newCoordinate,
+          animationDuration
+        );
+      }
+    } else {
+      this.state.coordinate.timing({
+        newCoordinate,
+        animationDuration
+      }).start();
+    }
   }
 
   async onMapReady() {
     Geolocation.getCurrentPosition(
       async (position) => {
+        const newPosition = Object.assign({}, this.state.myPosition, {
+          coords: {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude
+          },
+          heading: position.coords.heading,
+          timestamp: position.timestamp,
+          speed: position.coords.speed
+        });
 
         this.setState({
-          myPosition: {
-            coords: {
-              latitude: position.coords.latitude,
-              longitude: position.coords.longitude
-            },
-            heading: position.coords.heading,
-            timestamp: position.timestamp,
-            speed: position.coords.speed
-          },
+          myPosition: newPosition,
           prevPosition: {
             coords: {
               latitude: position.coords.latitude,
@@ -284,30 +345,20 @@ class StartCampaignPage extends Component {
       longitudeDelta: 0.01
     };
 
-    this.mapView.animateToRegion(c, 0);
+    this.mapView.animateToRegion(c, animationDuration);
   }
 
   checkIfWithinLocation(position) {
-
-    if (MapController.isInsidePolygon(this.state.polygons, this.state.myPosition.coords)) {
+    if(MapController.isInsidePolygon(this.state.polygons, this.state.myPosition.coords)) {
       // inside campaign
       this.setState({
-        styleAlarm: {
-          backgroundColor: theme.COLOR_GRAY_LIGHT,
-          color: theme.COLOR_BLACK
-        },
         prevCounted: this.state.counted,
         counted: 1,
         polygonFill: 'rgba(255, 17, 44, 0)'
       });
-
     } else {
       // outside Campaign
       this.setState({
-        styleAlarm: {
-          backgroundColor: theme.COLOR_ALARM,
-          color: theme.COLOR_WHITE
-        },
         prevCounted: this.state.counted,
         counted: 0,
         polygonFill: 'rgba(255, 17, 44, 0.4)'
@@ -315,14 +366,16 @@ class StartCampaignPage extends Component {
     }
 
     const distance = MapController.getDistanceBetween(
-              this.state.prevPosition.coords,
-              this.state.myPosition.coords);
+      this.state.prevPosition.coords,
+      this.state.myPosition.coords
+    );
 
-    if (this.state.counted && this.state.prevCounted) {
+    if(this.state.counted && this.state.prevCounted) {
       this.setState({
         totalCampaignTraveled: this.state.totalCampaignTraveled + parseFloat(distance)
       });
     }
+
     this.setState({
       totalCarTraveled: this.state.totalCarTraveled + parseFloat(distance)
     });
@@ -346,7 +399,7 @@ class StartCampaignPage extends Component {
       speed: position.coords.speed,
       timestamp: position.timestamp
     };
-    console.log(campaignTripMapArr);
+    
     let campaignTripMap =
       (this.state.campaignTripMap === undefined || this.state.campaignTripMap.length === 0) ?
       [] : [...this.state.campaignTripMap];
@@ -356,23 +409,22 @@ class StartCampaignPage extends Component {
       [] : [...this.state.locationData];
 
     CampaignController.trip_send_location(JSON.stringify(campaignTripMapArr))
-      .then((res) => {
-        console.log(res.data);
-      })
-      .catch((e) => {
-        console.log(e);
-        console.log(e.message);
-        console.log(e.response);
+    .then((res) => {
+      console.log(res.data);
+    })
+    .catch((e) => {
+      console.log(e);
+      console.log(e.message);
+      console.log(e.response);
 
-        let unsentLocations =
-          (this.state.campaignTripMap === undefined || this.state.campaignTripMap.length === 0) ?
-          [] : [...this.state.campaignTripMap];
+      let unsentLocations =
+        (this.state.campaignTripMap === undefined || this.state.campaignTripMap.length === 0) ?
+        [] : [...this.state.campaignTripMap];
 
-        unsentLocations.push(campaignTripMapArr);
+      unsentLocations.push(campaignTripMapArr);
 
-        this.setState({ unsentLocations });
-      });
-
+      this.setState({ unsentLocations });
+    });
 
     campaignTripMap.push(campaignTripMapArr);
     locationData.push(locationDataNew);
@@ -383,59 +435,54 @@ class StartCampaignPage extends Component {
     });
   }
 
-  mapContent = () =>
-    <View style={[mapStyle.container, style.mapContainer]}>
-      <MapView
-        style={mapStyle.map}
-        provider={PROVIDER_GOOGLE}
-        initialRegion={this.state.map.region}
-        ref={ref => this.mapView = ref}
-        onMapReady={() => this.onMapReady()}
-      >
-      {this.state.map.coordinates.map(polygon =>
-        polygon.map((coord, key) =>
-          <Polygon
-            key={key}
-            coordinates={coord}
-            fillColor={this.state.polygonFill}
-            strokeColor="rgba(255, 17, 44, 0.4)"
-          />
-        )
-      )}
+  mapContent = () => {
+    return (
+      <View style={[mapStyle.container, style.mapContainer]}>
+        <MapView
+          style={mapStyle.map}
+          provider={PROVIDER_GOOGLE}
+          initialRegion={this.state.map.region}
+          ref={ref => this.mapView = ref}
+          onMapReady={() => this.onMapReady()}
+        >
+          {this.state.map.coordinates.map(polygon =>
+            polygon.map((coord, key) =>
+              <Polygon
+                key={key}
+                coordinates={coord}
+                fillColor={this.state.polygonFill}
+                strokeColor="rgba(255, 17, 44, 0.4)" />
+            )
+          )}
 
-      <Polyline
-        coordinates={this.state.locationData}
-        strokeColor="rgba(38, 96, 255, 0.8)"
-        strokeWidth={6}
-        lineCap="round"
-      />
+          <Polyline
+            coordinates={this.state.locationData}
+            strokeColor="rgba(38, 96, 255, 0.8)"
+            strokeWidth={6}
+            lineCap="round" />
 
-      <Marker.Animated
-        image={this.state.markerImage}
-        ref={ref => this.marker = ref}
-        coordinate={this.state.myPosition.coords}
-        rotation={this.state.myPosition.heading}
-        anchor={{x: 0.5, y: 0.5}}
-      />
+          <Marker.Animated
+            image={this.state.markerImage}
+            ref={ref => this.marker = ref}
+            coordinate={this.state.myPosition.animatedCoords}
+            rotation={this.state.myPosition.heading}
+            anchor={{x: 0.5, y: 0.5}} />
+        </MapView>
 
-      </MapView>
-
-    </View>
-
-  savingModal = () =>
-    <Modal
-      isVisible={this.state.savingModalVisible}
-    >
-      <View style={style.modalContent}>
-        <ActivityIndicator
-          size="large"
-          color="#005B96"
-        />
-        <Text>
-          Saving
-        </Text>
       </View>
-    </Modal>
+    )
+  }
+
+  savingModal = () => {
+    return (
+      <Modal isVisible={this.state.savingModalVisible}>
+        <SavingModalWrapper>
+          <ActivityIndicator size="large" color="#005B96" />
+          <LabelSaving>Saving</LabelSaving>
+        </SavingModalWrapper>
+      </Modal>
+    )
+  }
 
   summaryModal = () => {
     const totalDistance = parseFloat(totalKmDistance(this.state.campaign.campaignDetails));
@@ -477,167 +524,154 @@ class StartCampaignPage extends Component {
     );
   }
 
+  bottomPanelOnLayout = ({nativeEvent}) => {
+    const {height} = nativeEvent.layout;
+
+    if(this.state.initLoading)
+      Animated.timing(this.state.animatedHeight, {
+        toValue: height,
+        duration: 500
+      }).start(() => {
+        this.setState({
+          cardHeight: height,
+          initLoading: false
+        });
+      });
+  }
+
+  minMaxViewOnPress = () => {
+    Animated.timing(this.state.animatedHeight, {
+      toValue: this.state.animatedHeight._value ? 0 : this.state.cardHeight,
+      duration: 500
+    }).start(() => {
+      this.setState({ imageRotate: this.state.animatedHeight._value ? 90 : 270 });
+    });
+  }
+
   render() {
     return (
       <Page nonPage>
-        <View style={style.container}>
+        <LoaderContainer
+          visible={this.state.initLoading}>
+          <LoaderWrapper>
+            <ActivityIndicator
+              size="large"
+              color={theme.COLOR_GRAY_HEAVY} />
+          </LoaderWrapper>
+        </LoaderContainer>
+
+        <Container>
           {this.summaryModal()}
           {this.savingModal()}
           {this.mapContent()}
 
-          <View style={style.bottomPanel}>
-            <View style={[style.viewCampaignRow, this.state.styleAlarm]}>
+          <BottomPanel>
+            <CampaignRow active={this.state.counted}>
+              <CampaignLabelWrapper>
+                <LabelText
+                  color={this.state.counted ? "black" : "white"}
+                  numberOfLines={1}>
+                  {this.state.campaign.campaignDetails.name}
+                </LabelText>
 
-              {/* <Text style={[style.textCampaignRow, this.state.styleAlarm]}>
-                {this.state.campaign.campaignDetails.name}
-              </Text>
-              <Text style={style.textBrandRow}>
-                {this.state.campaign.client.business_name}
-              </Text> */}
+                <CommonText
+                  color={this.state.counted ? "black" : "white"}
+                  numberOfLines={1}>
+                  {this.state.campaign.client.business_name}
+                </CommonText>
+              </CampaignLabelWrapper>
 
-              <LabelText color={this.state.counted ? "black" : "white"}>
-                {this.state.campaign.campaignDetails.name}
-              </LabelText>
+              <MinMaxWrapper
+                onPress={this.minMaxViewOnPress}>
+                <MinMaxIcon
+                  style={{
+                    transform: [{ rotate: `${this.state.imageRotate}deg` }]
+                  }}
+                  source={IMAGES.ICONS.caret_right} />
+              </MinMaxWrapper>
+            </CampaignRow>
 
-              <CommonText color={this.state.counted ? "black" : "white"}>
-                {this.state.campaign.client.business_name}
-              </CommonText>
-            </View>
+            <Animated.View
+              style={{
+                height: this.state.animatedHeight
+              }}>
+              <View onLayout={this.bottomPanelOnLayout}>
+                <CampaignRowWithPadding>
+                  <CampaignRowContent>
+                    <RowContentWrapper>
+                      <LeftColumnWrapper>
+                        <CommonText>Counting</CommonText>
+                      </LeftColumnWrapper>
 
-            <View style={{padding: 14}}>
-              <View
-                style={{
-                  paddingBottom: 7,
-                  borderBottomColor: '#a7a7a7',
-                  borderBottomWidth: 1
-                }}
-              >
-                {/* campaign area */}
-                <RowContent
-                  leftColumn={(
-                    <CommonText>Counting</CommonText>
-                  )}
-                  rightColumn={(
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        alignItems: 'center'
-                      }}
-                    >
-                      {/* red part */}
-                      <View
-                        style={{
-                          width: 20,
-                          height: 20,
-                          borderRadius: 10,
-                          marginRight: 4,
-                          backgroundColor: this.state.counted ? theme.COLOR_GRAY_MEDIUM : theme.COLOR_RED
-                        }}
-                      ></View>
+                      <RightColumnWrapper>
+                        <ContentRow>
+                          <RedCircle active={this.state.counted} />
+                          <GreenCricle active={this.state.counted} />
+                        </ContentRow>
+                      </RightColumnWrapper>
+                    </RowContentWrapper>
+                    
+                    <RowContentWrapper>
+                      <LeftColumnWrapper>
+                        <CommonText>Campaign Distance</CommonText>
+                      </LeftColumnWrapper>
 
-                      {/* green part */}
-                      <View
-                        style={{
-                          width: 20,
-                          height: 20,
-                          borderRadius: 10,
-                          marginLeft: 4,
-                          backgroundColor: this.state.counted ? theme.COLOR_GREEN : theme.COLOR_GRAY_MEDIUM
-                        }}
-                      ></View>
-                    </View>
-                  )}
-                />
+                      <RightColumnWrapper>
+                        <LabelText large>
+                          {((this.state.totalCampaignTraveled)).toFixed(2)}km
+                        </LabelText>
+                      </RightColumnWrapper>
+                    </RowContentWrapper>
+                    
+                    <RowContentWrapper>
+                      <LeftColumnWrapper>
+                        <CommonText>Total Distance</CommonText>
+                      </LeftColumnWrapper>
 
-                {/* campaign distance */}
-                <RowContent
-                  leftColumn={(
-                    <CommonText>Campaign Distance</CommonText>
-                  )}
-                  rightColumn={(
-                    <LabelText large>
-                      {((this.state.totalCampaignTraveled)).toFixed(2)}km
-                    </LabelText>
-                  )}
-                />
+                      <RightColumnWrapper>
+                        <LabelText>
+                          {((this.state.totalCarTraveled)).toFixed(2)}km
+                        </LabelText>
+                      </RightColumnWrapper>
+                    </RowContentWrapper>
+                  </CampaignRowContent>
 
-                {/* total distance */}
-                <RowContent
-                  leftColumn={(
-                    <CommonText>Total Distance</CommonText>
-                  )}
-                  rightColumn={(
-                    <LabelText>
-                      {((this.state.totalCarTraveled)).toFixed(2)}km
-                    </LabelText>
-                  )}
-                />
+                  <TimeContentWrapper>
+                    <RowContentWrapper>
+                      <LeftColumnWrapper>
+                        <CommonText xsmall>Time Started</CommonText>
+                      </LeftColumnWrapper>
+
+                      <RightColumnWrapper>
+                        <CommonText xsmall>
+                          {this.state.startTimeText}
+                        </CommonText>
+                      </RightColumnWrapper>
+                    </RowContentWrapper>
+
+                    <RowContentWrapper>
+                      <LeftColumnWrapper>
+                        <CommonText xsmall>Duration</CommonText>
+                      </LeftColumnWrapper>
+
+                      <RightColumnWrapper>
+                        <CommonText xsmall>
+                          {this.state.spanTime}min
+                        </CommonText>
+                      </RightColumnWrapper>
+                    </RowContentWrapper>
+                  </TimeContentWrapper>
+                </CampaignRowWithPadding>
+
+                <ButtonWrapper onPress={() => this.save()}>
+                  <LabelButton>
+                    End
+                  </LabelButton>
+                </ButtonWrapper>
               </View>
-
-              <View
-                style={{
-                  paddingTop: 7
-                }}
-              >
-                {/* time started */}
-                <RowContent
-                  leftColumn={(
-                    <CommonText xsmall>Time Started</CommonText>
-                  )}
-                  rightColumn={(
-                    <CommonText xsmall>
-                      {this.state.startTimeText}
-                    </CommonText>
-                  )}
-                />
-
-                {/* duration */}
-                <RowContent
-                  leftColumn={(
-                    <CommonText xsmall>Duration</CommonText>
-                  )}
-                  rightColumn={(
-                    <CommonText xsmall>
-                      {this.state.spanTime}min
-                    </CommonText>
-                  )}
-                />
-              </View>
-            </View >
-
-            {/* <View style={style.viewColumn}>
-              <Text style={style.textCampaignTraveled}>
-                {((this.state.totalCampaignTraveled)).toFixed(2)}km
-              </Text>
-              <Text style={style.textCarTraveled}>
-                {((this.state.totalCarTraveled)).toFixed(2)}km 
-              </Text>
-            </View>
-
-            <View style={style.viewColumn}>
-              <Text style={style.textLocation}>
-                {this.state.map.name}
-              </Text>
-              <Text style={style.textTime}>
-                {this.state.startTimeText}
-              </Text>
-              <Text style={style.textTime}>
-                {this.state.spanTime}min
-              </Text>
-            </View> */}
-
-            <View style={style.viewButtonRow}>
-              <TouchableOpacity
-                style={[buttonStyle.buttonStyle]}
-                onPress={() => this.save()}
-              >
-                <Text style={[buttonStyle.buttonLabel, style.button]}>
-                  End
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
+            </Animated.View>
+          </BottomPanel>
+        </Container>
       </Page>
     );
   }
@@ -655,36 +689,3 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(StartCampaignPage);
-
-class RowContent extends Component {
-  render() {
-    return (
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'flex-start',
-        }}
-      >
-        <View
-          style={{
-            flex: 1,
-            paddingRight: 10,
-            alignItems: 'flex-start'
-          }}
-        >
-          {this.props.leftColumn}
-        </View>
-        
-        <View
-          style={{
-            flex: 1,
-            paddingLeft: 10,
-            alignItems: 'flex-end'
-          }}
-        >
-          {this.props.rightColumn}
-        </View>
-      </View>
-    );
-  }
-}

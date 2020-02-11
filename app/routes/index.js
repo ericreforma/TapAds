@@ -28,7 +28,7 @@ import {
 	DashboardPage,
 	RecommendedPage,
 	ForgotPasswordPage,
-	MonthlyCarPhotoPage
+	MonthlyCarPhotoPage,
 } from '../pages';
 
 import TestPage from '../pages/TestPage';

@@ -1,6 +1,6 @@
 import LogInPage from './LoginPage';
 import NotificationPage from './NotificationPage';
-import SignUpPage from './SignUpPage';
+// import SignUpPage from './SignUpPage';
 import SignUpAddImagePage from './SignUpAddImagePage';
 import SignUpAddVehiclesPage from './SignUpAddVehiclesPage';
 import LoadingPage from './LoadingPage';
@@ -18,11 +18,12 @@ import MonthlyCarPhotoPage from './MonthlyCarPhotoPage';
 export { HomePage } from './Home';
 export * from './Campaign';
 export * from './Profile';
+export * from './Auth';
 
 export {
 	LogInPage,
 	NotificationPage,
-	SignUpPage,
+	// SignUpPage,
 	SignUpAddImagePage,
 	SignUpAddVehiclesPage,
 	LoadingPage,

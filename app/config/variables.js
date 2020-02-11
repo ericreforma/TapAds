@@ -147,6 +147,11 @@ export const MAP = {
 
 export const IMAGES = {
   ICONS: {
+    LOGIN_USERNAME: require('../assets/image/icons/login_username_icon.png'),
+    LOGIN_PASSWORD: require('../assets/image/icons/login_password_icon.png'),
+    PASSWORD_HIDE: require('../assets/image/icons/login_password_hide_icon.png'),
+    PASSWORD_SHOW: require('../assets/image/icons/login_password_show_icon.png'),
+    LOGIN_ARROW_RIGHT: require('../assets/image/icons/login_arrow_right_icon.png'),
     close_red: require('../assets/image/icons/close_icon.png'),
     close_white: require('../assets/image/icons/close_icon_white.png'),
     add: require('../assets/image/icons/add_icon.png'),
@@ -178,7 +183,12 @@ export const IMAGES = {
       female: require('../assets/image/female_avatar.png')
     },
     favorite_icon: require('../assets/image/icons/completed_favorite_icon.png'),
-    mail_icon: require('../assets/image/icons/mail_icon.png')
+    mail_icon: require('../assets/image/icons/mail_icon.png'),
+    caret_right: require('../assets/image/icons/caret-circle-right.png'),
+  },
+  BG_LOGIN_PAGE: require('../assets/image/login_page_bg.png'),
+  LOGO: {
+    TAPTAB: require('../assets/image/app_logo.png')
   }
 };
 

@@ -18,6 +18,7 @@ import DatePicker from 'react-native-datepicker';
 import { AuthController, NetworkController } from '../controllers';
 import { SignupAction } from '../redux/actions/signup.action';
 import { URL, IMAGES } from '../config/variables';
+import { IfElse, Then } from '../components/IfElse';
 
 // modals for terms and condition
 import TermsAndCondition from '../components/Modal/signup/TermsAndCondition';
@@ -90,9 +91,17 @@ class SignUpPage extends Component {
 	}
 
 	inputValueOnChangeText = (dataname) => (value) => {
-		this.setState({
-			[dataname]: value
-		});
+		if(dataname !== 'contact_number') {
+			this.setState({
+				[dataname]: value
+			});
+		} else {
+			if(value.length <= 10) {
+				this.setState({
+					[dataname]: value
+				});
+			}
+		}
 	}
 
 	signUpButtonOnSubmit = () => {
@@ -238,20 +247,38 @@ class SignUpPage extends Component {
 									}}
 									onDateChange={this.inputValueOnChangeText(input.dataName)}
 								/>
-								: <View key={index}>
+								: <View key={index}
+									style={{
+										flexDirection: 'row',
+										alignItems: 'center', 
+										borderBottomWidth: 2,
+										borderBottomColor: theme.COLOR_LIGHT_BLUE,
+										marginVertical: 10,
+									}}>
+									<IfElse condition={input.dataName === 'contact_number'}>
+										<Then>
+											<View style={{paddingRight: 10}}>
+												<Text style={{
+													color: theme.COLOR_BLACK,
+													fontFamily: 'Montserrat-Light',
+													fontSize: 16,
+												}}>+63</Text>
+											</View>
+										</Then>
+									</IfElse>
+
 									<TextInput
 										style={[
 											{
-												borderBottomWidth: 2,
-												borderBottomColor: theme.COLOR_LIGHT_BLUE,
 												fontFamily: 'Montserrat-Light',
 												fontSize: 16,
 												paddingVertical: 7,
-												marginVertical: 10,
 												paddingHorizontal: 0,
-												color: theme.COLOR_BLACK
+												color: theme.COLOR_BLACK,
+												flex: 1
 											}
 										]}
+										value={this.state[input.dataName]}
 										keyboardType={input.dataName == 'contact_number' ? 'number-pad' : 'default'}
 										secureTextEntry={input.dataName == 'password' || input.dataName == 'password_confirmation' ? true : false}
 										placeholder={input.placeholder}
