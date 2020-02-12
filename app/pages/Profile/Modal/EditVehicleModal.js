@@ -351,7 +351,7 @@ const EditVehicleModal = ({d, update}) => {
             size={20}
             name='send'
             type='font-awesome'
-            color={theme.COLOR_NORMAL_FONT} />
+            color={plateNumber ? theme.COLOR_BLUE : theme.COLOR_NORMAL_FONT} />
         </Loader>
       </TouchableOpacity>
     )
@@ -552,7 +552,7 @@ const EditVehicleModal = ({d, update}) => {
                         backgroundColor: theme.COLOR_LIGHT_BLUE
                       }}
                       onPress={uploadVehiclePhotos} >
-                      <VehicleText.Label text="Save Changes" white />
+                      <VehicleText.Label text="Update Vehicle Photos" white />
                     </TouchableOpacity>
                   </Else>
                 </IfElse>
