@@ -12,7 +12,8 @@ import MapView, {
 	Polygon,
 	PROVIDER_GOOGLE,
 	Polyline,
-	Marker
+	Marker,
+	AnimatedRegion
 } from 'react-native-maps';
 
 import { UserController } from '../../controllers/UserController';
@@ -28,6 +29,8 @@ import {
 	getHourDiff
 } from '../../config/functions';
 
+const animationDuration = 1000;
+
 export default class DashboardTrip extends Component {
 	constructor(props) {
 		super(props);
@@ -36,9 +39,16 @@ export default class DashboardTrip extends Component {
 			loader: false,
 			coordinates: [],
 			pointToPoint: {
-				firstPos: false,
+				firstPos: new AnimatedRegion({
+          latitude: 14.6307252,
+          longitude: 121.0436033,
+          latitudeDelta: 0.01,
+          longitudeDelta: 0.005
+        }),
 				lastPos: false
 			},
+			currentHeading: 0,
+			heading: [],
 			tripMap: [],
 			tripTimeStamp: {
 				start: false,
@@ -64,9 +74,15 @@ export default class DashboardTrip extends Component {
 				var totalDistance = 0,
 					totalCampaignDistance = 0;
 				const pointToPoint = {
-					firstPos: false,
+					firstPos: new AnimatedRegion({
+						latitude: 14.6307252,
+						longitude: 121.0436033,
+						latitudeDelta: 0.01,
+						longitudeDelta: 0.005
+					}),
 					lastPos: false
 				};
+
 				const tripMap = res.data.map((trip, index) => {
 					const coor = {
 						latitude: parseFloat(trip.latitude),
@@ -74,10 +90,12 @@ export default class DashboardTrip extends Component {
 					};
 					
 					if(index === 0) {
-						pointToPoint.firstPos = {
+						pointToPoint.firstPos = new AnimatedRegion({
 							latitude: parseFloat(trip.latitude),
 							longitude: parseFloat(trip.longitude),
-						};
+							latitudeDelta: 0.01,
+							longitudeDelta: 0.005
+						});
 					} else if(index === (res.data.length - 1)) {
 						pointToPoint.lastPos = {
 							latitude: parseFloat(trip.latitude),
@@ -91,6 +109,8 @@ export default class DashboardTrip extends Component {
 
 					return coor;
 				});
+
+				const heading = res.data.map(trip => parseFloat(trip.heading));
 
 				const firstTrip = res.data.find((x, idx) => idx === 0);
 				const lastTrip = res.data.find((x, idx) => idx === (res.data.length - 1));
@@ -113,12 +133,14 @@ export default class DashboardTrip extends Component {
 					pointToPoint,
 					tripTimeStamp,
 					totalTime,
+					heading,
+					currentHeading: heading[0] ? heading[0] : 0,
 					totalDistance: totalDistance.toFixed(2),
 					totalCampaignDistance: totalCampaignDistance.toFixed(2),
 				});
 
-				if(pointToPoint.firstPos && pointToPoint.lastPos && this.props.modalVisible) {
-					var intervalId = setInterval(this.movingCar, (5000 / tripMap.length));
+				if(tripMap.length !== 0 && this.props.modalVisible) {
+					var intervalId = setInterval(this.movingCar, animationDuration); //(5000 / tripMap.length)
 					this.setState({intervalId});
 				}
 				this.toggleLoader();
@@ -176,20 +198,44 @@ export default class DashboardTrip extends Component {
 	}
 
 	movingCar = () => {
-		var { pointToPoint,
+		var {
 			tripMap,
-			animationCount } = this.state;
-
-		pointToPoint.firstPos = tripMap[animationCount];
-		animationCount += 1;
-		if(animationCount === tripMap.length) {
-			animationCount = 0;
-		}
-		this.setState({
-			pointToPoint,
+			heading,
+			currentHeading,
 			animationCount
+		} = this.state;
+
+		this.zoomToMe(tripMap[animationCount]);
+		this.goAnimate(tripMap[animationCount]);
+		currentHeading = heading[animationCount];
+
+		animationCount += 1;
+		if(animationCount === tripMap.length)
+			animationCount = 0;
+
+
+		this.setState({
+			animationCount,
+			currentHeading
 		});
 	}
+  
+  goAnimate = newCoordinate => {
+    if(Platform.OS === 'android') {
+      if(this.markerRef) {
+        this.markerRef._component
+        .animateMarkerToCoordinate(
+          newCoordinate,
+          animationDuration
+        );
+      }
+    } else {
+      this.state.pointToPoint.firstPos.timing({
+        newCoordinate,
+        animationDuration
+      }).start();
+    }
+  }
 
 	closeModal = () => {
 		clearInterval(this.state.intervalId);
@@ -202,6 +248,17 @@ export default class DashboardTrip extends Component {
 		});
 		this.props.toggleModal();
 	}
+
+  zoomToMe(coords) {
+    const c = {
+      latitude: coords.latitude,
+      longitude: coords.longitude,
+			latitudeDelta: 0.01,
+			longitudeDelta: 0.005
+    };
+
+    this.mapView.animateToRegion(c, animationDuration);
+  }
 	
 	render() {
 			return (
@@ -259,11 +316,12 @@ export default class DashboardTrip extends Component {
 																					}}
 																			>
 																					<MapView
-																							style={{
-																									...StyleSheet.absoluteFillObject
-																							}}
-																							initialRegion={this.state.region}
-																							provider={PROVIDER_GOOGLE}
+																						ref={ref => this.mapView = ref}
+																						style={{
+																								...StyleSheet.absoluteFillObject
+																						}}
+																						initialRegion={this.state.region}
+																						provider={PROVIDER_GOOGLE}
 																					>
 																							{this.state.coordinates.map(polygon =>
 																									polygon.map((c, index) =>
@@ -283,18 +341,18 @@ export default class DashboardTrip extends Component {
 																									lineCap="round"
 																							/>
 																							
-																							{this.state.pointToPoint.firstPos ? (
-																									<Marker.Animated
-																											image={IMAGES.ICONS.car_icon}
-																											coordinate={this.state.pointToPoint.firstPos}
-																											anchor={{x: 0.5, y: 0.5}}
-																									/>
-																							) : null}
+																							<Marker.Animated
+																								ref={ref => this.markerRef = ref}
+																								image={IMAGES.ICONS.car_icon}
+																								coordinate={this.state.pointToPoint.firstPos}
+																								rotation={this.state.currentHeading}
+																								anchor={{x: 0.5, y: 0.5}}
+																							/>
 																							
 																							{this.state.pointToPoint.lastPos ? (
 																									<Marker
-																											image={IMAGES.ICONS.end_trip_icon}
-																											coordinate={this.state.pointToPoint.lastPos}
+																										image={IMAGES.ICONS.end_trip_icon}
+																										coordinate={this.state.pointToPoint.lastPos}
 																									/>
 																							) : null}
 																					</MapView>

@@ -188,7 +188,7 @@ class ProfilePage extends Component {
 			console.log(error);
 			this.modalToggle.bankDetails();
 			this.failedFlashMessage(
-				'Error saving account number!',
+				'Error saving Gcash number!',
 				'We apologize for the inconvenience,\nplease try again later'
 			);
 		});
@@ -357,7 +357,7 @@ class ProfilePage extends Component {
 										disabled={this.state.loader}
 									>
 										<Text style={styles.pinkButton}>
-											Edit GCash Details
+											Edit Gcash Details
 										</Text>
 									</TouchableOpacity>
 								</View>

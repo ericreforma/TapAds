@@ -41,8 +41,8 @@ export const MapController = {
     const dataMap = locations.map(l => JSON.parse(l.json_coordinates));
     const lats = [];
     const lons = [];
-    let latitudeDelta = 0;
-    let longitudeDelta = 0;
+    let latitudeDelta = 0.02;
+    let longitudeDelta = 0.01;
 
     const coordinates = dataMap.map(c => {
       const returnCoord = c.map(geo => geo.map(coord => {

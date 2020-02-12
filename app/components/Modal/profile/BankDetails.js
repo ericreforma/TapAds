@@ -45,8 +45,7 @@ export default class BankDetails extends Component {
 			errorsPassword = true;
 		}
 
-		if(accountNumber.toString().length < 9
-			|| accountNumber.toString().length > 16) {
+		if(accountNumber.toString().length !== 11) {
 			errorsAccountNumberLength = true;
 		}
 
@@ -54,8 +53,8 @@ export default class BankDetails extends Component {
 			if(errorsAccountNumberLength) {
 				this.dropDownAlertRef.alertWithType(
 					'error',
-					'Account number invalid!',
-					'Account number must be 9-15 digits long.'
+					'Gcash number invalid!',
+					'Gcash number must be 11 digits long.'
 				);
 			} else {
 				this.toggleSubmitLoader();
@@ -77,13 +76,13 @@ export default class BankDetails extends Component {
 					this.toggleSubmitLoader();
 					this.dropDownAlertRef.alertWithType(
 						'error',
-						'Error saving account number!',
+						'Error saving Gcash number!',
 						'We apologize for the inconvenience,\nplease try again later'
 					);
 				});
 			}
 		} else {
-			const descAccountNumber = errorsAccountNumber ? 'Account Number' : '';
+			const descAccountNumber = errorsAccountNumber ? 'Gcash Number' : '';
 			const descPassword = errorsPassword ? 'your current Password' : '';
 			const divider = errorsAccountNumber && errorsPassword ? ' and ' : '';
 			const description = [descAccountNumber, divider, descPassword].join('');
@@ -129,7 +128,7 @@ export default class BankDetails extends Component {
 								alignSelf: 'center'
 							}}
 						>
-							<LabelText large>GCash Info</LabelText>
+							<LabelText large>Gcash Info</LabelText>
 						</View>
 
 						<View
@@ -154,7 +153,7 @@ export default class BankDetails extends Component {
 									}}
 								>
 									<CommonText color="white">
-										GCash number:
+										Gcash number:
 									</CommonText>
 								</View>
 								
@@ -173,11 +172,11 @@ export default class BankDetails extends Component {
 							>
 								{this.props.accountNumber ? (
 									<CommonText>
-										{'If you wish to change your current GCash number.\nPlease proceed and fill up the field below:'}
+										{'If you wish to change your current Gcash number.\nPlease proceed and fill up the field below:'}
 									</CommonText>
 								) : (
 									<CommonText>
-										{'Currently, you presented no account number.\nIn order to withdraw any earnings, please proceed and fill up the field below:'}
+										{'Currently, you presented no Gcash number.\n\nIn order to receive any earnings, please proceed and fill up the fields below:'}
 									</CommonText>
 								)}
 							</View>

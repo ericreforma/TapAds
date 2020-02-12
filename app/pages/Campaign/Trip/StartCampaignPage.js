@@ -26,7 +26,7 @@ import style from '../../../styles/page.StartCampaign.style';
 import mapStyle from '../../../styles/map.style';
 import { LabelText, CommonText } from '../../../components/Text';
 import Page from './../../Page';
-import { totalKmDistance } from '../../../config/functions';
+import { totalKmDistance, getHeadingTwoPoints } from '../../../config/functions';
 import CampaignSummaryModal from './Modal/CampaignSummaryModal';
 import {
   Container,
@@ -75,7 +75,7 @@ class StartCampaignPage extends Component {
           longitudeDelta: 0.01
         }),
         distance: 0,
-      timestamp: null,
+        timestamp: null,
         heading: 0,
         speed: 0
       },
@@ -189,6 +189,7 @@ class StartCampaignPage extends Component {
 
   watchPosition() {
     const watchId = Geolocation.watchPosition(position => {
+      position.coords.heading = getHeadingTwoPoints(this.state.myPosition, position);
       const newPosition = Object.assign({}, this.state.myPosition, {
         coords: {
           latitude: position.coords.latitude,
@@ -239,6 +240,7 @@ class StartCampaignPage extends Component {
   async onMapReady() {
     Geolocation.getCurrentPosition(
       async (position) => {
+        position.coords.heading = getHeadingTwoPoints(this.state.myPosition, position);
         const newPosition = Object.assign({}, this.state.myPosition, {
           coords: {
             latitude: position.coords.latitude,
@@ -267,16 +269,10 @@ class StartCampaignPage extends Component {
         });
 
         const startAddress = await MapController.getAddress(this.state.myPosition.coords);
-
-        this.setState({
-          startAddress: startAddress.formattedAddress
-        });
-
+        this.setState({ startAddress: startAddress.formattedAddress });
         this.watchPosition();
       }
     );
-
-
   }
 
   async save() {
@@ -443,8 +439,7 @@ class StartCampaignPage extends Component {
           provider={PROVIDER_GOOGLE}
           initialRegion={this.state.map.region}
           ref={ref => this.mapView = ref}
-          onMapReady={() => this.onMapReady()}
-        >
+          onMapReady={() => this.onMapReady()}>
           {this.state.map.coordinates.map(polygon =>
             polygon.map((coord, key) =>
               <Polygon

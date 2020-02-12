@@ -302,3 +302,11 @@ export const checkIfCampaignActive = ({dateFrom, dateTo}) => {
 	if(dFrom <= dNow && dNow <= dTo) return true;
 	return false;
 }
+
+export const getHeadingTwoPoints = (coor1, coor2) => {
+	const lngDiff = coor2.coords.longitude - coor1.coords.longitude;
+	const latDiff = coor2.coords.latitude - coor1.coords.latitude;
+	const heading = Math.atan2(lngDiff, latDiff) * 180 / Math.PI;
+	const shiftedHeading = heading < 0 ? 360 + heading : heading;
+	return shiftedHeading;
+}
