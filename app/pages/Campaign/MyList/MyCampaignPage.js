@@ -1,22 +1,22 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {
-    View,
-    Text,
-    ScrollView,
-    TouchableOpacity,
-    ActivityIndicator,
-		PermissionsAndroid,
-    Dimensions
+	View,
+	Text,
+	ScrollView,
+	TouchableOpacity,
+	ActivityIndicator,
+	PermissionsAndroid,
+	Dimensions
 } from 'react-native';
 import { NavigationEvents } from 'react-navigation';
 import { RFPercentage } from 'react-native-responsive-fontsize';
 
 import {
-    Card,
-    CardHeader,
-    CardBody,
-    CardFooter
+	Card,
+	CardHeader,
+	CardBody,
+	CardFooter
 } from '../../../components/Card';
 import Page from '../../../pages/Page';
 import { VehicleType } from '../../../components/VehicleType';
@@ -555,7 +555,7 @@ class MyCampaignPage extends Component {
 				<NavigationEvents	onDidFocus={this.init} />
 
 				<ScrollView
-					style={styles.homePageScrollView}
+					// style={styles.homePageScrollView}
 					overScrollMode='never'
 					showsVerticalScrollIndicator={false}
 					scrollEnabled={this.state.scrollEnable}
@@ -590,15 +590,15 @@ class MyCampaignPage extends Component {
 					</View>
 				</ScrollView>
 
-				<NavigationBottom
+				{/* <NavigationBottom
 					contents={[
 						'ACTIVE',
-						// 'CAMPAIGNS',
+						'CAMPAIGNS',
 						'COMPLETED',
 					]}
 					navigationOnPress={this.navigationOnPress}
 					activeNav={this.state.nav}
-				/>
+				/> */}
 			</Page>
 		);
 	}
