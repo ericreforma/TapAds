@@ -118,7 +118,7 @@ class CampaignCardActive extends Component {
 									}}
 								>{this.props.campaign.campaignDetails.description}</Text>
 
-								<View
+								{/* <View
 									style={{
 										alignSelf: 'flex-start',
 										paddingTop: 5
@@ -137,7 +137,7 @@ class CampaignCardActive extends Component {
 											}}
 										>view dashboard</Text>
 									</TouchableOpacity>
-								</View>
+								</View> */}
 							</View>
 
 							<View

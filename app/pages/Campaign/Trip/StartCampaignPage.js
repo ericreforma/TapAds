@@ -4,7 +4,8 @@ import {
   ActivityIndicator,
   BackHandler,
   Platform,
-  Animated
+  Animated,
+  StatusBar
 } from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
 import KeepAwake from 'react-native-keep-awake';
@@ -17,6 +18,7 @@ import MapView, {
   PROVIDER_GOOGLE,
   AnimatedRegion
 } from 'react-native-maps';
+import VIForegroundService from '@voximplant/react-native-foreground-service';
 
 import { MapController } from '../../../controllers';
 import { CampaignController } from '../../../controllers';
@@ -119,7 +121,8 @@ class StartCampaignPage extends Component {
       initLoading: true,
       animatedHeight: new Animated.Value(1000),
       cardHeight: 1000,
-      imageRotate: 90
+      imageRotate: 90,
+      locatingStarted: true
     };
 
     console.disableYellowBox = true;
@@ -174,12 +177,32 @@ class StartCampaignPage extends Component {
       timeInterval: tInterval
     });
 
-    KeepAwake.activate();
-    this.backHandler = BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);
-  }
+    const channelConfig = {
+      id: 'channelId',
+      name: 'Channel name',
+      description: 'Channel description',
+      enableVibration: false
+    };
+    VIForegroundService.createNotificationChannel(channelConfig);
+    this.startForegroundService();
 
-  componentWillUnmount() {
-    this.backHandler.remove();
+    KeepAwake.activate();
+  }
+  
+  startForegroundService = async() => {
+    const notificationConfig = {
+      channelId: 'channelId',
+      id: 3456,
+      title: 'Text',
+      text: 'Some text',
+      icon: 'ic_icon'
+    };
+
+    try {
+      await VIForegroundService.startService(notificationConfig);
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   handleBackPress = () => {
@@ -189,6 +212,9 @@ class StartCampaignPage extends Component {
 
   watchPosition() {
     const watchId = Geolocation.watchPosition(position => {
+      const {latitude, longitude} = position.coords;
+      console.log({latitude});
+      console.log({longitude});
       position.coords.heading = getHeadingTwoPoints(this.state.myPosition, position);
       const newPosition = Object.assign({}, this.state.myPosition, {
         coords: {
@@ -297,7 +323,8 @@ class StartCampaignPage extends Component {
     const endAddress = await MapController.getAddress(endlocation);
 
     this.setState({
-      endAddress: endAddress.formattedAddress
+      endAddress: endAddress.formattedAddress,
+      locatingStarted: false
     });
 
     const campaignTrip = {
@@ -314,18 +341,17 @@ class StartCampaignPage extends Component {
     };
 
     CampaignController.trip_end(campaignTrip)
-      .then(response => {
-
-        this.props.dispatchMyList(() => {
-          this.props.dispatchUpdateSelected();
-        });
-
-      })
-      .catch(error => {
-        console.log(error);
-        console.log(error.message);
-        console.log(error.response);
+    .then(response => {
+      this.props.dispatchMyList(() => {
+        this.props.dispatchUpdateSelected();
+        VIForegroundService.stopService();
       });
+    })
+    .catch(error => {
+      console.log(error);
+      console.log(error.message);
+      console.log(error.response);
+    });
 
     this.setState({
       savingModalVisible: false,
@@ -393,7 +419,7 @@ class StartCampaignPage extends Component {
       heading: position.coords.heading,
       distance,
       speed: position.coords.speed,
-      timestamp: position.timestamp
+      timestamp: new Date().getTime()
     };
     
     let campaignTripMap =
@@ -404,6 +430,7 @@ class StartCampaignPage extends Component {
       (this.state.locationData === undefined || this.state.locationData.length === 0) ?
       [] : [...this.state.locationData];
 
+    console.log(campaignTripMapArr);
     CampaignController.trip_send_location(JSON.stringify(campaignTripMapArr))
     .then((res) => {
       console.log(res.data);
@@ -546,6 +573,11 @@ class StartCampaignPage extends Component {
   render() {
     return (
       <Page nonPage>
+        <StatusBar
+          animated={true}
+          backgroundColor={this.state.locatingStarted ? '#28a745' : '#28a74500'}
+          barStyle="light-content" />
+
         <LoaderContainer
           visible={this.state.initLoading}>
           <LoaderWrapper>

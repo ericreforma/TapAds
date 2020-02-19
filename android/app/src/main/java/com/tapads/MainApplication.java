@@ -3,6 +3,7 @@ package com.tapads;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.voximplant.foregroundservice.VIForegroundServicePackage;
 import com.corbt.keepawake.KCKeepAwakePackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
@@ -45,6 +46,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new VIForegroundServicePackage(),
             new KCKeepAwakePackage(),
             new VectorIconsPackage(),
             new RNDeviceInfo(),

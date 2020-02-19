@@ -155,6 +155,7 @@ android {
 }
 
 dependencies {
+    implementation project(':@voximplant_react-native-foreground-service')
     implementation project(':react-native-keep-awake')
     implementation project(':react-native-vector-icons')
     implementation project(':react-native-device-info')

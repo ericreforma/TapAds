@@ -10,7 +10,7 @@ import MessengerPage from './MessengerPage';
 import ChatPage from './ChatPage';
 import TermsAndConditionPage from './TermsAndConditionPage';
 import AddVehiclePage from './AddVehiclePage';
-import DashboardPage from './DashboardPage';
+// import DashboardPage from './DashboardPage';
 import ForgotPasswordPage from './ForgotPasswordPage';
 import MonthlyCarPhotoPage from './MonthlyCarPhotoPage';
 
@@ -33,7 +33,7 @@ export {
 	ChatPage,
 	TermsAndConditionPage,
 	AddVehiclePage,
-	DashboardPage,
+	// DashboardPage,
 	ForgotPasswordPage,
 	MonthlyCarPhotoPage
 };
