@@ -77,7 +77,7 @@ export const CampaignAction = {
     if(callback) {
       callback();
     } else {
-      NavigationService.navigate(navigate ? navigate : 'CampaignCardActive');
+      NavigationService.navigate(navigate ? navigate : 'CampaignDetails');
     }
   },
 
@@ -96,8 +96,13 @@ export const CampaignAction = {
     const state = getState();
     const selectedCampaign = state.campaignReducer.selected;
     const mylist = state.campaignReducer.mylist;
+    const checkCampaign = mylist.find(x =>
+      x.campaign_id === selectedCampaign.id
+      && x.request_status !== 2
+      && x.user_vehicle_id === userVehicleId
+    );
 
-    if (mylist.find(x => x.campaign_id === selectedCampaign.id && x.request_status !== 2) === undefined) {
+    if(checkCampaign === undefined) {
       CampaignController.interested(userVehicleId, selectedCampaign.id, selectedCampaign.client_id)
       .then((res) => {
         if(res.data.status === 'success') {
@@ -136,6 +141,45 @@ export const CampaignAction = {
         message: 'Campaign already on the list'
       });
     }
+  },
+
+  remove: (data, callback) => (dispatch, getState) => {
+    const cid = data.campaign_id;
+    const vid = data.user_vehicle_id;
+    const ucid = data.user_campaign_id;
+    const query = `?cid=${cid}&vid=${vid}&ucid=${ucid}`;
+    const state = getState();
+    const list = state.campaignReducer.mylist;
+    
+    dispatch({ type: CAMPAIGN.REMOVE.REQUEST });
+    CampaignController.remove(query)
+    .then(res => {
+      if(res.data.status === 'success') {
+        const newList = list.map(l => l);
+        const mylist = newList.filter(l => l.id !== ucid);
+
+        callback({
+          title: 'Campaign Deleted',
+          body: res.data.message,
+          data: mylist
+        });
+      } else {
+        dispatch({ type: CAMPAIGN.REMOVE.FAILED });
+        callback({
+          title: 'Error',
+          body: res.data.message
+        });
+      }
+    })
+    .catch(err => {
+      dispatch({ type: CAMPAIGN.REMOVE.FAILED });
+      console.log(err);
+      console.log(err.response);
+      callback({
+        title: 'Error',
+        body: 'Server Error'
+      });
+    });
   },
 
   changeCategory: classification => dispatch => {

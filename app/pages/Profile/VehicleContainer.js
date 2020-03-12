@@ -11,14 +11,22 @@ import {
 import {RFValue} from 'react-native-responsive-fontsize';
 import Carousel from 'react-native-snap-carousel';
 
-import {URL} from '../../config/variables';
+import {URL, VEHICLE} from '../../config/variables';
 import NavigationService from '../../services/navigation';
 
 import AsyncImage from '../../components/AsyncImage';
 import EditVehicleModal from './Modal/EditVehicleModal';
 import theme from '../../styles/theme.style';
+import {
+  VehicleTypeWrapper,
+  VehicleTypeImage,
+  VehicleTypeImageWrapper,
+  VehicleTypeLabel
+} from './VehicleContainerStyledComponents';
 
 const dim = 140;
+const vehicleType = id => Object.values(VEHICLE.TYPE).find(t => t.id === id);
+const vehicleClass = id => Object.values(VEHICLE.CLASS).find(c => c.id === id);
 
 const vehicleFormat = [
   {name: 'model', label: 'Model'},
@@ -210,8 +218,7 @@ const VehicleContainer = ({user, loader, update}) => {
             alignItems: 'center',
             justifyContent: 'center',
             paddingTop: 20
-          }}
-        >
+          }}>
           <VehicleText.Header.Right color="white">
             -- No vehicle listed --
           </VehicleText.Header.Right>
@@ -222,16 +229,20 @@ const VehicleContainer = ({user, loader, update}) => {
       <View>
         {data.filter((d, dIdx) => dIdx < vehicleDisplayLength)
         .map((d, dIdx) =>
-          <CardVehicleContainer key={d.id}>
-            <ImageSection d={d} />
-            <CardVehicleInfo d={d} />
-          </CardVehicleContainer>
+          <EditVehicleModal
+            update={update}
+            key={d.id}
+            d={d}>
+            <CardVehicleContainer>
+              <ImageSection d={d} />
+              <CardVehicleInfo d={d} />
+            </CardVehicleContainer>
+          </EditVehicleModal>
         )}
 
         <SeeMoreButton 
-          decision={vehicleDisplayLength < data.length}
           incVehicleDisplayLength={() => setVehicleDisplayLength(vehicleDisplayLength + 4)}
-        />
+          decision={vehicleDisplayLength < data.length} />
       </View>
     );
   }
@@ -275,11 +286,18 @@ const VehicleContainer = ({user, loader, update}) => {
           sliderWidth={dim}
           itemHeight={dim}
           itemWidth={dim}
-          onBeforeSnapToItem={sIdx => setNavDots(getActiveDot(sIdx))}
-        />
+          onBeforeSnapToItem={sIdx => setNavDots(getActiveDot(sIdx))} />
 
         <NavDots dots={navDots} />
-        <EditVehicleModal d={d} update={update} />
+        <VehicleTypeWrapper>
+          <VehicleTypeImage
+            source={vehicleClass(d.vehicle.classification).icon.white} />
+          
+          <VehicleTypeLabel>
+            {vehicleType(d.type).name.toUpperCase()}
+          </VehicleTypeLabel>
+        </VehicleTypeWrapper>
+        {/* <EditVehicleModal update={update} d={d} /> */}
       </View>
     )
   }
@@ -365,7 +383,7 @@ const VehicleContainer = ({user, loader, update}) => {
           <VehicleText.Manufacturer text={d.vehicle.manufacturer} />
           <View
             style={{
-              padding: 5,
+              padding: 3,
               marginTop: 3,
               borderRadius: 5,
               alignSelf: 'flex-start',
@@ -382,6 +400,8 @@ const VehicleContainer = ({user, loader, update}) => {
   }
 
   const CardVehicleBody = ({d}) => {
+    console.log(d);
+
     return (
       <View
         style={{

@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 
 import styles from '../styles/component.HeaderNav.style';
 import NavigationService from '../services/navigation';
+import { Menu } from './Modal/Navigation';
 
 class HeaderNav extends Component {
 	render() {
@@ -24,7 +25,7 @@ class HeaderNav extends Component {
 					<TouchableOpacity
 						style={styles.headerNavTopAppNameButton}
 						activeOpacity={0.8}
-						onPress={() => this.props.navigate('Notification')}
+						onPress={() => NavigationService.navigate('Notification')}
 					>
 						<Image
 							style={styles.headerNavTopNotification}
@@ -45,13 +46,7 @@ class HeaderNav extends Component {
 						) : null}
 					</TouchableOpacity>
 
-					<TouchableOpacity onPress={this.props.menuButtonOnPress}>
-						<Image
-							style={styles.headerNavTopMenu}
-							resizeMode="contain"
-							source={require('../assets/image/icons/navigation_icon.png')}
-						/>
-					</TouchableOpacity>
+					<Menu />
 				</View>
 			</View>
 		);

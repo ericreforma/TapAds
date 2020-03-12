@@ -31,6 +31,45 @@ export const Container = styled(View)`
   background-color: ${theme.COLOR_GRAY_HEAVY};
 `;
 
+export const TopPanel = styled(View)`
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin-top: 20px;
+  background-color: ${theme.COLOR_BLUE};
+  padding: 7px 15px;
+  flex-direction: row;
+  align-items: center;
+  border-top-left-radius: 20px;
+  border-bottom-left-radius: 20px;
+  elevation: 5;
+`;
+
+export const VehicleClassImage = styled(Image)`
+  resize-mode: contain;
+  width: ${theme.SCREEN_WIDTH / 11}px;
+  height: ${theme.SCREEN_WIDTH / 11}px;
+`;
+
+export const VehicleInfoWrapper = styled(View)`
+  padding-left: 15px;
+  max-width: ${theme.SCREEN_WIDTH / 2}px;
+`;
+
+export const VehicleManufacturerLabel = styled(Text)`
+  color: ${theme.COLOR_WHITE};
+  font-size: ${RFValue(15)}px;
+  line-height: ${RFValue(17)}px;
+  font-family: 'Montserrat-Bold';
+`;
+
+export const VehiclePlateNumber = styled(Text)`
+  color: ${theme.COLOR_WHITE};
+  font-size: ${RFValue(12)}px;
+  line-height: ${RFValue(12)}px;
+  font-family: 'Montserrat-Regular';
+`;
+
 export const BottomPanel = styled(View)`
   background-color: ${theme.COLOR_DIRTY_WHITE};
   border-radius: 8px;

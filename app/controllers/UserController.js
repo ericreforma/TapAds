@@ -20,9 +20,13 @@ export const UserController = {
       password: (args = {}) => HttpRequest.post('/user/update/password', args),
       bankDetails: (args = {}) => HttpRequest.post('/user/update/bank', args),
       carMonthlyUpdate: (args = {}) => HttpRequest.post('/user/update/cars/monthly', args),
-      notifications: (args = {}) => HttpRequest.post('/user/update/notifications', args),
       pNumber: form => HttpRequest.post('/user/update/request/pnumber', form),
-      vehiclePhoto: form => HttpRequest.post('/user/update/vehicle_photo', form)
+      vehiclePhoto: form => HttpRequest.post('/user/update/vehicle_photo', form),
+      seen: {
+        chat: form => HttpRequest.post('/user/update/seen/chat', form),
+        campaign: form => HttpRequest.post(`/user/update/seen/campaign`, form),
+        payment: form => HttpRequest.post(`/user/update/seen/payment`, form)
+      }
     },
     get: {
       notifications: () => HttpRequest.get('/user/get/notifications')
@@ -33,7 +37,8 @@ export const UserController = {
     remove: {
       photo: () => HttpRequest.get('/user/remove/photo'),
       license: () => HttpRequest.get('/user/remove/license'),
-      account: (args = {}) => HttpRequest.post('/user/remove/account', args)
+      account: (args = {}) => HttpRequest.post('/user/remove/account', args),
+      vehicle: args => HttpRequest.get(`/user/remove/vehicle${args}`)
     }
   },
 

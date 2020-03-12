@@ -1,14 +1,13 @@
 import React, { Component } from 'react';
 import {
-    View,
-    ScrollView,
-    TouchableOpacity,
-    TextInput,
-    Dimensions,
-    FlatList,
-    Text,
-    ActivityIndicator,
-    Image
+	Text,
+	View,
+	Image,
+	FlatList,
+	TextInput,
+	Dimensions,
+	TouchableOpacity,
+	ActivityIndicator,
 } from 'react-native';
 import { connect } from 'react-redux';
 import ImagePicker from 'react-native-image-picker';
@@ -16,12 +15,10 @@ import DropdownAlert from 'react-native-dropdownalert';
 import fileType from 'react-native-file-type';
 
 import { USER } from '../redux/actions/types.action';
-import Page from './Page';
-import UserInfo from '../components/UserInfo';
 import {
-		LabelText,
-    Common,
-    Label,
+	LabelText,
+	Common,
+	Label,
 } from '../components/Text';
 import { IMAGES, VEHICLE } from '../config/variables';
 import { UserController } from '../controllers/UserController';
@@ -32,6 +29,8 @@ import theme from '../styles/theme.style';
 import { Card, CardBody } from '../components/Card';
 
 import PopupMessage from '../components/Modal/popup';
+import PageLayout from '../components/PageLayout';
+import PageContainer from '../components/PageContainer';
 
 class AddVehiclePage extends Component {
 	constructor(props) {
@@ -386,21 +385,17 @@ class AddVehiclePage extends Component {
 
 	render() {
 		return (
-			<Page>
+			<PageLayout>
 				<PopupMessage
 					isVisible={this.state.popupModal.visible}
 					message={this.state.popupModal.message}
 					description={this.state.popupModal.description}
 					closeModal={this.closePopupModal}
 				/>
-
-				<ScrollView
+				<PageContainer
 					overScrollMode='never'
 					showsVerticalScrollIndicator={false}
-					keyboardShouldPersistTaps='always'
-				>
-					<UserInfo />
-
+					keyboardShouldPersistTaps='always'>
 					<View
 						style={{
 							margin: 20,
@@ -858,10 +853,10 @@ class AddVehiclePage extends Component {
 							</View>
 						</View>
 					</View>
-				</ScrollView>
+				</PageContainer>
 
 				<DropdownAlert ref={ref => this.dropDownAVPAlertRef = ref} />
-			</Page>
+			</PageLayout>
 		);
 	}
 }

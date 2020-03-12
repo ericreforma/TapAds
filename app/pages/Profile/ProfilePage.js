@@ -42,6 +42,7 @@ import { UserController } from '../../controllers/UserController';
 
 import theme from '../../styles/theme.style';
 import styles from '../../styles/page.Profile.style';
+import { IfElse, Then, Else } from '../../components/IfElse';
 
 class ProfilePage extends Component {
 	constructor(props) {
@@ -73,9 +74,8 @@ class ProfilePage extends Component {
 
 	init = () => {
 		const alert = this.props.navigation.getParam('alert', null);
-		if(alert) {
+		if(alert)
 			this.successFlashMessage(alert.message, alert.description);
-		}
 
 		var { user,
 			myList } = this.props,
@@ -298,28 +298,24 @@ class ProfilePage extends Component {
 			<PageLayout>
 				<NavigationEvents
 					onDidFocus={this.init}
-					onWillFocus={() => this.setState({loader: true})}
-				/>
+					onWillFocus={() => this.setState({loader: true})} />
 
 				<BankDetails
 					modalVisible={this.state.bankDetailsModal}
 					modalToggle={this.modalToggle.bankDetails}
 					accountNumber={this.props.user.account_number}
-					getUserProfile={this.getUserProfile}
-				/>
+					getUserProfile={this.getUserProfile} />
 
 				<Withdraws
 					modalVisible={this.state.withdrawsModal}
 					modalToggle={this.modalToggle.withdraws}
 					campaigns={this.props.myList}
-					dispatchUpdateMyList={this.props.dispatchMyList}
-				/>
+					dispatchUpdateMyList={this.props.dispatchMyList} />
 
 				<HistoryFilter
 					modalVisible={this.state.historyModal}
 					modalToggle={this.modalToggle.history}
-					search={this.modalFilter.history}
-				/>
+					search={this.modalFilter.history} />
 
 				<PageContainer
 					style={styles.scrollView}
@@ -331,8 +327,7 @@ class ProfilePage extends Component {
 							refreshing={this.state.refreshing}
 							onRefresh={this.updateUserProfile}
 						/>
-					}
-				>
+					}>
 					{/* profile info button */}
 					<View style={styles.viewProfileButtonContainer}>
 						<TouchableOpacity onPress={e => NavigationService.navigate('ProfileInfo')}>
@@ -347,15 +342,13 @@ class ProfilePage extends Component {
 						<Card>
 							<CardBody
 								header={true}
-								footer={true}
-							>
+								footer={true}>
 								<View style={styles.cardHeaderContainer}>
 									<LabelText>Earnings</LabelText>
 
 									<TouchableOpacity
 										onPress={this.modalToggle.bankDetails}
-										disabled={this.state.loader}
-									>
+										disabled={this.state.loader}>
 										<Text style={styles.pinkButton}>
 											Edit Gcash Details
 										</Text>
@@ -363,15 +356,19 @@ class ProfilePage extends Component {
 								</View>
 
 								<View style={styles.cardBodyContainer}>
-									{this.state.loader ? (
-										<ActivityIndicator color="#000" style={{ height: 75 }} />
-									) : (
-										<View style={styles.earningWrapper}>
-											<Text style={styles.earningText}>
-												P{numberWithCommas(this.state.totalEarnings)}
-											</Text>
-										</View>
-									)}
+									<IfElse condition={this.state.loader}>
+										<Then>
+											<ActivityIndicator color="#000" style={{ height: 75 }} />
+										</Then>
+
+										<Else>
+											<View style={styles.earningWrapper}>
+												<Text style={styles.earningText}>
+													P{numberWithCommas(this.state.totalEarnings)}
+												</Text>
+											</View>
+										</Else>
+									</IfElse>
 								</View>
 							</CardBody>
 						</Card>
@@ -410,86 +407,94 @@ class ProfilePage extends Component {
 								</CardBody>
 
 								<CardBody footer>
-									{this.state.loader ? (
-										<ActivityIndicator color="#000" style={{ height: 75 }} />
-									) : (
-										<View>
-											{this.state.historyData.length !== 0 ?
-												this.state.historyData.map((hd, hdIdx) =>
-													hdIdx < this.state.historyDataLength ?
+									<IfElse condition={this.state.loader}>
+										<Then>
+											<ActivityIndicator color="#000" style={{ height: 75 }} />
+										</Then>
+
+										<Else>
+											<View>
+												<IfElse condition={this.state.historyData.length !== 0}>
+													<Then>
+														{this.state.historyData.map((hd, hdIdx) =>
+															<IfElse key={hdIdx} condition={hdIdx < this.state.historyDataLength}>
+																<Then>
+																	<View
+																		style={[
+																			{
+																				flexDirection: 'row',
+																				alignItems: 'center'
+																			},
+																			(
+																				hdIdx == 0
+																				? { marginBottom: 5 }
+																				: (
+																					hdIdx == (this.state.historyData.length - 1)
+																					? { marginTop: 5 }
+																					: { marginVertical: 5 }
+																				)
+																			)
+																		]}
+																	>
+																		<View
+																			style={{
+																				flex: 1
+																			}}
+																		>
+																			<CommonText numberOfLines={1}>{hd.name}</CommonText>
+																		</View>
+
+																		<View
+																			style={{
+																				width: this.state.width / 4.5,
+																				justifyContent: 'flex-end',
+																				alignItems: 'flex-end'
+																			}}
+																		>
+																			<CommonText>{timeStampNumeric(hd.created_at)}</CommonText>
+																		</View>
+
+																		<View
+																			style={{
+																				width: this.state.width / 4,
+																				justifyContent: 'flex-end',
+																				alignItems: 'flex-end',
+																			}}
+																		>
+																			<CommonText>P{numberWithCommas(hd.amount)}</CommonText>
+																		</View>
+																	</View>
+																</Then>
+															</IfElse>
+														)}
+													</Then>
+
+													<Else>
 														<View
-															key={hdIdx}
-															style={[
-																{
-																	flexDirection: 'row',
-																	alignItems: 'center'
-																},
-																(
-																	hdIdx == 0
-																	? { marginBottom: 5 }
-																	: (
-																		hdIdx == (this.state.historyData.length - 1)
-																		? { marginTop: 5 }
-																		: { marginVertical: 5 }
-																	)
-																)
-															]}
-														>
-															<View
-																style={{
-																	flex: 1
-																}}
-															>
-																<CommonText numberOfLines={1}>{hd.name}</CommonText>
-															</View>
-
-															<View
-																style={{
-																	width: this.state.width / 4.5,
-																	justifyContent: 'flex-end',
-																	alignItems: 'flex-end'
-																}}
-															>
-																<CommonText>{timeStampNumeric(hd.created_at)}</CommonText>
-															</View>
-
-															<View
-																style={{
-																	width: this.state.width / 4,
-																	justifyContent: 'flex-end',
-																	alignItems: 'flex-end',
-																}}
-															>
-																<CommonText>P{numberWithCommas(hd.amount)}</CommonText>
-															</View>
+															style={{
+																alignSelf: 'center',
+																marginVertical: 10
+															}}>
+															<CommonText>-- no transaction history --</CommonText>
 														</View>
-													: null
-												)
-												: (
-													<View
-														style={{
-															alignSelf: 'center',
-															marginVertical: 10
-														}}
-													>
-														<CommonText>-- no transaction history --</CommonText>
-													</View>
-												)
-											}
+													</Else>
+												</IfElse>
 
-											{this.state.historyDataLength < this.state.historyData.length ? (
-												<TouchableOpacity
-													style={{
-														alignSelf: 'center',
-														marginTop: 10
-													}}
-													onPress={this.historyDataViewMore}
-												>
-													<CommonText color="pink">view more</CommonText>
-												</TouchableOpacity>
-											) : null}
-										</View>
-									)}
+												<IfElse condition={this.state.historyDataLength < this.state.historyData.length}>
+													<Then>
+														<TouchableOpacity
+															style={{
+																alignSelf: 'center',
+																marginTop: 10
+															}}
+															onPress={this.historyDataViewMore}>
+															<CommonText color="pink">view more</CommonText>
+														</TouchableOpacity>
+													</Then>
+												</IfElse>
+											</View>
+										</Else>
+									</IfElse>
 								</CardBody>
 							</Card>
 						</View>
@@ -499,8 +504,7 @@ class ProfilePage extends Component {
 					<VehicleContainer
 						user={this.props.user}
 						loader={this.state.loader}
-						update={this.updateUserProfile}
-					/>
+						update={this.updateUserProfile} />
 				</PageContainer>
 
 				<DropdownAlert ref={ref => this.dropDownMainAlertRef = ref} />

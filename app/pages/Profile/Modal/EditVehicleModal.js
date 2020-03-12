@@ -1,10 +1,10 @@
 import React, {
   useState, useEffect
 } from 'react';
+import { connect } from 'react-redux';
 import {
   View,
   Text,
-  Modal,
   Image,
   Alert,
   TextInput,
@@ -16,6 +16,7 @@ import {
 } from 'react-native-elements';
 import ImagePicker from 'react-native-image-picker';
 import fileType from 'react-native-file-type';
+import Modal from 'react-native-modal';
 
 import {
   URL,
@@ -27,6 +28,8 @@ import Loader from '../../../components/Loader';
 import { IfElse, Then, Else } from '../../../components/IfElse';
 import theme from '../../../styles/theme.style';
 import AsyncImage from '../../../components/AsyncImage';
+import { AlertFunction } from '../../../components/App/Alert/AlertContent';
+import { UserAction } from '../../../redux/actions/user.action';
 
 const VehicleText = {
   Manufacturer: ({text}) => {
@@ -86,19 +89,6 @@ const Row = ({children, lastChild}) => {
   )
 }
 
-const ModalContainer = ({children}) => {
-  return (
-    <View
-      style={{
-        backgroundColor: theme.COLOR_BLACK + '81',
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center'
-      }}
-    >{children}</View>
-  )
-}
-
 const Card = ({children}) => {
   return (
     <View
@@ -143,7 +133,8 @@ const PlateNumberContainer = ({children}) => {
   )
 }
 
-const EditVehicleModal = ({d, update}) => {
+const EditVehicleModal = props => {
+  const {d, update, deleteVehicle} = props;
   const [vehicleData, setVehicleData] = useState(d);
   const [vehiclePhotos, setVehiclePhotos] = useState([]);
   const [plateNumber, setPlateNumber] = useState('');
@@ -155,8 +146,10 @@ const EditVehicleModal = ({d, update}) => {
   const [PNAlertVisible, setPNAlertVisible] = useState(false);
   const [PNAlertText, setPNAlertText] = useState('');
   const [PNAlertType, setPNAlertType] = useState(false);
+  const [alertModal, setAlertModal] = useState(false);
+  const [loadingDeleted, setLoadingDeleted] = useState(false);
   let PNTimer = null;
-
+  
   useEffect(() => {
     if(modalVisible) {
       const newVehiclePhotos = d.photo.map(v => {
@@ -173,6 +166,10 @@ const EditVehicleModal = ({d, update}) => {
       ]);
     }
   }, [modalVisible]);
+
+  const toggleModal = () => setModalVisible(!modalVisible);
+
+  const toggleAlertModal = () => setAlertModal(!alertModal);
 
   const editPlateNumberButtonOnPress = () => {
     setSubmitLoadingPN(true);
@@ -311,36 +308,6 @@ const EditVehicleModal = ({d, update}) => {
     }
   }
 
-  const EditButton = () => {
-    return (
-      <TouchableOpacity
-        style={{
-          position: 'absolute',
-          top: -141,
-          left: 0,
-          paddingTop: 3,
-          paddingLeft: 3,
-          backgroundColor: theme.COLOR_BLUE,
-          borderBottomRightRadius: 3,
-          overflow: 'hidden'
-        }}
-        activeOpacity={0.9} 
-        onPress={() => setModalVisible(!modalVisible)} >
-        <Icon
-          name='edit'
-          type='font-awesome'
-          color={theme.COLOR_WHITE}
-          size={15}
-          containerStyle={{
-            paddingTop: 5,
-            paddingRight: 5,
-            paddingLeft: 6,
-            paddingBottom: 5
-          }} />
-      </TouchableOpacity>
-    )
-  }
-
   const EditPlateNumberButton = () => {
     return (
       <TouchableOpacity onPress={editPlateNumberButtonOnPress}>
@@ -445,136 +412,170 @@ const EditVehicleModal = ({d, update}) => {
     )
   }
 
+  const deleteButtonOnPress = () => {
+    toggleAlertModal();
+  }
+
+  const deleteProceedOnPress = () => {
+    if(modalVisible) {
+      setLoadingDeleted(true);
+      deleteVehicle(d.id, () => {
+        toggleAlertModal();
+        toggleModal();
+        setTimeout(() => setLoadingDeleted(false), 500);
+      });
+    }
+  }
+
   return (
     <View>
-      <EditButton />
+      {/* <EditButton /> */}
+      <TouchableOpacity
+        activeOpacity={0.9} 
+        onPress={toggleModal} >
+        {props.children}
+      </TouchableOpacity>
+
+      <AlertFunction
+        title="Delete Vehicle"
+        body="Are you sure you want to delete this vehicle? Press Proceed to continue"
+        proceedText="Continue"
+        cancelText="Cancel"
+        loading={loadingDeleted}
+        confirmOnPress={deleteProceedOnPress}
+        isVisible={alertModal}
+        toggleModal={toggleAlertModal} />
 
       <Modal
-        animationType="fade"
-        transparent={true}
+        style={{
+          margin: 0,
+          backgroundColor: theme.COLOR_BLACK + '81',
+          justifyContent: 'center',
+          alignItems: 'center'
+        }}
         visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)} >
-        <ModalContainer>
-          <Card>
-            {/* alert */}
-            <IfElse condition={PNAlertVisible}>
-              <Then>
-                <AlertContainer>
-                  <VehicleText.Common text={PNAlertText} white />
-                </AlertContainer>
-              </Then>
-            </IfElse>
+        onBackdropPress={toggleModal}
+        onBackButtonPress={toggleModal}>
+        <Card>
+          <IfElse condition={PNAlertVisible}>
+            <Then>
+              <AlertContainer>
+                <VehicleText.Common text={PNAlertText} white />
+              </AlertContainer>
+            </Then>
+          </IfElse>
 
-            {/* vehicle data */}
-            <Row>
-              <VehicleText.Manufacturer text={vehicleData.vehicle.manufacturer} />
-              <VehicleText.Label text={vehicleData.vehicle.model} />
-              <VehicleText.Label text={vehicleData.vehicle.year} />
-            </Row>
-            <Divider />
+          <Row>
+            <VehicleText.Manufacturer text={vehicleData.vehicle.manufacturer} />
+            <VehicleText.Label text={vehicleData.vehicle.model} />
+            <VehicleText.Label text={vehicleData.vehicle.year} />
+          </Row>
+          <Divider />
 
-            {/* plate number */}
-            <Row>
-              <VehicleText.Common text="Plate Number / Conduction Sticker" />
-              <VehicleText.Label
-                text={vehicleData.plate_number
-                  ? vehicleData.plate_number
-                  : '----'} />
-              <PlateNumberContainer>
-                <PlateNumberInfo>
-                  <TextInput
-                    style={{
-                      color: theme.COLOR_NORMAL_FONT,
-                      borderColor: theme.COLOR_NORMAL_FONT,
-                      borderBottomWidth: 2,
-                      paddingTop: 0,
-                      paddingBottom: 5,
-                      paddingHorizontal: 5,
-                      fontSize: 12,
-                    }}
-                    value={plateNumber}
-                    placeholder="new plate number/conduction sticker"
-                    onSubmitEditing={editPlateNumberButtonOnPress}
-                    onChangeText={value => setPlateNumber(value)} />
-                </PlateNumberInfo>
-
-                <EditPlateNumberButton />
-              </PlateNumberContainer>
-            </Row>
-
-            {/* add photo */}
-            <Row lastChild>
-              <VehicleText.Common text="Vehicle Photos" />
-              <View
-                style={{
-                  borderRadius: 10,
-                  overflow: 'hidden',
-                  backgroundColor: theme.COLOR_GRAY_LIGHT,
-                  marginTop: 10,
-                  marginBottom: 15
-                }} >
-                <FlatList
-                  data={vehiclePhotos}
-                  renderItem={renderVehicles}
-                  keyExtractor={(item, index) => index.toString()}
-                  horizontal={true}
-                  overScrollMode="never"
-                  showsHorizontalScrollIndicator={false}
-                  contentContainerStyle={{
-                    paddingHorizontal: 30,
-                    paddingVertical: 20,
+          <Row>
+            <VehicleText.Common text="Plate Number / Conduction Sticker" />
+            <VehicleText.Label
+              text={vehicleData.plate_number
+                ? vehicleData.plate_number
+                : '----'} />
+            <PlateNumberContainer>
+              <PlateNumberInfo>
+                <TextInput
+                  style={{
+                    color: theme.COLOR_NORMAL_FONT,
+                    borderColor: theme.COLOR_NORMAL_FONT,
+                    borderBottomWidth: 2,
+                    paddingTop: 0,
+                    paddingBottom: 5,
+                    paddingHorizontal: 5,
+                    fontSize: 12,
                   }}
-                />
+                  value={plateNumber}
+                  placeholder="new plate number/conduction sticker"
+                  onSubmitEditing={editPlateNumberButtonOnPress}
+                  onChangeText={value => setPlateNumber(value)} />
+              </PlateNumberInfo>
 
-                <IfElse condition={submitLoadingVP}>
-                  <Then>
-                    <View
-                      style={{
-                        alignSelf: 'center',
-                        paddingHorizontal: 20,
-                        paddingVertical: 10,
-                        borderRadius: 15,
-                        marginBottom: 15,
-                        backgroundColor: theme.COLOR_LIGHT_BLUE
-                      }} >
-                      <Loader loading={true} />
-                    </View>
-                  </Then>
+              <EditPlateNumberButton />
+            </PlateNumberContainer>
+          </Row>
 
-                  <Else>
-                    <TouchableOpacity
-                      style={{
-                        alignSelf: 'center',
-                        paddingHorizontal: 20,
-                        paddingVertical: 10,
-                        borderRadius: 15,
-                        marginBottom: 15,
-                        backgroundColor: theme.COLOR_LIGHT_BLUE
-                      }}
-                      onPress={uploadVehiclePhotos} >
-                      <VehicleText.Label text="Update Vehicle Photos" white />
-                    </TouchableOpacity>
-                  </Else>
-                </IfElse>
-              </View>
-
-              <TouchableOpacity
-                style={{
-                  alignSelf: 'center',
-                  paddingHorizontal: 20,
-                  paddingVertical: 10,
-                  borderRadius: 15,
-                  backgroundColor: theme.COLOR_GRAY_BUTTON
+          <Row lastChild>
+            <VehicleText.Common text="Vehicle Photos" />
+            <View
+              style={{
+                borderRadius: 10,
+                overflow: 'hidden',
+                backgroundColor: theme.COLOR_GRAY_LIGHT,
+                marginTop: 10,
+                marginBottom: 15
+              }} >
+              <FlatList
+                data={vehiclePhotos}
+                renderItem={renderVehicles}
+                keyExtractor={(item, index) => index.toString()}
+                horizontal={true}
+                overScrollMode="never"
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={{
+                  paddingHorizontal: 30,
+                  paddingVertical: 20,
                 }}
-                onPress={() => setModalVisible(false)} >
-                <VehicleText.Label text="Back" white />
-              </TouchableOpacity>
-            </Row>
-          </Card>
-        </ModalContainer>
+              />
+
+              <IfElse condition={submitLoadingVP}>
+                <Then>
+                  <View
+                    style={{
+                      alignSelf: 'center',
+                      paddingHorizontal: 20,
+                      paddingVertical: 10,
+                      borderRadius: 15,
+                      marginBottom: 15,
+                      backgroundColor: theme.COLOR_LIGHT_BLUE
+                    }} >
+                    <Loader loading={true} />
+                  </View>
+                </Then>
+
+                <Else>
+                  <TouchableOpacity
+                    style={{
+                      alignSelf: 'center',
+                      paddingHorizontal: 20,
+                      paddingVertical: 10,
+                      borderRadius: 15,
+                      marginBottom: 15,
+                      backgroundColor: theme.COLOR_LIGHT_BLUE
+                    }}
+                    onPress={uploadVehiclePhotos} >
+                    <VehicleText.Label text="Update Vehicle Photos" white />
+                  </TouchableOpacity>
+                </Else>
+              </IfElse>
+            </View>
+            
+            <TouchableOpacity
+              style={{
+                alignSelf: 'center',
+                paddingHorizontal: 20,
+                paddingVertical: 10,
+                borderRadius: 15,
+                backgroundColor: theme.COLOR_RED
+              }}
+              onPress={deleteButtonOnPress}>
+              <VehicleText.Label text="Delete Vehicle" white />
+            </TouchableOpacity>
+          </Row>
+        </Card>
       </Modal>
     </View>
   );
 }
 
-export default EditVehicleModal;
+const mapDispatchToProps = dispatch => ({
+  deleteVehicle: (args, callback) =>
+    dispatch(UserAction.removeVehicle(args, callback))
+});
+
+export default connect(null, mapDispatchToProps)(EditVehicleModal);

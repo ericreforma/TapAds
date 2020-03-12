@@ -17,16 +17,16 @@ import { UserAction } from '../redux/actions/user.action';
 import { CampaignAction } from '../redux/actions/campaign.action';
 import NavigationService from '../services/navigation';
 import { AuthController } from '../controllers';
-import { getCurrentTime } from '../config/functions';
 import { URL, IMAGES } from '../config/variables';
 
 import { AppBackground } from '../components/AppBackground';
 import HeaderNav from '../components/HeaderNav';
-import ModalMenu from '../components/Modal/Navigation';
 import { LabelText, CommonText } from '../components/Text';
 import theme from '../styles/theme.style';
 
 import Sound from 'react-native-sound';
+import { getCurrentTime } from '../config/functions';
+import { IfElse, Then, Else } from './IfElse';
 
 const slideSpeed = 500;
 
@@ -34,13 +34,6 @@ class PageLayout extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			modalFadeBackground: new Animated.Value(0),
-			modalContainerzIndex: 0,
-			modalXValue: new Animated.Value(Dimensions.get('window').width),
-			carouselPage: 0,
-			width: Dimensions.get('window').width,
-			height: Dimensions.get('window').height,
-			scrollEnable: true,
 			appState: AppState.currentState,
 
 			notificationBannerTop: new Animated.Value(-100),
@@ -66,9 +59,12 @@ class PageLayout extends Component {
   }
 
   unmountComponent = () => {
-    this.notificationListener();
-    this.onTokenRefresh();
-    AppState.removeEventListener('change', this._handleAppStateChange);
+		if(this.notificationListener)
+    	this.notificationListener();
+		if(this.onTokenRefresh)
+			this.onTokenRefresh();
+		
+		AppState.removeEventListener('change', this._handleAppStateChange);
 	}
 
   messageListener = async () => {
@@ -87,13 +83,25 @@ class PageLayout extends Component {
 			if(receivedData.name === 'Campaign')
 				this.props.dispatchMyList();
 			
-			this.checkPageFunction(receivedData.sender_id);
+			// console.log({
+			// 	mountCID: this.props.clientId,
+			// 	mountCaID: this.props.campaignId,
+			// 	mountVID: this.props.vehicleId
+			// });
+
+			// console.log({
+			// 	senderCID: receivedData.sender_id,
+			// 	senderCaID: receivedData.campaign_id,
+			// 	senderVID: receivedData.vehicle_id
+			// });
+
+			this.checkPageFunction(receivedData);
 			if(!this.props.notif) {
 				if(!this.props.messenger || (this.props.messenger && receivedData.name !== 'Chat')) {
-					if(!this.props.message || ((this.props.message &&
-							this.props.clientId !== receivedData.sender_id)
-							|| receivedData.name !== 'Chat')
-						|| (this.props.message && receivedData.name !== 'Chat')) {
+					if(!this.props.message || (this.props.message &&
+							(this.props.clientId !== receivedData.sender_id ||
+							this.props.campaignId !== receivedData.campaign_id ||
+							this.props.vehicleId !== receivedData.vehicle_id))) {
 						this.showBanner();
 					}
 				}
@@ -129,9 +137,12 @@ class PageLayout extends Component {
 		}).start();
 	}
 
-	checkPageFunction = senderId => {
+	checkPageFunction = senderData => {
 		if(this.props.messenger || this.props.notif
-			|| (this.props.message && this.props.clientId === senderId)) {
+			|| (this.props.message &&
+				this.props.clientId === senderData.sender_id &&
+				this.props.campaignId === senderData.campaign_id &&
+				this.props.vehicleId === senderData.vehicle_id)) {
 			this.props.reInitializePage();
 		}
 
@@ -146,7 +157,14 @@ class PageLayout extends Component {
 	}
 
   notificationOpened = data => {
-		const { sender_id, page, name, args, add_data } = data;
+		const {
+			sender_id,
+			page,
+			name,
+			args,
+			add_data,
+			campaign_id,
+			vehicle_id } = data;
 		if(page) {
 			if(name === 'Custom') {
 				if(add_data) {
@@ -159,7 +177,13 @@ class PageLayout extends Component {
 				if(this.props.clientId !== sender_id)
 					this.props.messageNewPage(sender_id);
 			} else {
-				const argsToPass = page === 'Chat' ? { id: sender_id } : null;
+				const argsToPass = page === 'Chat'
+					? { chatDetails: {
+						clientId: sender_id,
+						campaignId: campaign_id,
+						vehicleId: vehicle_id
+					}} : null;
+				console.log(argsToPass);
 				NavigationService.navigate(page, argsToPass);
 			}
 		} else {
@@ -187,125 +211,77 @@ class PageLayout extends Component {
 		// console.log(`App State: ${this.state.appState}, ${getCurrentTime()}`);
 	}
 
-	menuButtonOnPress = () => {
-		Animated.timing(this.state.modalFadeBackground, {
-			toValue: this.state.scrollEnable ? 0.7 : 0,
-			duration: 500
-		}).start(() => {
-			this.setState({
-				modalContainerzIndex: this.state.scrollEnable ? 0 : 1
-			});
+	logout = () => {
+		AuthController.logout()
+		.then(() => {
+			NavigationService.navigate('Loading');
+			this.props.resetPropsValues();
+		})
+		.catch((e) => {
+			console.log("error");
+			console.log(e);
 		});
-
-		Animated.timing(this.state.modalXValue, {
-			toValue: this.state.scrollEnable ? this.state.width - 330 : this.state.width,
-			duration: 500
-		}).start();
-
-		this.setState({
-			scrollEnable: !this.state.scrollEnable,
-			modalContainerzIndex: 1
-		});
-	}
-
-	navigateToPage = (page) => {
-		this.menuButtonOnPress();
-		this.navigate(page);
-	}
-
-	navigate = (page) => {
-		if(page === 'logout') {
-			AuthController.logout()
-			.then(() => {
-			  NavigationService.navigate('Loading');
-				this.props.resetPropsValues();
-			})
-			.catch((e) => {
-				console.log("error");
-				console.log(e);
-			});
-		} else {
-			NavigationService.navigate(page);
-		}
 	}
 
 	render() {
-		if(this.props.logout)	this.navigate('logout');
+		if(this.props.logout)	this.logout();
 
-		if(this.props.nonPage) {
-			return (
-				<View	style={{ flex: 1, flexDirection: 'column' }}>
-					<NavigationEvents
-						onDidFocus={this.mountComponent}
-						onWillBlur={this.unmountComponent}
-					/>
+		return (
+			<IfElse condition={this.props.nonPage}>
+				<Then>
+					<View	style={{ flex: 1, flexDirection: 'column' }}>
+						<NavigationEvents
+							onDidFocus={this.mountComponent}
+							onWillBlur={this.unmountComponent} />
 
-					<Animated.View
-						style={{
-							position: 'absolute',
-							top: this.state.notificationBannerTop,
-							left: 0,
-							width: Dimensions.get('window').width
-						}}
-					>
-						<MessagePopupNotif
-							popupNotif={this.state.popupNotif}
-							notificationBannerOnPress={this.notificationBannerOnPress}
-						/>
-					</Animated.View>
+						<Animated.View
+							style={{
+								position: 'absolute',
+								top: this.state.notificationBannerTop,
+								left: 0,
+								width: Dimensions.get('window').width
+							}}>
+							<MessagePopupNotif
+								popupNotif={this.state.popupNotif}
+								notificationBannerOnPress={this.notificationBannerOnPress} />
+						</Animated.View>
 
-					{this.props.children}
-				</View>
-			);
-		} else {
-			return (
-				<View
-					style={
-						this.props.message || this.props.campaignPage
-						? { flex: 1, flexDirection: 'column' }
-						: {}
-					}
-				>
-					<NavigationEvents
-						onDidFocus={this.mountComponent}
-						onWillBlur={this.unmountComponent}
-					/>
+						{this.props.children}
+					</View>
+				</Then>
 
-					<Animated.View
-						style={{
-							position: 'absolute',
-							top: this.state.notificationBannerTop,
-							left: 0,
-							width: Dimensions.get('window').width
-						}}
-					>
-						<MessagePopupNotif
-							popupNotif={this.state.popupNotif}
-							notificationBannerOnPress={this.notificationBannerOnPress}
-						/>
-					</Animated.View>
+				<Else>
+					<View
+						style={
+							this.props.message || this.props.campaignPage
+							? { flex: 1, flexDirection: 'column' }
+							: {}
+						}>
+						<NavigationEvents
+							onDidFocus={this.mountComponent}
+							onWillBlur={this.unmountComponent} />
 
-					<AppBackground />
-					
-					<HeaderNav
-						menuButtonOnPress={this.menuButtonOnPress}
-						navigate={this.navigate}
-					/>
+						<Animated.View
+							style={{
+								position: 'absolute',
+								top: this.state.notificationBannerTop,
+								left: 0,
+								width: Dimensions.get('window').width
+							}}>
+							<MessagePopupNotif
+								popupNotif={this.state.popupNotif}
+								notificationBannerOnPress={this.notificationBannerOnPress} />
+						</Animated.View>
 
-					{this.props.children}
+						<AppBackground />
+						
+						<HeaderNav resetPropsValues={this.props.resetPropsValues} />
 
-					<ModalMenu
-						modalContainerzIndex={this.state.modalContainerzIndex}
-						width={this.state.width}
-						height={this.state.scrollEnable ? 0 : this.state.height}
-						modalFadeBackground={this.state.modalFadeBackground}
-						modalXValue={this.state.modalXValue}
-						menuButtonOnPress={this.menuButtonOnPress}
-						navigateToPage={this.navigateToPage}
-					/>
-				</View>
-			);
-		}
+						{this.props.children}
+					</View>
+				</Else>
+			</IfElse>
+		);
 	}
 }
 

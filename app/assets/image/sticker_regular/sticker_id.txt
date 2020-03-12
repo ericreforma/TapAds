@@ -1,0 +1,6 @@
+0 - full wrap
+1 - 4 doors
+2 - 2 doors
+3 - bumper
+4 - rear windows
+5 - in-car

@@ -22,7 +22,6 @@ export function userReducer(state = initialState, action) {
         user: initialState.user
       });
 
-    case USER.NOTIFICATION.SUCCESS:
     case USER.NOTIFICATION.FAILED:
       return Object.assign({}, state, {
         notification: initialState.notification
@@ -38,6 +37,13 @@ export function userReducer(state = initialState, action) {
       return Object.assign({}, state, {
         user: Object.assign({}, state.user, {
           vehicles: [...state.user.vehicles, action.vehicle]
+        })
+      });
+
+    case USER.VEHICLE.REMOVE.SUCCESS:
+      return Object.assign({}, state, {
+        user: Object.assign({}, state.user, {
+          vehicles: action.vehicles
         })
       });
 

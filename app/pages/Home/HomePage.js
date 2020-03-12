@@ -9,7 +9,6 @@ import { NavigationEvents } from 'react-navigation';
 import styles from './Styles/HomePage.style';
 import theme from '../../styles/theme.style';
 
-import { CampaignAction } from '../../redux/actions/campaign.action';
 import PageLayout from '../../components/PageLayout';
 import PageContainer from '../../components/PageContainer';
 import NavigationService from '../../services/navigation';

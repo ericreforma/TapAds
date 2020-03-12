@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import {
 	View,
 	Text,
-	ScrollView,
 	ActivityIndicator
 } from 'react-native';
 import { NavigationEvents } from 'react-navigation';
@@ -15,8 +14,9 @@ import { USER } from '../redux/actions/types.action';
 import { CommonText } from '../components/Text';
 import styles from '../styles/page.Notification.style';
 import NotificationCard from '../components/NotificationCard';
-import Page from './Page';
-import UserInfo from '../components/UserInfo';
+import PageLayout from '../components/PageLayout';
+import PageContainer from '../components/PageContainer';
+import { IfElse, Then, Else } from '../components/IfElse';
 
 class NotificationPage extends Component {
 	constructor(props) {
@@ -37,17 +37,19 @@ class NotificationPage extends Component {
 	getNotificationContent = () => {
 		UserController.request.notificationContent()
 		.then(res => {
-			const { notif } = res.data;
 			const { notification } = this.state;
 
 			this.setState({
-				notification: notif.concat(notification),
+				notification: notification.concat(res.data),
 				loader: false
 			});
 			
-			this.props.updateUserNotification(0);
+			// this.props.updateUserNotification(0);
 		})
-		.catch(error => console.log(error.response));
+		.catch(err => {
+			console.log(err);
+			console.log(err.response);
+		});
 	}
 
 	removeNotification = () => {
@@ -67,22 +69,17 @@ class NotificationPage extends Component {
 
 	render() {
 		return (
-			<Page
+			<PageLayout
 				notif
-				reInitializePage={this.getNotificationContent}
-			>
+				reInitializePage={this.getNotificationContent}>
 				<NavigationEvents
 					onWillFocus={this.getNotificationContent}
-					onWillBlur={this.removeNotification}
-				/>
+					onWillBlur={this.removeNotification} />
 
-				<ScrollView
+				<PageContainer
 					style={styles.notifPageScrollView}
 					overScrollMode='never'
-					showsVerticalScrollIndicator={false}
-				>
-					<UserInfo />
-
+					showsVerticalScrollIndicator={false}>
 					<View style={styles.notifPageContentMargin}>
 						{/* notificaton label */}
 						<View style={styles.notifPageContentLabelWrapper}>
@@ -94,32 +91,40 @@ class NotificationPage extends Component {
 						{/* notification content */}
 						<View style={styles.notifPageContentContainer}>
 							<View style={styles.notifPageContentBodyWrapper}>
-								{this.state.loader ? (
-									<ActivityIndicator color="#000" style={{ height: 75 }} />
-								) : (
-									this.state.notification.length !== 0
-									? this.state.notification.map((notif, index) =>
-										<NotificationCard
-											key={index}
-											client={notif.client}
-											action={notif.action}
-											requestStatus={notif.request_status}
-											onPress={this.notificationOnPress(notif.action, notif.id)}
-											seen={notif.seen}
-										/>
-									) : (
-										<View style={styles.notifPageNoNotif}>
-											<CommonText xsmall>
-												-- No notification --
-											</CommonText>
-										</View>
-									)
-								)}
+								<IfElse condition={this.state.loader}>
+									<Then>
+										<ActivityIndicator color="#000" style={{ height: 75 }} />
+									</Then>
+
+									<Else>
+										<IfElse condition={this.state.notification.length !== 0}>
+											<Then>
+												{this.state.notification.map((notif, index) =>
+													<NotificationCard
+														key={index}
+														client={notif.client}
+														action={notif.action}
+														requestStatus={notif.request_status}
+														onPress={this.notificationOnPress(notif.action, notif.id)}
+														seen={notif.seen} />
+												)}
+											</Then>
+
+											<Else>
+												<View style={styles.notifPageNoNotif}>
+													<CommonText xsmall>
+														-- No notification --
+													</CommonText>
+												</View>
+											</Else>
+										</IfElse>
+									</Else>
+								</IfElse>
 							</View>
 						</View>
 					</View>
-				</ScrollView>
-			</Page>
+				</PageContainer>
+			</PageLayout>
 		);
 	}
 }

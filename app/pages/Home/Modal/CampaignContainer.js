@@ -1,13 +1,4 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  Modal,
-  Image,
-  ScrollView,
-  TouchableOpacity
-} from 'react-native';
-import { RFValue, RFPercentage } from "react-native-responsive-fontsize";
 
 import CampaignChooseVehicle from './CampaignChooseVehicle';
 import { IMAGES, VEHICLE, URL } from '../../../config/variables';
@@ -19,6 +10,39 @@ import {
   getDate
 } from '../../../config/functions';
 import theme from '../../../styles/theme.style';
+import {
+  CampaignContainerButton,
+  ModalBackWrapper,
+  ModalBackButton,
+  ModalBackImage,
+  ModalContentContainer,
+  ModalContentScroll,
+  ModalContentWrapper,
+  CampaignChooseVehicleContainer,
+  CampaignImageWrapper,
+  CampaignImage,
+  CampaignInfoWrapper,
+  CampaignInfoLabel,
+  CampaignInfoCommon,
+  CampaignInfoDivider,
+  CampaignInfoDescription,
+  CampaignInfoCardCommon,
+  CampaignInfoCardLabel,
+  CampaignAdditionalInfoContainer,
+  CampaignAdditionalInfoWrapper,
+  CampaignLVSWrapper,
+  CampaignLVSLocationWrapper,
+  CampaignInfoCommonLabel,
+  CampaignLVSVehicleClassWrapper,
+  CampaignLVSSlotsWrapper,
+  CampaignLVSVehicleClassImageWrapper,
+  CampaignLVSVehicleClassImage,
+  CampaignStickerLocationWrapper,
+  CampaignStickerLocationHeading,
+  CampaignStickerImageLocation,
+  CampaignContainerModal
+} from './CampaignContainerStyledComponents';
+import { IfElse, Then, Else } from '../../../components/IfElse';
 
 const recCampaignImage = require('../../../assets/image/recommended_campaign_image.png');
 const vehicleType = id => Object.values(VEHICLE.TYPE).find(t => t.id === id);
@@ -29,402 +53,186 @@ const CampaignContainer = props => {
   const { campaign, homePageInit } = props;
   const [modalVisible, setModalVisible] = useState(false);
 
-  const CampaignBody = () => {
-    return (
-      <View
-        style={{
-          flex: 1,
-        }}
-      >
-        <ScrollView
-          overScrollMode='never'
-          showsVerticalScrollIndicator={false}
-        >
-          <View
-            style={{
-              marginHorizontal: RFPercentage(1.5),
-              marginBottom: RFPercentage(4),
-              marginTop: RFPercentage(2),
-              borderRadius: theme.PAGE_CARD_RADIUS,
-              backgroundColor: theme.COLOR_WHITE,
-              overflow: 'hidden',
-              elevation: 5
-            }}
-          >
-            <CampaignImage />
-            <CampaignInfo />
-            
-            <View
-              style={{
-                marginTop: 15,
-                marginBottom: 30,
-              }}
-            >
-              <CampaignChooseVehicle
-                homePageInit={homePageInit}
-                closeCampaignModal={() => setModalVisible(false)}
-              />
-            </View>
-          </View>
-        </ScrollView>
-      </View>
-    );
-  }
+  const imageSource = campaign.photo
+    ? {uri: `${URL.SERVER_MEDIA}/${campaign.photo}`}
+    : recCampaignImage;
 
-  const CampaignImage = () => {
-    const imageSource = campaign.photo
-      ? {uri: `${URL.SERVER_MEDIA}/${campaign.photo}`}
-      : recCampaignImage;
-    return (
-      <View
-        style={{
-          flex: 1,
-          height: theme.SCREEN_HEIGHT / 3.5,
-          backgroundColor: theme.COLOR_BLUE
-        }}
-      >
-        <Image
-          source={imageSource}
-          resizeMode="cover"
-          style={{
-            width: '100%',
-            height: theme.SCREEN_HEIGHT / 3.5,
-          }}
-        />
-      </View>
-    );
-  }
+  const campaignInfo = [
+    [
+      {name: 'common', text: 'From'},
+      {name: 'label', text: getDate(campaign.duration_from)},
+      {name: 'common', text: 'to'},
+      {name: 'label', text: getDate(campaign.duration_to)},
+    ], [
+      {name: 'common', text: 'Earn up to'},
+      {name: 'label', text: `P${earnUpTo(campaign, true)}`},
+      {name: 'common', text: 'for'},
+      {name: 'label', text: `${totalKmDistance(campaign)}km`},
+    ], [
+      {name: 'common', text: 'Bonus'},
+      {name: 'label', text: `P${numberWithCommas(campaign.completion_bonus)}`},
+      {name: 'common', text: 'for campaign completion'},
+    ]
+  ];
 
-  const CampaignInfo = () => {
-    return (
-      <View
-        style={{
-          paddingHorizontal: 20,
-          paddingVertical: 15
-        }}
-      >
-        <CampaignText.Label text={campaign.name} />
-        <CampaignText.Common text={campaign.client.business_name} />
-        <CampaignDivider color={theme.COLOR_LIGHT_BLUE} />
-        <CampaignText.Description text={campaign.description} />
-        <CampaignDivider color="#e7e7e7" height={2} />
-        <CampaignLVSInfo />
-        <CampaignInfoCard
-          info={[
-            {name: 'common', text: 'From'},
-            {name: 'label', text: getDate(campaign.duration_from)},
-            {name: 'common', text: 'to'},
-            {name: 'label', text: getDate(campaign.duration_to)},
-          ]}
-        />
-        <CampaignInfoCard
-          info={[
-            {name: 'common', text: 'Earn up to'},
-            {name: 'label', text: `P${earnUpTo(campaign, true)}`},
-            {name: 'common', text: 'for'},
-            {name: 'label', text: `${totalKmDistance(campaign)}km`},
-          ]}
-        />
-        <CampaignInfoCard
-          info={[
-            {name: 'common', text: 'Bonus'},
-            {name: 'label', text: `P${numberWithCommas(campaign.completion_bonus)}`},
-            {name: 'common', text: 'for campaign completion'},
-          ]}
-        />
-        <CampaignStickerLocation />
-      </View>
-    );
-  }
-
-  const CampaignLVSInfo = () => {
-    return (
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'flex-end',
-          paddingVertical: 25,
-          paddingTop: 20
-        }}
-      >
-        <View
-          style={{
-            flex: 1,
-            alignItems: 'flex-start'
-          }}
-        >
-          <CampaignText.Label text={campaign.location} numberOfLines={2} />
-          <CampaignText.CommonLabel text="Location" />
-        </View>
-        
-        <View
-          style={{
-            paddingHorizontal: 10,
-            alignItems: 'center'
-          }}
-        >
-          <View
-            style={{
-              width: theme.SCREEN_WIDTH / 10,
-              height: theme.SCREEN_WIDTH / 15,
-            }}
-          >
-            <Image
-              source={vehicleClass(campaign.vehicle_classification).icon.black}
-              resizeMode="contain"
-              style={{
-                width: theme.SCREEN_WIDTH / 10,
-                height: theme.SCREEN_WIDTH / 15,
-              }}
-            />
-          </View>
-          <CampaignText.CommonLabel text={vehicleType(campaign.vehicle_type).nameOnCaps} />
-        </View>
-        
-        <View
-          style={{
-            flex: 1,
-            alignItems: 'flex-end'
-          }}
-        >
-          <CampaignText.Label text={getSlotAvailable(campaign)} />
-          <CampaignText.CommonLabel text="Slots available" />
-        </View>
-      </View>
-    );
-  }
-
-  const CampaignInfoCard = props => {
-		return (
-			<View
-				style={{
-					marginVertical: 7,
-					paddingVertical: 15,
-					flexDirection: 'row',
-					justifyContent: 'center',
-					alignItems: 'center',
-					backgroundColor: theme.COLOR_WHITE,
-					borderRadius: theme.PAGE_CARD_RADIUS,
-					elevation: 3
-				}}
-			>
-				{props.info.map((i, index) =>
-					<View
-						key={index}
-						style={{
-							flexDirection: 'row',
-							justifyContent: 'center',
-							alignItems: 'center',
-						}}
-					>
-            {
-              i.name === 'common'
-              ? <CampaignText.Card.Common text={i.text} />
-							: <CampaignText.Card.Label text={i.text} />
-						}
-					</View>
-				)}
-			</View>
-		);
-  }
-
-  const CampaignStickerLocation = () => {
-    return (
-      <View
-        style={{
-          marginVertical: 10,
-          paddingHorizontal: 20
-        }}
-      >
-        <View
-          style={{
-            marginTop: 10,
-            marginBottom: [3,4,6].indexOf(parseInt(campaign.vehicle_stickerArea)) !== -1 ? 20 : 0,
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}
-        >
-          <CampaignText.Label text={vehicleStickerArea[campaign.vehicle_stickerArea].name} />
-        </View>
-
-        {campaign.vehicle_classification === 2 ? (
-          <CampaignStickerImageLocation
-            source={VEHICLE.STICKER_AREA.motorcycle.image} />
-        ) : campaign.vehicle_stickerArea === 1 ? (
-            <View>
-              <CampaignStickerImageLocation
-                source={vehicleStickerArea[campaign.vehicle_stickerArea].imageLeft} />
-                
-              <CampaignStickerImageLocation
-                source={vehicleStickerArea[campaign.vehicle_stickerArea].imageRight} />
-            </View>
-          ) : (
-            <CampaignStickerImageLocation
-              source={vehicleStickerArea[campaign.vehicle_stickerArea].image} />
-          )
-        }
-      </View>
-    );
-  }
-
-  const CampaignStickerImageLocation = ({source}) => {
-    return (
-      <Image
-        style={{
-          width: '100%',
-          height: theme.SCREEN_HEIGHT / 5
-        }}
-        resizeMode="contain"
-        source={source}
-      />
-    )
-  }
-
-  const CampaignDivider = ({color, height}) => {
-    return (
-      <View
-        style={{
-          backgroundColor: color ? color : theme.COLOR_WHITE,
-          height: color ? (height ? height : 3) : 0,
-          marginVertical: 10
-        }}
-      />
-    );
-  }
-
-  const CampaignText = {
-    Label: ({text, numberOfLines = false}) => {
-      return (
-        <Text
-          style={{
-            fontFamily: 'Montserrat-Bold',
-            fontSize: RFValue(15),
-            color: theme.COLOR_BLACK
-          }}
-          numberOfLines={numberOfLines ? numberOfLines : 1}
-        >{text}</Text>
-      );
-    },
-    Common: ({text, color = false}) => {
-      return (
-        <Text
-          style={{
-            fontFamily: 'Montserrat-Medium',
-            fontSize: RFValue(11),
-            color: color ? color : theme.COLOR_NORMAL_FONT,
-            lineHeight: RFValue(13)
-          }}
-          numberOfLines={1}
-        >{text}</Text>
-      )
-    },
-    CommonLabel: ({text}) => {
-      return (
-        <Text
-          style={{
-            fontFamily: 'Montserrat-Bold',
-            fontSize: RFValue(12),
-            color: theme.COLOR_NORMAL_FONT,
-            lineHeight: RFValue(13)
-          }}
-          numberOfLines={1}
-        >{text}</Text>
-      );
-    },
-    Description: ({text}) => {
-      return (
-        <View
-          style={{
-            paddingVertical: 5
-          }}
-        >
-          <Text
-            style={{
-              fontFamily: 'Montserrat-Regular',
-              fontSize: RFValue(11),
-              color: theme.COLOR_NORMAL_FONT
-            }}
-          >{text}</Text>
-        </View>
-      );
-    },
-    Card: {
-      Label: ({text}) => {
-        return (
-          <Text
-            style={{
-              fontFamily: 'Montserrat-Bold',
-              fontSize: RFValue(11),
-              color: theme.COLOR_BLACK,
-              lineHeight: RFValue(11)
-            }}
-          >{`${text} `}</Text>
-        );
-      },
-      Common: ({text}) => {
-        return (
-          <Text
-            style={{
-              fontFamily: 'Montserrat-Regular',
-              fontSize: RFValue(11),
-              color: theme.COLOR_BLACK,
-              lineHeight: RFValue(11)
-            }}
-          >{`${text} `}</Text>
-        );
-      }
-    }
-  }
+  const CampaignContainerText = {
+    location: 'Location',
+    slotsAvail: 'Slots available'
+  };
   
   return (
-    <View>
-      <TouchableOpacity 
+    <>
+      <CampaignContainerButton 
         style={props.style}
         activeOpacity={props.activeOpacity}
         onPress={e => {
           props.onPress(e);
           setModalVisible(true);
         }}
-        disabled={modalVisible}
-      >
+        disabled={modalVisible}>
         {props.children}
-      </TouchableOpacity>
+      </CampaignContainerButton>
 
-      <Modal
+      <CampaignContainerModal
         animationType="slide"
         transparent={false}
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}
-        presentationStyle="fullScreen"
-      >
-        <View
-          style={{
-            backgroundColor: theme.COLOR_WHITE,
-            paddingVertical: RFPercentage(3),
-            paddingHorizontal: RFPercentage(1.5),
-            // elevation: 5,
-          }}
-        >
-          <TouchableOpacity
-            style={{
-              alignSelf: 'flex-start'
-            }}
-            onPress={() => setModalVisible(false)}
-          >
-            <Image
-              source={IMAGES.ICONS.back_icon_black}
-              resizeMode="contain"
-              style={{
-                width: RFPercentage(2.5),
-                height: RFPercentage(2.5)
-              }}
-            />
-          </TouchableOpacity>
-        </View>
+        presentationStyle="fullScreen">
+        <ModalBackWrapper>
+          <ModalBackButton onPress={() => setModalVisible(false)}>
+            <ModalBackImage source={IMAGES.ICONS.back_icon_black} />
+          </ModalBackButton>
+        </ModalBackWrapper>
         
-        <CampaignBody />
-      </Modal>
-    </View>
+        <ModalContentContainer>
+          <ModalContentScroll
+            overScrollMode='never'
+            showsVerticalScrollIndicator={false}>
+            <ModalContentWrapper>
+              <CampaignImageWrapper>
+                <CampaignImage source={imageSource} />
+              </CampaignImageWrapper>
+
+              <CampaignInfoWrapper>
+                <CampaignInfoLabel>
+                  {campaign.name}
+                </CampaignInfoLabel>
+
+                <CampaignInfoCommon>
+                  {campaign.client.business_name}
+                </CampaignInfoCommon>
+
+                <CampaignInfoDivider
+                  color={theme.COLOR_LIGHT_BLUE} />
+
+                <CampaignInfoDescription>
+                  {campaign.description}
+                </CampaignInfoDescription>
+
+                <CampaignInfoDivider
+                  color="#e7e7e7"
+                  height={2} />
+
+                <CampaignLVSWrapper>
+                  <CampaignLVSLocationWrapper>
+                    <CampaignInfoLabel numberOfLines={2}>
+                      {campaign.location}
+                    </CampaignInfoLabel>
+
+                    <CampaignInfoCommonLabel>
+                      {CampaignContainerText.location}
+                    </CampaignInfoCommonLabel>
+                  </CampaignLVSLocationWrapper>
+                  
+                  <CampaignLVSVehicleClassWrapper>
+                    <CampaignLVSVehicleClassImageWrapper>
+                      <CampaignLVSVehicleClassImage
+                        source={vehicleClass(campaign.vehicle_classification).icon.black} />
+                    </CampaignLVSVehicleClassImageWrapper>
+
+                    <CampaignInfoCommonLabel>
+                      {vehicleType(campaign.vehicle_type).nameOnCaps}
+                    </CampaignInfoCommonLabel>
+                  </CampaignLVSVehicleClassWrapper>
+                  
+                  <CampaignLVSSlotsWrapper>
+                    <CampaignInfoLabel>
+                      {getSlotAvailable(campaign)} 
+                    </CampaignInfoLabel>
+
+                    <CampaignInfoCommonLabel>
+                      {CampaignContainerText.slotsAvail}
+                    </CampaignInfoCommonLabel>
+                  </CampaignLVSSlotsWrapper>
+                </CampaignLVSWrapper>
+
+                {campaignInfo.map((c, cIdx) =>
+                  <CampaignAdditionalInfoContainer key={cIdx}>
+                    {c.map((i, index) =>
+                      <CampaignAdditionalInfoWrapper key={index}>
+                        <IfElse condition={i.name === 'common'}>
+                          <Then>
+                            <CampaignInfoCardCommon>
+                              {i.text}
+                            </CampaignInfoCardCommon>
+                          </Then>
+
+                          <Else>
+                            <CampaignInfoCardLabel>
+                              {i.text}
+                            </CampaignInfoCardLabel>
+                          </Else>
+                        </IfElse>
+                      </CampaignAdditionalInfoWrapper>
+                    )}
+                  </CampaignAdditionalInfoContainer>
+                )}
+                
+                <CampaignStickerLocationWrapper>
+                  <CampaignStickerLocationHeading
+                    marginBottom={[3,4,6].indexOf(parseInt(campaign.vehicle_stickerArea)) !== -1 ? 20 : 0}>
+                    <CampaignInfoLabel>
+                      {vehicleStickerArea[campaign.vehicle_stickerArea].name}
+                    </CampaignInfoLabel>
+                  </CampaignStickerLocationHeading>
+
+                  <IfElse condition={campaign.vehicle_classification === 2}>
+                    <Then>
+                      <CampaignStickerImageLocation
+                        source={VEHICLE.STICKER_AREA.motorcycle.image} />
+                    </Then>
+
+                    <Else>
+                      <IfElse condition={campaign.vehicle_stickerArea === 1}>
+                        <Then>
+                          <CampaignStickerImageLocation
+                            source={vehicleStickerArea[campaign.vehicle_stickerArea].imageLeft} />
+                            
+                          <CampaignStickerImageLocation
+                            source={vehicleStickerArea[campaign.vehicle_stickerArea].imageRight} />
+                        </Then>
+
+                        <Else>
+                          <CampaignStickerImageLocation
+                            source={vehicleStickerArea[campaign.vehicle_stickerArea].image} />
+                        </Else>
+                      </IfElse>
+                    </Else>
+                  </IfElse>
+                </CampaignStickerLocationWrapper>
+              </CampaignInfoWrapper>
+
+              <CampaignChooseVehicleContainer>
+                <CampaignChooseVehicle
+                  homePageInit={homePageInit}
+                  closeCampaignModal={() => setModalVisible(false)} />
+              </CampaignChooseVehicleContainer>
+            </ModalContentWrapper>
+          </ModalContentScroll>
+        </ModalContentContainer>
+      </CampaignContainerModal>
+    </>
   );
 };
 

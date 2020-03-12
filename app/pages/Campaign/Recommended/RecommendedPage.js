@@ -97,13 +97,6 @@ class RecommendedPage extends Component {
     this.setState({ loader: !this.state.loader });
   }
 
-  viewDetailsButtonPressed = (id) => {
-    const { campaigns } = this.state;
-    const campaign = campaigns.find(x => x.id === id);
-    this.props.viewDetails(campaign);
-    NavigationService.navigate('Campaign');
-  }
-
   render() {
     return (
       <PageLayout>

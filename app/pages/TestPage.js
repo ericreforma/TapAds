@@ -1,91 +1,72 @@
 import React, { useState } from 'react';
-import {
-  Button,
-  View,
-  Image,
-  ActivityIndicator
-} from 'react-native';
+import Modal from 'react-native-modal';
+import { ActivityIndicator, View, Button, Text } from 'react-native';
+import { IfElse, Then, Else } from '../components/IfElse';
 
-import theme from '../styles/theme.style';
+const TestPage = props => {
+  const [visible, setVisible] = useState(false);
+  const [loadingVisible, setLoadingVisible] = useState(false);
+  let timeoutData;
 
-const AsyncImage = props => {
-  const {
-    style,
-    source
-  } = props;
-  const [loaded, setLoaded] = useState(false);
+  const toggleModal = () => {
+    clearTimeout(timeoutData);
 
-  const onLoad = () => {
-    // This only exists so the transition can be seen
-    // if loaded too quickly.
-    setTimeout(() => {
-      setLoaded(true);
-    }, 1000)
+    if(!visible) {
+      timeoutData = setTimeout(() => {
+        setVisible(!visible);
+        setLoadingVisible(false);
+      }, 5000);
+    }
+
+    setVisible(!visible);
   }
 
-  return (
-    <View style={style}>
-      <Image
-        source={source}
-        resizeMode="cover"
-        style={imageStyle(style)}
-        onLoad={onLoad}
-      />
-        {!loaded &&
-          <View style={imageBeforeOnLoad(style)}>
-            <ActivityIndicator color="#fff" />
-          </View>
-        }
-    </View>
-  )
-}
-
-const TestPage = () => {
   return (
     <View
       style={{
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'white',
+        padding: 15
       }}>
-
       <Button
         title="Click me"
-        onPress={() => alert('test clicked')}
-      />
+        onPress={toggleModal} />
 
-      <AsyncImage
-        style={{
-          height: 100,
-          width: 100,
-          borderRadius: 25
-        }}
-        source={{
-          uri: 'https://dev.bcdpinpoint.com/TapAdsServer/public/storage/images/campaigns/a540abed969dffda01980b9a71a2f197.jpeg'
-        }}
-      />
+      <Modal
+        isVisible={visible}
+        onBackButtonPress={toggleModal}
+        onModalHide={() => {
+          setLoadingVisible(true);
+        }}>
+        <IfElse condition={loadingVisible}>
+          <Then>
+            <View
+              style={{
+                backgroundColor: '#fff',
+                alignSelf: 'center',
+                padding: 25,
+                borderRadius: 10
+              }}>
+              <ActivityIndicator size="large" />
+            </View>
+          </Then>
 
+          <Else>
+            <View
+              style={{
+                backgroundColor: '#fff',
+                padding: 15,
+                borderRadius: 10
+              }}>
+              <Text>
+                Hello
+              </Text>
+            </View>
+          </Else>
+        </IfElse>
+      </Modal>
     </View>
-  );
-}
-
-const imageStyle = style => {
-  return {
-    ...style,
-    position: 'absolute',
-    resizeMode: 'cover'
-  }
-}
-
-const imageBeforeOnLoad = style => {
-  return {
-    ...style,
-    backgroundColor: theme.COLOR_GRAY_HEAVY,
-    position: 'absolute',
-    alignItems: 'center',
-    justifyContent: 'center'
-  }
+  )
 }
 
 export default TestPage;

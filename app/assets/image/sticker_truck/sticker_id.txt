@@ -1,0 +1,5 @@
+0 - full wrap
+1 - 2 cargo side
+2 - cargo side
+3 - back door
+4 - hood

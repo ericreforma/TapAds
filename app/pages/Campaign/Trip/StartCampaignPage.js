@@ -27,7 +27,6 @@ import { timeConverter } from '../../../utils';
 import style from '../../../styles/page.StartCampaign.style';
 import mapStyle from '../../../styles/map.style';
 import { LabelText, CommonText } from '../../../components/Text';
-import Page from './../../Page';
 import { totalKmDistance, getHeadingTwoPoints } from '../../../config/functions';
 import CampaignSummaryModal from './Modal/CampaignSummaryModal';
 import {
@@ -51,12 +50,21 @@ import {
   MinMaxWrapper,
   MinMaxIcon,
   LoaderWrapper,
-  LoaderContainer
+  LoaderContainer,
+  TopPanel,
+  VehicleClassImage,
+  VehicleInfoWrapper,
+  VehicleManufacturerLabel,
+  VehiclePlateNumber
 } from './StartCampaignStyledComponents';
-import { IMAGES } from '../../../config/variables';
+import { IMAGES, VEHICLE } from '../../../config/variables';
 import theme from '../../../styles/theme.style';
+import PageLayout from '../../../components/PageLayout';
+import { AlertFunction } from '../../../components/App';
+import { CampaignStartTripText } from '../../../lang/en';
 
 const animationDuration = 2000;
+const carClassification = id => Object.values(VEHICLE.CLASS).find(i => i.id === id);
 
 class StartCampaignPage extends Component {
   constructor(props) {
@@ -122,7 +130,8 @@ class StartCampaignPage extends Component {
       animatedHeight: new Animated.Value(1000),
       cardHeight: 1000,
       imageRotate: 90,
-      locatingStarted: true
+      locatingStarted: true,
+      alertModalVisible: false,
     };
 
     console.disableYellowBox = true;
@@ -168,9 +177,9 @@ class StartCampaignPage extends Component {
       let diff = (starttime - currenttime) / 1000;
       diff /= 60;
 
-      this.setState({
-        spanTime: Math.abs(Math.round(diff))
-      });
+      const spanTime = Math.abs(Math.round(diff));
+      if(spanTime !== this.state.spanTime)
+        this.setState({ spanTime });
     }, 1000);
 
     this.setState({
@@ -186,7 +195,13 @@ class StartCampaignPage extends Component {
     VIForegroundService.createNotificationChannel(channelConfig);
     this.startForegroundService();
 
+    this.backHandler = BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);
+
     KeepAwake.activate();
+  }
+
+  componentWillUnmount = () => {
+    this.backHandler.remove();
   }
   
   startForegroundService = async() => {
@@ -206,15 +221,13 @@ class StartCampaignPage extends Component {
   }
 
   handleBackPress = () => {
-    console.log('Back button press');
+    this.toggleAlertModalVisible();
     return true;
   }
 
   watchPosition() {
     const watchId = Geolocation.watchPosition(position => {
       const {latitude, longitude} = position.coords;
-      console.log({latitude});
-      console.log({longitude});
       position.coords.heading = getHeadingTwoPoints(this.state.myPosition, position);
       const newPosition = Object.assign({}, this.state.myPosition, {
         coords: {
@@ -430,7 +443,6 @@ class StartCampaignPage extends Component {
       (this.state.locationData === undefined || this.state.locationData.length === 0) ?
       [] : [...this.state.locationData];
 
-    console.log(campaignTripMapArr);
     CampaignController.trip_send_location(JSON.stringify(campaignTripMapArr))
     .then((res) => {
       console.log(res.data);
@@ -570,9 +582,23 @@ class StartCampaignPage extends Component {
     });
   }
 
+  toggleAlertModalVisible = () => {
+    this.setState({alertModalVisible: !this.state.alertModalVisible});
+  }
+
+  alertModalOnConfirm = () => {
+    this.toggleAlertModalVisible();
+    this.save();
+  }
+
   render() {
+    const {vehicles} = this.props.user;
+    const {user_vehicle_id} = this.props.campaign;
+    const vehicle = vehicles.find(v => v.id === user_vehicle_id);
+    const vehicleClassImageSource = carClassification(vehicle.vehicle.classification).icon.white;
+
     return (
-      <Page nonPage>
+      <PageLayout nonPage>
         <StatusBar
           animated={true}
           backgroundColor={this.state.locatingStarted ? '#28a745' : '#28a74500'}
@@ -591,6 +617,29 @@ class StartCampaignPage extends Component {
           {this.summaryModal()}
           {this.savingModal()}
           {this.mapContent()}
+          
+          <AlertFunction
+            proceedText={CampaignStartTripText.backButtonPress.proceedText}
+            cancelText={CampaignStartTripText.backButtonPress.cancelText}
+            title={CampaignStartTripText.backButtonPress.title}
+            body={CampaignStartTripText.backButtonPress.body}
+            toggleModal={this.toggleAlertModalVisible}
+            confirmOnPress={this.alertModalOnConfirm}
+            isVisible={this.state.alertModalVisible} />
+
+          <TopPanel>
+            <VehicleClassImage source={vehicleClassImageSource} />
+          
+            <VehicleInfoWrapper>
+              <VehicleManufacturerLabel numberOfLines={1}>
+                {vehicle.vehicle.manufacturer}
+              </VehicleManufacturerLabel>
+
+              <VehiclePlateNumber>
+                {vehicle.plate_number}
+              </VehiclePlateNumber>
+            </VehicleInfoWrapper>
+          </TopPanel>
 
           <BottomPanel>
             <CampaignRow active={this.state.counted}>
@@ -699,7 +748,7 @@ class StartCampaignPage extends Component {
             </Animated.View>
           </BottomPanel>
         </Container>
-      </Page>
+      </PageLayout>
     );
   }
 }
@@ -707,7 +756,8 @@ class StartCampaignPage extends Component {
 const mapStateToProps = (state) => ({
   campaign: state.campaignReducer.mylist_selected,
   trip: state.campaignReducer.trip,
-  campaign_location: state.campaignReducer.campaign_location
+  campaign_location: state.campaignReducer.campaign_location,
+	user: state.userReducer.user,
 });
 
 const mapDispatchToProps = dispatch => ({

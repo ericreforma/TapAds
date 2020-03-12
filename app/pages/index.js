@@ -1,39 +1,17 @@
-import LogInPage from './LoginPage';
-import NotificationPage from './NotificationPage';
-// import SignUpPage from './SignUpPage';
-import SignUpAddImagePage from './SignUpAddImagePage';
-import SignUpAddVehiclesPage from './SignUpAddVehiclesPage';
-import LoadingPage from './LoadingPage';
-import CampaignPage from './CampaignPage';
-import CampaignCardActive from './CampaignCardActive';
-import MessengerPage from './MessengerPage';
-import ChatPage from './ChatPage';
-import TermsAndConditionPage from './TermsAndConditionPage';
-import AddVehiclePage from './AddVehiclePage';
-// import DashboardPage from './DashboardPage';
-import ForgotPasswordPage from './ForgotPasswordPage';
-import MonthlyCarPhotoPage from './MonthlyCarPhotoPage';
+export {default as AddVehiclePage} from './AddVehiclePage';
 
-// new directory
-export { HomePage } from './Home';
+export {default as LogInPage} from './LoginPage';
+export {default as SignUpAddImagePage} from './SignUpAddImagePage';
+export {default as SignUpAddVehiclesPage} from './SignUpAddVehiclesPage';
+export {default as ForgotPasswordPage} from './ForgotPasswordPage';
+
+// export {default as NotificationPage} from './NotificationPage';
+export {default as TermsAndConditionPage} from './TermsAndConditionPage';
+export {default as LoadingPage} from './LoadingPage';
+
+export * from './Home';
 export * from './Campaign';
 export * from './Profile';
 export * from './Auth';
-
-export {
-	LogInPage,
-	NotificationPage,
-	// SignUpPage,
-	SignUpAddImagePage,
-	SignUpAddVehiclesPage,
-	LoadingPage,
-	CampaignPage,
-	CampaignCardActive,
-	MessengerPage,
-	ChatPage,
-	TermsAndConditionPage,
-	AddVehiclePage,
-	// DashboardPage,
-	ForgotPasswordPage,
-	MonthlyCarPhotoPage
-};
+export * from './Messages';
+export * from './Notification';

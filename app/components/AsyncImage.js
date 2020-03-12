@@ -35,7 +35,8 @@ const AsyncImage = props => {
     // This only exists so the transition can be seen
     // if loaded too quickly.
     setTimeout(() => {
-      setLoaded(true);
+      if(setLoaded)
+        setLoaded(true);
     }, 500);
   }
 

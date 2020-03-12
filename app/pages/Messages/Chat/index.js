@@ -1,0 +1,1 @@
+export {default as MessageChatPage} from './MessageChat';

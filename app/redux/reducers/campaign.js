@@ -160,6 +160,12 @@ export function campaignReducer(state = initialState, action) {
         mylist_selected: action.mylist_selected
       });
 
+    case CAMPAIGN.REMOVE.SUCCESS:
+      return Object.assign({}, state, {
+        mylist_selected: {},
+        mylist: action.mylist
+      });
+
     default:
       return state;
   }

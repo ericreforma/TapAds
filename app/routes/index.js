@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import {
 	createStackNavigator,
 	createSwitchNavigator,
@@ -16,13 +16,12 @@ import {
 	SignUpAddVehiclesPage,
 	ProfilePage,
 	LoadingPage,
-	CampaignPage,
 	MyCampaignPage,
-	CampaignCardActive,
+	CampaignDetailsPage,
 	StartCampaignPage,
 	ProfileInfoPage,
-	MessengerPage,
-	ChatPage,
+	MessageListPage,
+	MessageChatPage,
 	TermsAndConditionPage,
 	AddVehiclePage,
 	DashboardPage,
@@ -33,22 +32,19 @@ import {
 
 import TestPage from '../pages/TestPage';
 
-export default class Route extends Component {
-	constructor(props) {
-		super(props);
-    console.disableYellowBox = true;
-	}
-	
-	render() {
-		return (
-			<AppContainer
-				ref={(navigatorRef) => {
-					NavigationService.setTopLevelNavigator(navigatorRef);
-				}}
-			/>
-		);
-	}
+console.disableYellowBox = true;
+
+const Route = () => {
+	return (
+		<AppContainer
+			ref={(navigatorRef) => {
+				NavigationService.setTopLevelNavigator(navigatorRef);
+			}}
+		/>
+	);s
 }
+
+export default Route;
 
 const AuthStack = createStackNavigator(
 	{
@@ -70,11 +66,10 @@ const AppStack = createStackNavigator(
 		Notification: NotificationPage,
 		Profile: ProfilePage,
 		MyCampaign: MyCampaignPage,
-		CampaignCardActive: CampaignCardActive,
-		Messenger: MessengerPage,
-		Campaign: CampaignPage,
+		CampaignDetails: CampaignDetailsPage,
+		Messenger: MessageListPage,
 		ProfileInfo: ProfileInfoPage,
-		Chat: ChatPage,
+		Chat: MessageChatPage,
 		TermsAndCondition: TermsAndConditionPage,
 		Addvehicle: AddVehiclePage,
 		StartCampaign: StartCampaignPage,

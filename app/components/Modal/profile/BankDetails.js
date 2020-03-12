@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {
 	Modal,
 	View,
+	Text,
 	TextInput,
 	TouchableOpacity,
 	ActivityIndicator
@@ -30,12 +31,11 @@ export default class BankDetails extends Component {
 	submitAccountDetails = () => {
 		var { accountNumber,
 			password } = this.state,
-			form = { accountNumber, password },
+			newAccountNumber = `+63${accountNumber}`;
+			form = { accountNumber: newAccountNumber, password },
 			errorsAccountNumber = false,
 			errorsPassword = false,
 			errorsAccountNumberLength = false;
-
-		console.log(accountNumber.toString().length);
 
 		if(accountNumber === '') {
 			errorsAccountNumber = true;
@@ -45,7 +45,7 @@ export default class BankDetails extends Component {
 			errorsPassword = true;
 		}
 
-		if(accountNumber.toString().length !== 11) {
+		if(accountNumber.toString().length !== 10) {
 			errorsAccountNumberLength = true;
 		}
 
@@ -181,24 +181,42 @@ export default class BankDetails extends Component {
 								)}
 							</View>
 
-							<TextInput
-								style={[
-									{
-										borderBottomWidth: 2,
-										borderBottomColor: theme.COLOR_LIGHT_BLUE,
+							<View
+								style={{
+									borderBottomWidth: 2,
+									borderBottomColor: theme.COLOR_LIGHT_BLUE,
+									paddingVertical: 7,
+									marginVertical: 10,
+									paddingHorizontal: 0,
+									flexDirection: 'row',
+									alignItems: 'center',
+									justifyContent: 'center'
+								}}>
+								<Text
+									style={{
 										fontFamily: 'Montserrat-Light',
+										color: theme.COLOR_BLACK,
+										fontSize: 15
+									}}>
+									+63
+								</Text>
+
+								<TextInput
+									style={{
+										fontFamily: 'Montserrat-Light',
+										color: theme.COLOR_BLACK,
 										fontSize: 15,
-										paddingVertical: 7,
-										marginVertical: 10,
-										paddingHorizontal: 0,
-										color: theme.COLOR_BLACK
-									}
-								]}
-								placeholder="Account number"
-								keyboardType="number-pad"
-								onChangeText={accountNumber => this.setState({accountNumber})}
-								placeholderTextColor={theme.COLOR_NORMAL_FONT + '50'}
-							/>
+										padding: 0,
+										margin: 0,
+										flex: 1,
+										paddingLeft: 5
+									}}
+									maxLength={10}
+									placeholder="Gcash number"
+									keyboardType="number-pad"
+									onChangeText={accountNumber => this.setState({accountNumber})}
+									placeholderTextColor={theme.COLOR_NORMAL_FONT + '50'} />
+							</View>
 
 							<TextInput
 								style={[

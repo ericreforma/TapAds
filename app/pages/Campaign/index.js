@@ -1,4 +1,6 @@
-export { StartCampaignPage } from './Trip';
-export { RecommendedPage } from './Recommended';
-export { MyCampaignPage } from './MyList';
-export { DashboardPage } from './Dashboard';
+export * from './Trip';
+export * from './Recommended';
+export * from './MyList';
+export * from './Dashboard';
+export * from './Details';
+export * from './MonthlyUpdate';

@@ -1,5 +1,5 @@
-const SERVER_MAIN = 'http://192.168.0.50/TapAdsServer/public';
-// const SERVER_MAIN = 'https://dev.bcdpinpoint.com/TapAdsServer/public';
+// const SERVER_MAIN = 'http://192.168.0.50/TapAdsServer/public';
+const SERVER_MAIN = 'https://dev.bcdpinpoint.com/TapAdsServer/public';
 
 const SERVER_API = `${SERVER_MAIN}/api`;
 const SERVER_MEDIA = `${SERVER_MAIN}/storage`;
@@ -17,7 +17,8 @@ export const URL = {
       LIST: '/user/campaign/list',
       ADD: '/user/campaign/add',
       FAVORITE: (id) => { return `/user/campaign/favorite/${id}`; },
-      RECOMMENDED: '/user/campaign/recommended'
+      RECOMMENDED: '/user/campaign/recommended',
+      REMOVE: '/user/campaign/remove',
     },
     TRIP: {
       ADD: '/user/campaign/trip/add',

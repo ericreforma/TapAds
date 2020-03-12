@@ -310,3 +310,38 @@ export const getHeadingTwoPoints = (coor1, coor2) => {
 	const shiftedHeading = heading < 0 ? 360 + heading : heading;
 	return shiftedHeading;
 }
+
+export const convert12HourTime = (timestamp) => {
+	var date = timestamp.split(' ')[0],
+		year = parseInt(date.split('-')[0]),
+		month = parseInt(date.split('-')[1]),
+		day = parseInt(date.split('-')[2]),
+		time = timestamp.split(' ')[1],
+		hour = parseInt(time.split(':')[0]),
+		min = time.split(':')[1],
+		dateNow = new Date(),
+		dateDB = new Date(year, month - 1, day, time.split(':')[0], time.split(':')[1], time.split(':')[2]),
+		yearNow = dateNow.getFullYear(),
+		millis = dateDB.getTime(),
+		millisNow = dateNow.getTime(),
+		hourDiff = Math.abs(millisNow - millis) / 36e5,
+		months = [
+			'Jan', 'Feb', 'Mar',
+			'Apr', 'May', 'Jun',
+			'Jul', 'Aug', 'Sep',
+			'Oct', 'Nov', 'Dec'
+		],
+		time;
+
+	if(yearNow > year) {
+		time = date.replace(/-/g,'/');
+	} else if(hourDiff >= 48) {
+		time = `${months[month - 1]} ${day}`;
+	} else {
+		time = (hour == 0 ? '12' : (
+			hour < 12 ? hour : hour - 12
+		)) + `:${min} ${hour < 12 ? 'AM' : 'PM'}`;
+	}
+
+	return time;
+}

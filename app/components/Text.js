@@ -42,7 +42,9 @@ class CommonText extends Component {
                                 )
                             )
                         )
-                    )
+                    ), {
+                        textAlign: this.props.textAlign ? this.props.textAlign : 'left'
+                    }
                 ]}
                 numberOfLines={this.props.numberOfLines ? this.props.numberOfLines : 0}
             >
@@ -79,7 +81,9 @@ class LabelText extends Component {
                             ? styles.commonFontSize
                             : styles.textDefault
                         )
-                    )
+                    ), {
+                        textAlign: this.props.textAlign ? this.props.textAlign : 'left'
+                    }
                 ]}
                 numberOfLines={this.props.numberOfLines ? this.props.numberOfLines : 0}
             >
