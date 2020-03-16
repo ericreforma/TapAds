@@ -130,6 +130,8 @@ export const CampaignAction = {
       })
       .catch(e => {
         console.log('error');
+        console.log(e);
+        console.log(e.response);
         errorCallback({
           existingCampaign: false,
           message: e.response

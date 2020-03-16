@@ -1,5 +1,5 @@
 0 - full wrap
-1 - 4 doors
-2 - 2 doors
+1 - one side
+2 - two side
 3 - back door
 4 - hood

@@ -47,6 +47,7 @@ import { IfElse, Then, Else } from '../../../components/IfElse';
 const recCampaignImage = require('../../../assets/image/recommended_campaign_image.png');
 const vehicleType = id => Object.values(VEHICLE.TYPE).find(t => t.id === id);
 const vehicleClass = id => Object.values(VEHICLE.CLASS).find(c => c.id === id);
+const vehicleSticker = (cid, sid) => Object.values(VEHICLE.CLASS).find(c => c.id === cid).sticker[sid];
 const vehicleStickerArea = Object.values(VEHICLE.STICKER_AREA);
 
 const CampaignContainer = props => {
@@ -79,6 +80,8 @@ const CampaignContainer = props => {
     location: 'Location',
     slotsAvail: 'Slots available'
   };
+
+  console.log(campaign);
   
   return (
     <>

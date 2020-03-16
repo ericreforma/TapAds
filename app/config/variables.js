@@ -1,5 +1,5 @@
-// const SERVER_MAIN = 'http://192.168.0.50/TapAdsServer/public';
-const SERVER_MAIN = 'https://dev.bcdpinpoint.com/TapAdsServer/public';
+const SERVER_MAIN = 'http://192.168.0.50/TapAdsServer/public';
+// const SERVER_MAIN = 'https://dev.bcdpinpoint.com/TapAdsServer/public';
 
 const SERVER_API = `${SERVER_MAIN}/api`;
 const SERVER_MEDIA = `${SERVER_MAIN}/storage`;
@@ -47,6 +47,47 @@ export const VEHICLE = {
         black: require('../assets/image/icons/car_small_black_icon.png'),
         white: require('../assets/image/icons/car_small_white_icon.png'),
       },
+      sticker: [
+        {
+          name: 'Full Wrap',
+          delimiter: '',
+          image: [
+            require('../assets/image/sticker_regular/full-wrap.png')
+          ]
+        }, {
+          name: '2 Doors',
+          delimiter: 'or',
+          image: [
+            require('../assets/image/sticker_regular/two-door-left.png'),
+            require('../assets/image/sticker_regular/two-door-right.png')
+          ]
+        }, {
+          name: '4 Doors',
+          delimiter: 'and',
+          image: [
+            require('../assets/image/sticker_regular/two-door-left.png'),
+            require('../assets/image/sticker_regular/two-door-right.png')
+          ]
+        }, {
+          name: 'Bumper',
+          delimiter: '',
+          image: [
+            require('../assets/image/sticker_regular/bumper.png')
+          ]
+        }, {
+          name: 'Rear Window',
+          delimiter: '',
+          image: [
+            require('../assets/image/sticker_regular/rear-window.png')
+          ]
+        }, {
+          name: 'In-car',
+          delimiter: '',
+          image: [
+            require('../assets/image/sticker_regular/in-car.png')
+          ]
+        }
+      ]
     },
     premium: {
       id: 1,
@@ -57,6 +98,47 @@ export const VEHICLE = {
         black: require('../assets/image/icons/car_mid_black_icon.png'),
         white: require('../assets/image/icons/car_mid_white_icon.png'),
       },
+      sticker: [
+        {
+          name: 'Full Wrap',
+          delimiter: '',
+          image: [
+            require('../assets/image/sticker_premium/full-wrap.png')
+          ]
+        }, {
+          name: '2 Doors',
+          delimiter: 'or',
+          image: [
+            require('../assets/image/sticker_premium/two-door-left.png'),
+            require('../assets/image/sticker_premium/two-door-right.png')
+          ]
+        }, {
+          name: '4 Doors',
+          delimiter: 'and',
+          image: [
+            require('../assets/image/sticker_premium/two-door-left.png'),
+            require('../assets/image/sticker_premium/two-door-right.png')
+          ]
+        }, {
+          name: 'Bumper',
+          delimiter: '',
+          image: [
+            require('../assets/image/sticker_premium/bumper.png')
+          ]
+        }, {
+          name: 'Rear Window',
+          delimiter: '',
+          image: [
+            require('../assets/image/sticker_premium/rear-window.png')
+          ]
+        }, {
+          name: 'In-car',
+          delimiter: '',
+          image: [
+            require('../assets/image/sticker_premium/in-car.png')
+          ]
+        }
+      ]
     },
     motorcycle: {
       id: 2,
@@ -67,6 +149,15 @@ export const VEHICLE = {
         black: require('../assets/image/icons/motorcycle_black_icon.png'),
         white: require('../assets/image/icons/motorcycle_white_icon.png'),
       },
+      sticker: [
+        {
+          name: 'Motorcycle',
+          delimiter: '',
+          image: [
+            require('../assets/image/sticker_motorcycle/motorcycle.png')
+          ]
+        }
+      ]
     },
     vans: {
       id: 3,
@@ -76,7 +167,42 @@ export const VEHICLE = {
         large: require('../assets/image/category_car_large.png'),
         black: require('../assets/image/icons/car_large_black_icon.png'),
         white: require('../assets/image/icons/car_large_white_icon.png'),
-      }
+      },
+      sticker: [
+        {
+          name: 'Full Wrap',
+          delimiter: '',
+          image: [
+            require('../assets/image/sticker_van/full-wrap.png')
+          ]
+        }, {
+          name: '1 Side',
+          delimiter: 'or',
+          image: [
+            require('../assets/image/sticker_van/left-part.png'),
+            require('../assets/image/sticker_van/right-part.png')
+          ]
+        }, {
+          name: '2 Sides',
+          delimiter: 'and',
+          image: [
+            require('../assets/image/sticker_van/left-part.png'),
+            require('../assets/image/sticker_van/right-part.png')
+          ]
+        }, {
+          name: 'Back Door',
+          delimiter: '',
+          image: [
+            require('../assets/image/sticker_van/back-door.png')
+          ]
+        }, {
+          name: 'Hood',
+          delimiter: '',
+          image: [
+            require('../assets/image/sticker_van/hood.png')
+          ]
+        }
+      ]
     },
     truck: {
       id: 4,
@@ -86,7 +212,56 @@ export const VEHICLE = {
         large: require('../assets/image/category_truck.png'),
         black: require('../assets/image/icons/truck_black_icon.png'),
         white: require('../assets/image/icons/truck_white_icon.png'),
-      }
+      },
+      sticker: [
+        {
+          name: 'Full Wrap',
+          delimiter: '',
+          image: [
+            require('../assets/image/sticker_truck/full-wrap.png')
+          ]
+        }, {
+          name: '1 Door',
+          delimiter: 'or',
+          image: [
+            require('../assets/image/sticker_truck/left-door.png'),
+            require('../assets/image/sticker_truck/right-door.png')
+          ]
+        }, {
+          name: '2 Doors',
+          delimiter: 'and',
+          image: [
+            require('../assets/image/sticker_truck/left-door.png'),
+            require('../assets/image/sticker_truck/right-door.png')
+          ]
+        }, {
+          name: '1 Cargo',
+          delimiter: 'or',
+          image: [
+            require('../assets/image/sticker_truck/left-part.png'),
+            require('../assets/image/sticker_truck/right-part.png')
+          ]
+        }, {
+          name: '2 Cargo',
+          delimiter: 'and',
+          image: [
+            require('../assets/image/sticker_truck/left-part.png'),
+            require('../assets/image/sticker_truck/right-part.png')
+          ]
+        }, {
+          name: 'Back Door',
+          delimiter: '',
+          image: [
+            require('../assets/image/sticker_truck/back-door.png')
+          ]
+        }, {
+          name: 'Hood',
+          delimiter: '',
+          image: [
+            require('../assets/image/sticker_truck/hood.png')
+          ]
+        }
+      ]
     }
   },
   TYPE: {
